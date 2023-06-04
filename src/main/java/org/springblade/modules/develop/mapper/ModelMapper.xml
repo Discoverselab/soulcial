@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.springblade.modules.develop.mapper.ModelMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="modelResultMap" type="org.springblade.modules.develop.entity.Model">
+        <id column="id" property="id"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="datasource_id" property="datasourceId"/>
+        <result column="model_name" property="modelName"/>
+        <result column="model_code" property="modelCode"/>
+        <result column="model_table" property="modelTable"/>
+        <result column="model_class" property="modelClass"/>
+        <result column="model_remark" property="modelRemark"/>
+    </resultMap>
+
+
+    <select id="selectModelPage" resultMap="modelResultMap">
+        select * from blade_model where is_deleted = 0
+    </select>
+
+</mapper>

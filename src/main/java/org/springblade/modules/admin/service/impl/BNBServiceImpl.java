@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springblade.core.tool.api.R;
+import org.springblade.modules.admin.service.BNBService;
+import org.springblade.modules.admin.util.LeaveMsg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +27,8 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.*;
+import org.web3j.tx.gas.ContractGasProvider;
+import org.web3j.tx.gas.StaticGasProvider;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
@@ -40,7 +44,7 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class BNBServiceImpl {
+public class BNBServiceImpl implements BNBService {
 
 
     @Autowired
@@ -52,19 +56,24 @@ public class BNBServiceImpl {
 //    private JsonRpcHttpClient jsonrpcClient;
 
 
-    @Value("${coin.create.pwd}")
-    private String coinCreatePwd;
+    private final static String coinCreatePwd = "peic8888";
 
 	//TODO
-	private static final String coinKeystorePath = "";
-	private static final String coinWithdrawWallet = "";
+	private static final String coinKeystorePath = "E:/work/coin";
+	private static final String coinWalletFile = "UTC--2023-06-05T15-42-39.669000000Z--e52e23326668117034a0ec6a288e5bb117b7f2c6.json";
 
 	//代币合约地址
 	private static final String tokenContractAddress = "";
 
+	//admin钱包地址
+	private static final String adminAddress = "0xe52e23326668117034a0ec6a288e5bb117b7f2c6";
+
+	//PFP合约地址
+	private static final String contractAddress = "0x37a7860b29ffF81CDE90C9F1cB741186D3290A0D";
 
 
-    public String createNewWallet(String account, String password) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException, CipherException {
+
+    public String createNewWallet(String password) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException, CipherException {
         log.info("====>  Generate new wallet file for BNB.");
         String fileName = WalletUtils.generateNewWalletFile(password, new File(coinKeystorePath), true);
         Credentials credentials = WalletUtils.loadCredentials(password, coinKeystorePath + "/" + fileName);
@@ -146,31 +155,31 @@ public class BNBServiceImpl {
 		return R.success("成功");
     }
 
-    public R transferTokenFromWithdrawWallet(String toAddress, BigDecimal amount, boolean sync, String withdrawId) {
-        Credentials credentials;
-		//TODO
-		String WithdrawWalletPassword = "";
-
-        try {
-            //解锁提币钱包
-            credentials = WalletUtils.loadCredentials(WithdrawWalletPassword, coinKeystorePath + "/" + coinWithdrawWallet);
-        } catch (IOException e) {
-            log.error("transferTokenFromWithdrawWallet{}", e);
-            // 密钥文件异常
-            return R.fail(500, "賬戶信息異常，請聯繫管理員[C006]");
-        } catch (CipherException e) {
-            log.error("transferTokenFromWithdrawWallet{}", e);
-            // 解密失败
-            return R.fail(500, "賬戶信息異常，請聯繫管理員[C007]");
-        }
-//        if (sync) {
-//            return paymentHandler.transferToken(credentials, toAddress, amount);
-//        } else {
-//            paymentHandler.transferTokenAsync(credentials, toAddress, amount, withdrawId);
-//            return new MessageResult(0, "提交成功");
+//    public R transferTokenFromWithdrawWallet(String toAddress, BigDecimal amount, boolean sync, String withdrawId) {
+//        Credentials credentials;
+//		//TODO
+//		String WithdrawWalletPassword = "";
+//
+//        try {
+//            //解锁提币钱包
+//            credentials = WalletUtils.loadCredentials(WithdrawWalletPassword, coinKeystorePath + "/" + coinWithdrawWallet);
+//        } catch (IOException e) {
+//            log.error("transferTokenFromWithdrawWallet{}", e);
+//            // 密钥文件异常
+//            return R.fail(500, "賬戶信息異常，請聯繫管理員[C006]");
+//        } catch (CipherException e) {
+//            log.error("transferTokenFromWithdrawWallet{}", e);
+//            // 解密失败
+//            return R.fail(500, "賬戶信息異常，請聯繫管理員[C007]");
 //        }
-		return R.success("成功");
-    }
+////        if (sync) {
+////            return paymentHandler.transferToken(credentials, toAddress, amount);
+////        } else {
+////            paymentHandler.transferTokenAsync(credentials, toAddress, amount, withdrawId);
+////            return new MessageResult(0, "提交成功");
+////        }
+//		return R.success("成功");
+//    }
 
 
 //    public BigDecimal getTokenBalance(String address) throws IOException {
@@ -281,4 +290,67 @@ public class BNBServiceImpl {
         map.put("status","0");
         return map;
     }
+
+	@Override
+	public void mintPFP(String toAddress) {
+		try {
+//			String toAddress = adminAddress;
+			//獲取密鑰文件
+			//String walletFile = "D:/data/bnb/keystore" + "/" + account.getWalletFile();
+			String walletFile = coinKeystorePath + "/" + coinWalletFile;
+			//獲取密鑰
+			Credentials credentials = WalletUtils.loadCredentials(coinCreatePwd, walletFile);
+			//獲取gasprice
+			BigInteger gasPrice = getGasPrice();
+			log.info("獲取gasPrice成功：" + gasPrice);
+			//設置gaslimt(mint大概需要130000，設置為1000000)
+			//正式網需要70000 （0.0007  約等於1.3RMB）
+			BigInteger gasLimit = new BigInteger("1000000");
+			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
+			//判斷餘額是否足夠最小手續費0.007
+//			BigDecimal balance = bnbService.getBalance(credentials.getAddress());
+//			if (balance.compareTo(new BigDecimal("0.007")) < 0) {
+//				return new MessageResult(500, "賬戶餘額不足，請先充值");
+//			}
+			//加載NFT
+			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
+			log.info("加載NFT成功：" + contract);
+			//校驗擁有者
+			TransactionReceipt send = contract.admin().send();
+
+			System.out.println("adminAddress:" + adminAddress);
+//			System.out.println("fromAddress:" + fromAddress);
+			//System.out.println("approvedAddress:"+approvedAddress);
+//			if (!adminAddress.equals(fromAddress)) {
+//				logger.info("fromAddress不是admin");
+//				return new MessageResult(500, "付款地址不是admin");
+//			}
+			BigInteger productId = new BigInteger("11030023230606001");
+			//鑄造
+			log.info("調用safeMint前：toAddress=" + toAddress + ";productId=" + productId);
+			TransactionReceipt receipt = contract.safeMint(toAddress, productId).send();
+			log.info("調用safeMint成功：" + receipt);
+			//TODO 判斷鑄造狀態是否成功
+			//獲取交易hash
+			String transactionHash = receipt.getTransactionHash();
+			log.info("==============NFT鑄造生成交易hash：" + transactionHash);
+			if (transactionHash == null) {
+				System.out.println("铸造失败");
+			} else {
+				System.out.println("铸造成功" + transactionHash);
+//				return MessageResult.success(transactionHash);
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public String createAdminWallet() {
+		String walletAddress = "";
+		try {
+			walletAddress = createNewWallet(coinCreatePwd);
+		}catch (Exception e){}
+		return walletAddress;
+	}
 }

@@ -362,6 +362,7 @@ public class CollectInfoController {
 //		getNFTCount("0x148D59faF10b52063071eDdf4Aaf63A395f2d41c",proxy);
 //		getETHGasPrice("0xc5102fE9359FD9a28f877a67E36B0F050d81a3CC",proxy);
 
+
 //		scoreCharisma("4","0xD790D1711A9dCb3970F47fd775f2f9A2f0bCc348","shiyu");
 	}
 

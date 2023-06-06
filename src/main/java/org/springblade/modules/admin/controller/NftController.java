@@ -1,5 +1,6 @@
 package org.springblade.modules.admin.controller;
 
+import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -45,4 +46,14 @@ public class NftController {
 		String adminWallet = bnbService.createAdminWallet();
 		return R.data(adminWallet);
 	}
+
+	@PostMapping("/login")
+	@ApiOperation(value = "登录")
+	public R<String> login(@RequestParam("address") String address) {
+		StpUtil.login(address);
+		SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
+		return R.data(tokenInfo.getTokenValue());
+	}
+
+
 }

@@ -188,7 +188,7 @@ blade:
   #jackson配置
   jackson:
     #null自动转空值
-    null-to-empty: true
+    null-to-empty: false
     #大数字自动转字符串
     big-num-to-string: true
     #支持text文本请求,与报文加密同时开启

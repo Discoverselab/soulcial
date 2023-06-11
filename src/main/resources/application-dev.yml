@@ -2,7 +2,9 @@
 spring:
   redis:
     ##redis 单机环境配置
-    host: 120.27.226.185
+#    host: 120.27.226.185
+    #soul-阿里云
+    host: 8.136.19.106
     port: 6379
     password: qwe123!@#
     database: 1
@@ -13,7 +15,9 @@ spring:
     #  commandTimeout: 5000
   datasource:
     # MySql
-    url: jdbc:mysql://120.27.226.185:3306/pfp?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+#    url: jdbc:mysql://120.27.226.185:3306/pfp?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+    #soul-阿里云
+    url: jdbc:mysql://8.136.19.106:3306/pfp?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
     #生产
 #    url: jdbc:mysql://119.45.180.31:3306/sport?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
 #    url: jdbc:mysql://119.45.180.31:3306/collect?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true

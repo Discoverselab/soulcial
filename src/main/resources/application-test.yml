@@ -2,21 +2,36 @@
 spring:
   redis:
     ##redis 单机环境配置
-    ##将docker脚本部署的redis服务映射为宿主机ip
-    ##生产环境推荐使用阿里云高可用redis服务并设置密码
-    host: 127.0.0.1
+    host: 8.136.19.106
     port: 6379
-    password:
-    database: 0
+    password: qwe123!@#
+    database: 1
     ssl: false
     ##redis 集群环境配置
     #cluster:
     #  nodes: 127.0.0.1:7001,127.0.0.1:7002,127.0.0.1:7003
     #  commandTimeout: 5000
   datasource:
-    url: jdbc:mysql://localhost:3306/bladex_boot?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
-    username: root
-    password: root
+    # MySql
+    url: jdbc:mysql://8.136.19.106:3306/pfp?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+    username: pfp
+    password: kfCssD3Ca5ZHtSd4
+    # PostgreSQL
+    #url: jdbc:postgresql://127.0.0.1:5432/bladex_boot
+    #username: postgres
+    #password: 123456
+    # Oracle
+    #url: jdbc:oracle:thin:@127.0.0.1:1521:orcl
+    #username: BLADEX_BOOT
+    #password: BLADEX_BOOT
+    # SqlServer
+    #url: jdbc:sqlserver://127.0.0.1:1433;DatabaseName=bladex_boot
+    #username: bladex_boot
+    #password: bladex_boot
+    # DaMeng
+    #url: jdbc:dm://127.0.0.1:5236/BLADEX_BOOT?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8
+    #username: BLADEX_BOOT
+    #password: BLADEX_BOOT
 
 #第三方登陆
 social:
@@ -29,12 +44,20 @@ blade:
   lock:
     ##是否启用分布式锁
     enabled: false
-    ##将docker脚本部署的redis服务映射为宿主机ip
-    ##生产环境推荐使用阿里云高可用redis服务并设置密码
+    ##redis服务地址
     address: redis://127.0.0.1:6379
-    password: 123456
   #本地文件上传
   file:
     remote-mode: true
     upload-domain: http://localhost:8999
     remote-path: /usr/share/nginx/html
+
+baidu:
+  convertVoice:
+    apiKey: 84czVQFnab6m70lugkOI3xb1
+    secretKey: 9RwTR0oYoPsqBihCnp2OXsgAGb50dr1A
+
+tencent:
+  oss:
+    secretId: AKIDhIgneFa9SZQ5UgdKkuoVVHn21kBLErGP
+    secretKey: wK6jBf1B6l9MJzPZXHAm8F6h6GCsJUPe

@@ -51,6 +51,9 @@ public class BNBServiceImpl implements BNBService {
 	@Qualifier("bscWeb3j")
     private Web3j web3j;
 
+	@Value("${spring.profiles.active}")
+	List<String> activeProfiles;
+
 
 //    @Autowired
 //    private JsonRpcHttpClient jsonrpcClient;
@@ -59,7 +62,8 @@ public class BNBServiceImpl implements BNBService {
     private final static String coinCreatePwd = "peic8888";
 
 	//TODO
-	private static final String coinKeystorePath = "E:/work/coin";
+	private static final String coinKeystorePathWindows = "E:/work/coin";
+	private static final String coinKeystorePathLinux = "/opt/peic/keystore/bnb";
 	private static final String coinWalletFile = "UTC--2023-06-05T15-42-39.669000000Z--e52e23326668117034a0ec6a288e5bb117b7f2c6.json";
 
 	//代币合约地址
@@ -75,8 +79,8 @@ public class BNBServiceImpl implements BNBService {
 
     public String createNewWallet(String password) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException, CipherException {
         log.info("====>  Generate new wallet file for BNB.");
-        String fileName = WalletUtils.generateNewWalletFile(password, new File(coinKeystorePath), true);
-        Credentials credentials = WalletUtils.loadCredentials(password, coinKeystorePath + "/" + fileName);
+        String fileName = WalletUtils.generateNewWalletFile(password, new File(coinKeystorePathWindows), true);
+        Credentials credentials = WalletUtils.loadCredentials(password, coinKeystorePathWindows + "/" + fileName);
         String address = credentials.getAddress();
         return address;
     }
@@ -136,7 +140,7 @@ public class BNBServiceImpl implements BNBService {
 
         Credentials credentials;
         try {
-            credentials = WalletUtils.loadCredentials(coinCreatePwd, coinKeystorePath + "/" + walletFile);
+            credentials = WalletUtils.loadCredentials(coinCreatePwd, coinKeystorePathWindows + "/" + walletFile);
         } catch (IOException e) {
             log.error("transferToken{}", e);
             // 密钥文件异常
@@ -292,11 +296,17 @@ public class BNBServiceImpl implements BNBService {
     }
 
 	@Override
-	public void mintPFP(String toAddress) {
+	public R mintPFP(String toAddress) {
 		try {
-//			String toAddress = adminAddress;
+			String coinKeystorePath = null;
+			if(activeProfiles != null && activeProfiles.size() > 0){
+				if(activeProfiles.get(0).equalsIgnoreCase("dev")){
+					coinKeystorePath = coinKeystorePathWindows;
+				}else {
+					coinKeystorePath = coinKeystorePathLinux;
+				}
+			}
 			//獲取密鑰文件
-			//String walletFile = "D:/data/bnb/keystore" + "/" + account.getWalletFile();
 			String walletFile = coinKeystorePath + "/" + coinWalletFile;
 			//獲取密鑰
 			Credentials credentials = WalletUtils.loadCredentials(coinCreatePwd, walletFile);
@@ -343,6 +353,8 @@ public class BNBServiceImpl implements BNBService {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
+
+		return null;
 	}
 
 	@Override
@@ -352,5 +364,66 @@ public class BNBServiceImpl implements BNBService {
 			walletAddress = createNewWallet(coinCreatePwd);
 		}catch (Exception e){}
 		return walletAddress;
+	}
+
+	@Override
+	public synchronized R<String> mintNFT(String adminAddress, String contractAddress, String adminJsonFile, String toAddress,Long tokenId) {
+		try {
+			String coinKeystorePath = null;
+			if(activeProfiles != null && activeProfiles.size() > 0){
+				if(activeProfiles.get(0).equalsIgnoreCase("dev")){
+					coinKeystorePath = coinKeystorePathWindows;
+				}else {
+					coinKeystorePath = coinKeystorePathLinux;
+				}
+			}
+			//獲取密鑰文件
+			String walletFile = coinKeystorePath + "/" + adminJsonFile;
+			//獲取密鑰
+			Credentials credentials = WalletUtils.loadCredentials(coinCreatePwd, walletFile);
+			//獲取gasprice
+			BigInteger gasPrice = getGasPrice();
+			log.info("獲取gasPrice成功：" + gasPrice);
+			//設置gaslimt(mint大概需要130000，設置為1000000)
+			//正式網需要70000 （0.0007  約等於1.3RMB）
+			BigInteger gasLimit = new BigInteger("1000000");
+			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
+			//判斷餘額是否足夠最小手續費0.007
+//			BigDecimal balance = bnbService.getBalance(credentials.getAddress());
+//			if (balance.compareTo(new BigDecimal("0.007")) < 0) {
+//				return new MessageResult(500, "賬戶餘額不足，請先充值");
+//			}
+			//加載NFT
+			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
+			log.info("加載NFT成功：" + contract);
+			//校驗擁有者
+//			TransactionReceipt send = contract.admin().send();
+
+			System.out.println("adminAddress:" + adminAddress);
+//			System.out.println("fromAddress:" + fromAddress);
+			//System.out.println("approvedAddress:"+approvedAddress);
+//			if (!adminAddress.equals(fromAddress)) {
+//				logger.info("fromAddress不是admin");
+//				return new MessageResult(500, "付款地址不是admin");
+//			}
+			BigInteger productId = new BigInteger(tokenId.toString());
+			//鑄造
+			log.info("調用safeMint前：toAddress=" + toAddress + ";productId=" + productId);
+			TransactionReceipt receipt = contract.safeMint(toAddress, productId).send();
+			log.info("調用safeMint成功：" + receipt);
+			//獲取交易hash
+			String transactionHash = receipt.getTransactionHash();
+			log.info("==============NFT鑄造生成交易hash：" + transactionHash);
+			if (transactionHash == null) {
+				System.out.println("铸造失败");
+			} else {
+				System.out.println("铸造成功" + transactionHash);
+				return R.data(transactionHash);
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		//TODO 翻译
+		return R.fail("铸造失败，请联系管理员");
 	}
 }

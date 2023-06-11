@@ -32,7 +32,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/collect")
-@Api(value = "管理后台登录",tags = "管理后台登录接口")
+@Api(value = "自用测试接口",tags = "自用测试接口")
 @Slf4j
 public class CollectInfoController {
 
@@ -51,6 +51,9 @@ public class CollectInfoController {
 
 	private final static String NFTCountUrl = "https://knn3-gateway.knn3.xyz/data-api/api/addresses/holdNfts";
 
+	private final static String CCMainnetUrl = "https://api.cyberconnect.dev/playground";
+
+	private final static String CCTestUrl = "https://api.cyberconnect.dev/testnet/playground";
 
 //	@GetMapping("/calculateScore")
 //	@ApiOperation(value = "算分")

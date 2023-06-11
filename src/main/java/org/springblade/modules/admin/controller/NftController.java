@@ -19,6 +19,7 @@ import org.springblade.modules.admin.util.AddressUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,7 +167,7 @@ public class NftController {
 
 	@PostMapping("/mintFreeNft")
 	@ApiOperation(value = "铸造免费NFT")
-	public R mintFreeNft(@RequestBody MintNftVo mintNftVo) {
+	public R mintFreeNft(@Valid @RequestBody MintNftVo mintNftVo) {
 		R result = nftService.mintFreeNft(mintNftVo);
 		return result;
 	}

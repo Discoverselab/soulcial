@@ -12,6 +12,7 @@ import org.springblade.modules.admin.pojo.enums.*;
 import org.springblade.modules.admin.pojo.po.MemberPO;
 import org.springblade.modules.admin.pojo.vo.EnumVo;
 import org.springblade.modules.admin.pojo.vo.MintNftVo;
+import org.springblade.modules.admin.pojo.vo.MintPictureVo;
 import org.springblade.modules.admin.service.BNBService;
 import org.springblade.modules.admin.service.NftService;
 import org.springblade.modules.admin.util.AddressUtil;
@@ -128,18 +129,38 @@ public class NftController {
 
 	@GetMapping("/getMintPicture")
 	@ApiOperation(value = "获取铸造NFT的图片（返回6张图片）")
-	public R<List<String>> getMintPicture(@ApiParam(value = "personality:传1到16",required = true) @RequestParam("personality") Integer personality,
-										  @ApiParam(value = "mood:不知道有哪些，先传个1吧",required = true) @RequestParam("mood") Integer mood,
-										  @ApiParam(value = "weather:不知道有哪些，先传个1吧",required = true) @RequestParam("weather") Integer weather,
-										  @ApiParam(value = "color:不知道有哪些，先传个1吧",required = true) @RequestParam("color") Integer color) {
+	public R<List<MintPictureVo>> getMintPicture(@ApiParam(value = "personality:传1到16",required = true) @RequestParam("personality") Integer personality,
+												 @ApiParam(value = "mood:不知道有哪些，先传个1吧",required = true) @RequestParam("mood") Integer mood,
+												 @ApiParam(value = "weather:不知道有哪些，先传个1吧",required = true) @RequestParam("weather") Integer weather,
+												 @ApiParam(value = "color:不知道有哪些，先传个1吧",required = true) @RequestParam("color") Integer color) {
 		//TODO 需要生成图片，目前写死
-		List<String> result = new ArrayList<>();
-		result.add("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/11/1667761506611122176.png");
-		result.add("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/11/1667761733875290112.png");
-		result.add("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/11/1667761795762245632.png");
-		result.add("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/11/1667761845041123328.png");
-		result.add("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/11/1667761901072830464.png");
-		result.add("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/11/1667761950074884096.png");
+		List<MintPictureVo> result = new ArrayList<>();
+		for (int i=0;i<6;i++){
+			MintPictureVo mintPictureVo = new MintPictureVo();
+			mintPictureVo.setColorAttribute(20);
+
+			if(i == 0){
+				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935016998465536.png");
+				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935749877592064.png");
+			} else if (i == 1) {
+				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935243595739136.png");
+				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935861299277824.png");
+			} else if(i == 2){
+				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935016998465536.png");
+				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935923874099200.png");
+			} else if (i == 3) {
+				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935243595739136.png");
+				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935977548607488.png");
+			} else if(i == 4){
+				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935016998465536.png");
+				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667936036033982464.png");
+			} else if (i == 5) {
+				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935243595739136.png");
+				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667936100689178624.png");
+			}
+
+			result.add(mintPictureVo);
+		}
 		return R.data(result);
 	}
 

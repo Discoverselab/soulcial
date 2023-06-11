@@ -82,6 +82,12 @@ public class PFPTokenPO extends BasePO {
 	 */
 	private String pictureUrl;
 
+	@ApiModelProperty("方形图片url")
+	private String squarePictureUrl;
+
+	@ApiModelProperty("图片颜色属性")
+	private Integer colorAttribute;
+
 	/**
 	 *personality
 	 */

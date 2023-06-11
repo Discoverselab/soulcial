@@ -113,6 +113,8 @@ public class NftServiceImpl implements NftService {
 		pfpTokenPO.setMintUserAddress(toAddress);
 		pfpTokenPO.setMintUserId(userId);
 		pfpTokenPO.setPictureUrl(mintNftVo.getPictureUrl());
+		pfpTokenPO.setSquarePictureUrl(mintNftVo.getSquarePictureUrl());
+		pfpTokenPO.setColorAttribute(mintNftVo.getColorAttribute());
 		pfpTokenPO.setMood(mintNftVo.getMood());
 		pfpTokenPO.setColor(mintNftVo.getColor());
 		pfpTokenPO.setWeather(mintNftVo.getWeather());

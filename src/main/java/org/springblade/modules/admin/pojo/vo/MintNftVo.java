@@ -20,8 +20,16 @@ public class MintNftVo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@NotNull
-	@ApiModelProperty("图片url")
+	@ApiModelProperty("不规则图片url")
 	private String pictureUrl;
+
+	@NotNull
+	@ApiModelProperty("方形图片url")
+	private String squarePictureUrl;
+
+	@NotNull
+	@ApiModelProperty("图片颜色属性")
+	private Integer colorAttribute;
 
 	@NotNull
 	@ApiModelProperty("personality")

@@ -44,13 +44,17 @@ public class CollectInfoController {
 	private final static int timeout = HttpGlobalConfig.getTimeout();
 	private final static String knn3AuthKey = "a97c41edaf7bbcde96dfc31ab15226a2e09c1d15913551f85d56847d3ee10ef8";
 
+	private final static String NFTGOAPIKEY = "875799bb-8645-4b19-a705-eb7299bda7d2";
+
 	private final static String LensFollowingCountUrl = "https://knn3-gateway.knn3.xyz/data-api/api/addresses/lensFollowingCount";
 
 	private final static String LensFollowersCountUrl = "https://knn3-gateway.knn3.xyz/data-api/api/lens/followers/:profileId/count";
 
 	private final static String PoapsCountUrl = "https://knn3-gateway.knn3.xyz/data-api/api/addresses/poaps/count";
 
-	private final static String NFTCountUrl = "https://knn3-gateway.knn3.xyz/data-api/api/addresses/holdNfts";
+	private final static String NFTCountUrlKnn3 = "https://knn3-gateway.knn3.xyz/data-api/api/addresses/holdNfts";
+
+	private final static String NFTCountUrlNFTGO = "https://data-api.nftgo.io/eth/v2/address/metrics?address=";
 
 	private final static String CCMainnetUrl = "https://api.cyberconnect.dev/playground";
 
@@ -107,16 +111,15 @@ public class CollectInfoController {
 		try {
 
 			//获取lens following
-			HttpRequest httpRequest = HttpRequest.get(LensFollowersCountUrl.replace(":profileId","")).header("auth-key", knn3AuthKey).timeout(timeout);
+			HttpRequest httpRequest = HttpRequest.get(LensFollowersCountUrl.replace(":profileId",profileId)).header("auth-key", knn3AuthKey).timeout(timeout);
 			if(proxy != null){
 				httpRequest.setProxy(proxy);
 			}
 			String body = httpRequest.execute().body();
-			System.out.println("body"+body);
-			JSONObject jsonObject = JSONObject.parseObject(body);
-			JSONArray list = jsonObject.getJSONArray("list");
 
-			count = list.size();
+
+			System.out.println("body:"+body);
+			count = Integer.parseInt(body);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -264,36 +267,46 @@ public class CollectInfoController {
 	private static int getNFTCount(String address,Proxy proxy) {
 		int count = 0;
 		try {
-			//ethereum 网络
-			Map<String,Object> paramMap = new HashMap<String,Object>();
-			paramMap.put("address",address);
-			paramMap.put("network","ethereum");
-			HttpRequest httpRequest = HttpRequest.get(NFTCountUrl).header("auth-key", knn3AuthKey).timeout(timeout);
+//			//ethereum 网络
+//			Map<String,Object> paramMap = new HashMap<String,Object>();
+//			paramMap.put("address",address);
+//			paramMap.put("network","ethereum");
+//			HttpRequest httpRequest = HttpRequest.get(NFTCountUrl).header("auth-key", knn3AuthKey).timeout(timeout);
+//			if(proxy != null){
+//				httpRequest.setProxy(proxy);
+//			}
+//			String body = httpRequest.form(paramMap).execute().body();
+//			System.out.println("body1:"+body);
+//			JSONObject jsonObject = JSONObject.parseObject(body);
+//			JSONArray list = jsonObject.getJSONArray("list");
+//
+//			count = list.size();
+//
+//			//polygon 网络
+//			paramMap = new HashMap<String,Object>();
+//			paramMap.put("address",address);
+//			paramMap.put("network","ethereum");
+//			paramMap.put("network","polygon");
+//			httpRequest = HttpRequest.get(NFTCountUrl).header("auth-key", knn3AuthKey).timeout(timeout);
+//			if(proxy != null){
+//				httpRequest.setProxy(proxy);
+//			}
+//			body = httpRequest.form(paramMap).execute().body();
+//			System.out.println("body2:"+body);
+//			jsonObject = JSONObject.parseObject(body);
+//			list = jsonObject.getJSONArray("list");
+
+
+
+			HttpRequest httpRequest = HttpRequest.get(NFTCountUrlNFTGO + address).header("X-API-KEY", NFTGOAPIKEY).timeout(timeout);
 			if(proxy != null){
 				httpRequest.setProxy(proxy);
 			}
-			String body = httpRequest.form(paramMap).execute().body();
-			System.out.println("body1:"+body);
+			String body = httpRequest.execute().body();
+			System.out.println("body:"+body);
 			JSONObject jsonObject = JSONObject.parseObject(body);
-			JSONArray list = jsonObject.getJSONArray("list");
+			count = jsonObject.getInteger("mint_num");
 
-			count = list.size();
-
-			//polygon 网络
-			paramMap = new HashMap<String,Object>();
-			paramMap.put("address",address);
-			paramMap.put("network","ethereum");
-			paramMap.put("network","polygon");
-			httpRequest = HttpRequest.get(NFTCountUrl).header("auth-key", knn3AuthKey).timeout(timeout);
-			if(proxy != null){
-				httpRequest.setProxy(proxy);
-			}
-			body = httpRequest.form(paramMap).execute().body();
-			System.out.println("body2:"+body);
-			jsonObject = JSONObject.parseObject(body);
-			list = jsonObject.getJSONArray("list");
-
-			count = count + list.size();
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -360,10 +373,10 @@ public class CollectInfoController {
 //		getCCFollowing("0x148D59faF10b52063071eDdf4Aaf63A395f2d41c",proxy);
 //		getCCFollows("shiyu","0xD790D1711A9dCb3970F47fd775f2f9A2f0bCc348",proxy);
 //		getPoapsCount("0x148D59faF10b52063071eDdf4Aaf63A395f2d41c",proxy);
-//		getLensFollows("4",proxy);
+//		getLensFollows("5",proxy);
 //		getLensFollowing("0x148D59faF10b52063071eDdf4Aaf63A395f2d41c",proxy);
 //		getW3STCount("0x148D59faF10b52063071eDdf4Aaf63A395f2d41c",proxy);
-//		getNFTCount("0x148D59faF10b52063071eDdf4Aaf63A395f2d41c",proxy);
+		getNFTCount("0x5ac69c26a15cfaaeb066043dcc932f7d01faf182",proxy);
 //		getETHGasPrice("0xc5102fE9359FD9a28f877a67E36B0F050d81a3CC",proxy);
 
 
@@ -372,7 +385,7 @@ public class CollectInfoController {
 
 
 	@GetMapping("/scoreCourage")
-	@ApiOperation(value = "勇气")
+	@ApiOperation(value = "勇气(目前仅计算ETH手续费)")
 	public  R<Integer> scoreCourage(@ApiParam(value = "address", required = true) @RequestParam(value = "address") String address) {
 		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
 //		Proxy proxy = null;
@@ -492,16 +505,18 @@ public class CollectInfoController {
 
 
 	@GetMapping("/scoreCharisma")
-	@ApiOperation(value = "魅力")
-	public  R<Integer> scoreCharisma(@ApiParam(value = "查lensFollowers需要的profileId", required = true) @RequestParam(value = "profileId") String profileId,
-										   @ApiParam(value = "查following需要的address", required = true) @RequestParam(value = "address") String address,
-										   @ApiParam(value = "查ccFollows需要的handle", required = true) @RequestParam(value = "handle") String handle) {
+	@ApiOperation(value = "魅力（目前仅对接了lens）")
+	public  R<Integer> scoreCharisma(@ApiParam(value = "查lensFollowers需要的profileId", required = true) @RequestParam(value = "profileId") String profileId
+											,@ApiParam(value = "查following需要的address", required = true) @RequestParam(value = "address") String address
+//										   ,@ApiParam(value = "查ccFollows需要的handle", required = true) @RequestParam(value = "handle") String handle
+											) {
 		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
 //		Proxy proxy = null;
 
 		//f1(x)
 		int lensFollows = getLensFollows(profileId, proxy);
-		int ccFollows = getCCFollows(handle, address, proxy);
+		int ccFollows = 0;
+//		int ccFollows = getCCFollows(handle, address, proxy);
 
 		int count1 = lensFollows + ccFollows;
 		double f1 = 0;
@@ -520,7 +535,8 @@ public class CollectInfoController {
 
 		//f2(x)
 		int lensFollowing = getLensFollowing(address, proxy);
-		int ccFollowing = getCCFollowing(address, proxy);
+		int ccFollowing = 0;
+//		int ccFollowing = getCCFollowing(address, proxy);
 
 		int count2 = lensFollowing + ccFollowing;
 		double f2 = 0;

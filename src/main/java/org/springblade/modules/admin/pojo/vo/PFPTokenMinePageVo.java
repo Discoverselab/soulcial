@@ -163,5 +163,8 @@ public class PFPTokenMinePageVo implements Serializable {
 	@ApiModelProperty("Top Pick(当前最高出价：单位固定为BNB)")
 	private BigDecimal topPick;
 
+	@ApiModelProperty("Cost(当前登录用户最近一次购买该NFT的价格：单位固定为BNB)")
+	private BigDecimal costPrice;
+
 
 }

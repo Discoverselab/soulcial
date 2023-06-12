@@ -545,7 +545,7 @@ public class CollectInfoController {
 
 	@GetMapping("/getLevel")
 	@ApiOperation(value = "获取等级")
-	public  R getLevel(@ApiParam(value = "charisma", required = true) @RequestParam(value = "charisma") Integer charisma,
+	public R<Integer> getLevel(@ApiParam(value = "charisma", required = true) @RequestParam(value = "charisma") Integer charisma,
 								 @ApiParam(value = "extroversion", required = true) @RequestParam(value = "extroversion") Integer extroversion,
 								 @ApiParam(value = "energy", required = true) @RequestParam(value = "energy") Integer energy,
 								@ApiParam(value = "wisdom", required = true) @RequestParam(value = "wisdom") Integer wisdom,
@@ -558,12 +558,12 @@ public class CollectInfoController {
 
 		PFPTokenPO pfpTokenPO = new PFPTokenPO();
 		pfpTokenPO.setLevelScore(levelScore);
-		pfpTokenPO.setLevel();
+		pfpTokenPO.countLevel();
 
 		NFTLevelEnum[] values = NFTLevelEnum.values();
 		for (NFTLevelEnum value : values) {
 			if(pfpTokenPO.getLevel() == value.getCode()){
-				return R.success(value.getName());
+				return R.data(levelScore,value.getName());
 			}
 		}
 
@@ -575,21 +575,21 @@ public class CollectInfoController {
 	public  R<Integer> getMatch(@ApiParam(value = "tag1_1", required = true) @RequestParam(value = "tag1_1") Integer tag1_1,
 					   @ApiParam(value = "tag1_2", required = true) @RequestParam(value = "tag1_2") Integer tag1_2,
 					   @ApiParam(value = "tag1_3", required = true) @RequestParam(value = "tag1_3") Integer tag1_3,
-					   @ApiParam(value = "charisma1", required = true) @RequestParam(value = "charisma") Integer charisma1,
-					   @ApiParam(value = "extroversion1", required = true) @RequestParam(value = "extroversion") Integer extroversion1,
-					   @ApiParam(value = "energy1", required = true) @RequestParam(value = "energy") Integer energy1,
-					   @ApiParam(value = "wisdom1", required = true) @RequestParam(value = "wisdom") Integer wisdom1,
-					   @ApiParam(value = "art1", required = true) @RequestParam(value = "art") Integer art1,
-					   @ApiParam(value = "courage1", required = true) @RequestParam(value = "courage") Integer courage1,
+					   @ApiParam(value = "charisma1", required = true) @RequestParam(value = "charisma1") Integer charisma1,
+					   @ApiParam(value = "extroversion1", required = true) @RequestParam(value = "extroversion1") Integer extroversion1,
+					   @ApiParam(value = "energy1", required = true) @RequestParam(value = "energy1") Integer energy1,
+					   @ApiParam(value = "wisdom1", required = true) @RequestParam(value = "wisdom1") Integer wisdom1,
+					   @ApiParam(value = "art1", required = true) @RequestParam(value = "art1") Integer art1,
+					   @ApiParam(value = "courage1", required = true) @RequestParam(value = "courage1") Integer courage1,
 					   @ApiParam(value = "tag2_1", required = true) @RequestParam(value = "tag2_1") Integer tag2_1,
 					   @ApiParam(value = "tag2_2", required = true) @RequestParam(value = "tag2_2") Integer tag2_2,
 					   @ApiParam(value = "tag2_3", required = true) @RequestParam(value = "tag2_3") Integer tag2_3,
-					   @ApiParam(value = "charisma2", required = true) @RequestParam(value = "charisma") Integer charisma2,
-					   @ApiParam(value = "extroversion2", required = true) @RequestParam(value = "extroversion") Integer extroversion2,
-					   @ApiParam(value = "energy2", required = true) @RequestParam(value = "energy") Integer energy2,
-					   @ApiParam(value = "wisdom2", required = true) @RequestParam(value = "wisdom") Integer wisdom2,
-					   @ApiParam(value = "art2", required = true) @RequestParam(value = "art") Integer art2,
-					   @ApiParam(value = "courage2", required = true) @RequestParam(value = "courage") Integer courage2) {
+					   @ApiParam(value = "charisma2", required = true) @RequestParam(value = "charisma2") Integer charisma2,
+					   @ApiParam(value = "extroversion2", required = true) @RequestParam(value = "extroversion2") Integer extroversion2,
+					   @ApiParam(value = "energy2", required = true) @RequestParam(value = "energy2") Integer energy2,
+					   @ApiParam(value = "wisdom2", required = true) @RequestParam(value = "wisdom2") Integer wisdom2,
+					   @ApiParam(value = "art2", required = true) @RequestParam(value = "art2") Integer art2,
+					   @ApiParam(value = "courage2", required = true) @RequestParam(value = "courage2") Integer courage2) {
 		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
 //		Proxy proxy = null;
 

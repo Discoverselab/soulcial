@@ -134,7 +134,7 @@ public class NftServiceImpl implements NftService {
 			pfpTokenPO.getWisdom() + pfpTokenPO.getArt() + pfpTokenPO.getCourage());
 
 		//设置level
-		pfpTokenPO.setLevel();
+		pfpTokenPO.countLevel();
 
 		pfpTokenMapper.insert(pfpTokenPO);
 
@@ -157,7 +157,7 @@ public class NftServiceImpl implements NftService {
 
 			pfpTokenMapper.updateById(pfpTokenPO);
 
-			return R.success("mint success");
+			return R.data(pfpTokenPO.getId(),"mint success");
 
 //			PFPTransactionPO pfpTransactionPO = new PFPTransactionPO();
 //			pfpTransactionPO.setTokenId(pfpTokenPO.getId());

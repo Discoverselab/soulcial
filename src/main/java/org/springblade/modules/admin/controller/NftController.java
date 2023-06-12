@@ -167,7 +167,7 @@ public class NftController {
 
 	@PostMapping("/mintFreeNft")
 	@ApiOperation(value = "铸造免费NFT")
-	public R mintFreeNft(@Valid @RequestBody MintNftVo mintNftVo) {
+	public R<Long> mintFreeNft(@Valid @RequestBody MintNftVo mintNftVo) {
 		R result = nftService.mintFreeNft(mintNftVo);
 		return result;
 	}

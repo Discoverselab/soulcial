@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springblade.core.tool.api.R;
 import org.springblade.core.tool.utils.BeanUtil;
+import org.springblade.core.tool.utils.StringUtil;
 import org.springblade.modules.admin.dao.MemberMapper;
 import org.springblade.modules.admin.dao.PFPTokenMapper;
 import org.springblade.modules.admin.pojo.enums.NFTColorEnum;
@@ -71,10 +72,51 @@ public class HomeController {
 	public R<UserInfoVo> getUserInfo() {
 		Long userId = StpUtil.getLoginIdAsLong();
 
+		UserInfoVo userInfoVo = new UserInfoVo();
 		MemberPO memberPO = memberMapper.selectById(userId);
+		BeanUtil.copyProperties(memberPO,userInfoVo);
 
+		return R.data(userInfoVo);
+	}
 
-		return R.data(null);
+	@PostMapping("/setUserTags")
+	@ApiOperation(value = "设置用户标签")
+	public R<UserInfoVo> setUserTags(@Valid @RequestBody UserTagsVo userTagsVo) {
+		Long userId = StpUtil.getLoginIdAsLong();
+
+		MemberPO memberPO = memberMapper.selectById(userId);
+		memberPO.setUserTags(userTagsVo.getUserTags());
+
+		memberPO.initForUpdate();
+
+		memberMapper.updateById(memberPO);
+
+		return R.success("修改成功");
+	}
+
+	@PostMapping("/setUserInfo")
+	@ApiOperation(value = "设置用户昵称和头像")
+	public R<UserInfoVo> setUserInfo(@Valid @RequestBody UserNameAvatarVo userNameAvatarVo) {
+
+		String avatar = userNameAvatarVo.getAvatar();
+		String userName = userNameAvatarVo.getUserName();
+
+		if(StringUtil.isNotBlank(avatar) && StringUtil.isNotBlank(userName)){
+			Long userId = StpUtil.getLoginIdAsLong();
+
+			MemberPO memberPO = memberMapper.selectById(userId);
+			if(StringUtil.isNotBlank(avatar)){
+				memberPO.setAvatar(avatar);
+			}
+			if(StringUtil.isNotBlank(userName)){
+				memberPO.setUserName(userName);
+			}
+
+			memberPO.initForUpdate();
+
+			memberMapper.updateById(memberPO);
+		}
+		return R.success("修改成功");
 	}
 
 

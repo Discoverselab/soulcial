@@ -57,6 +57,19 @@ public class LoginController {
 
 			memberPO.setAvatar(avatarList.get(RandomUtil.randomInt(0,3)));
 
+			//TODO 用户注册。刷新分数
+			memberPO.setCharisma(RandomUtil.randomInt(20,100));
+			memberPO.setExtroversion(RandomUtil.randomInt(20,100));
+			memberPO.setEnergy(RandomUtil.randomInt(20,100));
+			memberPO.setWisdom(RandomUtil.randomInt(20,100));
+			memberPO.setArt(RandomUtil.randomInt(20,100));
+			memberPO.setCourage(RandomUtil.randomInt(20,100));
+			//计算总分
+			memberPO.setLevelScore(memberPO.getCharisma() + memberPO.getExtroversion() + memberPO.getEnergy() +
+				memberPO.getWisdom() + memberPO.getArt() + memberPO.getCourage());
+			//设置level
+			memberPO.countLevel();
+
 			memberMapper.insert(memberPO);
 		}
 

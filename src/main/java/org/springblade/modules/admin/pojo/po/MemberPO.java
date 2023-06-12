@@ -91,4 +91,17 @@ public class MemberPO extends BasePO {
 	@ApiModelProperty("courage(6边型算分)")
 	private Integer courage;
 
+	public void countLevel(){
+		if(this.levelScore == null || this.levelScore < 200){
+			this.level = 1;
+		} else if(this.levelScore < 300){
+			this.level = 2;
+		} else if(this.levelScore < 400){
+			this.level = 3;
+		} else if(this.levelScore < 500){
+			this.level = 4;
+		} else {
+			this.level = 5;
+		}
+	}
 }

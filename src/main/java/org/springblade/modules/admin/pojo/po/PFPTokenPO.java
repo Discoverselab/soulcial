@@ -140,7 +140,7 @@ public class PFPTokenPO extends BasePO {
 	private Integer art;
 	private Integer courage;
 
-	public void setLevel(){
+	public void countLevel(){
 		if(this.levelScore == null || this.levelScore < 200){
 			this.level = 1;
 		} else if(this.levelScore < 300){

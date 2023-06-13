@@ -144,20 +144,20 @@ public class NftController {
 				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935016998465536.png");
 				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935749877592064.png");
 			} else if (i == 1) {
-				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935243595739136.png");
-				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935861299277824.png");
+				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603439399104512.png");
+				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603329093103616.png");
 			} else if(i == 2){
-				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935016998465536.png");
-				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935923874099200.png");
+				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603730555105280.png");
+				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603551709982720.png");
 			} else if (i == 3) {
-				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935243595739136.png");
-				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935977548607488.png");
+				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603875980013568.png");
+				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603822204841984.png");
 			} else if(i == 4){
-				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935016998465536.png");
-				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667936036033982464.png");
+				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668604008863952896.png");
+				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603945051811840.png");
 			} else if (i == 5) {
-				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935243595739136.png");
-				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667936100689178624.png");
+				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668604170780864512.png");
+				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668604086018174976.png");
 			}
 
 			result.add(mintPictureVo);

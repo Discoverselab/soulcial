@@ -50,7 +50,11 @@ public class CollectInfoController {
 
 	private final static String LensFollowersCountUrl = "https://knn3-gateway.knn3.xyz/data-api/api/lens/followers/:profileId/count";
 
+	private final static String LensProfileIdsByAddressUrl = "https://knn3-gateway.knn3.xyz/data-api/api/addresses/boundLens";
+
 	private final static String PoapsCountUrl = "https://knn3-gateway.knn3.xyz/data-api/api/addresses/poaps/count";
+
+	private final static String SnapshotCountUrl = "https://knn3-gateway.knn3.xyz/data-api/api/addresses/calVotes/";
 
 	private final static String NFTCountUrlKnn3 = "https://knn3-gateway.knn3.xyz/data-api/api/addresses/holdNfts";
 
@@ -99,11 +103,51 @@ public class CollectInfoController {
 		return count;
 	}
 
-	@GetMapping("/getLensFollows")
-	@ApiOperation(value = "getLensFollows")
-	public R<Integer> getLensFollows(@ApiParam(value = "查lensFollowers需要的profileId",required = true)@RequestParam(value = "profileId",required = true)String profileId) {
+	@GetMapping("/getLensFollowsByProfileId")
+	@ApiOperation(value = "根据profileId查询LensFollows")
+	public R<Integer> getLensFollowsByProfileId(@ApiParam(value = "profileId",required = true)@RequestParam(value = "profileId",required = true)String profileId) {
 		int lensFollowing = getLensFollows(profileId, null);
 		return R.data(lensFollowing);
+	}
+
+	@GetMapping("/getLensFollowsByAddress")
+	@ApiOperation(value = "根据address查询LensFollows")
+	public R<Integer> getLensFollowsByAddress(@ApiParam(value = "address",required = true)@RequestParam(value = "address",required = true)String address) {
+		int lensFollowing = getLensProfileIdByAddress(address, null);
+		return R.data(lensFollowing);
+	}
+
+	private static int getLensProfileIdByAddress(String address,Proxy proxy) {
+		int count = 0;
+		try {
+			Map<String,Object> paramMap = new HashMap<String,Object>();
+			paramMap.put("address",address);
+
+			//获取lens following
+			HttpRequest httpRequest = HttpRequest.get(LensProfileIdsByAddressUrl).form(paramMap).header("auth-key", knn3AuthKey).timeout(timeout);
+			if(proxy != null){
+				httpRequest.setProxy(proxy);
+			}
+			String body = httpRequest.execute().body();
+
+			System.out.println("body:"+body);
+
+			JSONObject jsonObject = JSONObject.parseObject(body);
+			JSONArray list = jsonObject.getJSONArray("list");
+			for (int i=0;i<list.size();i++){
+				JSONObject profileObj = list.getJSONObject(i);
+				Integer profileId = profileObj.getInteger("profileId");
+				System.out.println("profileId:"+profileId);
+
+				int lensFollows = getLensFollows(profileId.toString(), proxy);
+
+				count = count + lensFollows;
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		log.info("getLensFollows:"+count);
+		return count;
 	}
 
 	private static int getLensFollows(String profileId,Proxy proxy) {
@@ -128,7 +172,7 @@ public class CollectInfoController {
 	}
 
 	@GetMapping("/getCCFollowing")
-	@ApiOperation(value = "getCCFollowing")
+	@ApiOperation(value = "getCCFollowing(未集成)")
 	public R<Integer> getCCFollowing(@ApiParam(value = "查CCFollowing需要的address",required = true)@RequestParam(value = "address",required = true)String address) {
 		int lensFollowing = getCCFollowing(address, null);
 		return R.data(lensFollowing);
@@ -167,7 +211,7 @@ public class CollectInfoController {
 	}
 
 	@GetMapping("/getCCFollows")
-	@ApiOperation(value = "getCCFollows")
+	@ApiOperation(value = "getCCFollows(未集成)")
 	public R<Integer> getCCFollows(@ApiParam(value = "查getCCFollows需要的handle",required = true)@RequestParam(value = "handle",required = true)String handle,
 								   @ApiParam(value = "查getCCFollows需要的addressMe",required = true)@RequestParam(value = "addressMe",required = true)String addressMe) {
 		int lensFollowing = getCCFollows(handle,addressMe, null);
@@ -227,8 +271,33 @@ public class CollectInfoController {
 		return count;
 	}
 
+	@GetMapping("/getSnapshotCount")
+	@ApiOperation(value = "getSnapshotCount")
+	public R<Integer> getSnapshotCount(@ApiParam(value = "查SnapshotCount需要的address",required = true)@RequestParam(value = "address",required = true)String address) {
+		int lensFollowing = getSnapshotCount(address, null);
+		return R.data(lensFollowing);
+	}
+
+	private static int getSnapshotCount(String address,Proxy proxy) {
+		int count = 0;
+		try {
+
+			HttpRequest httpRequest = HttpRequest.get(SnapshotCountUrl + address).header("auth-key", knn3AuthKey).timeout(timeout);
+			if(proxy != null){
+				httpRequest.setProxy(proxy);
+			}
+			String body = httpRequest.execute().body();
+			System.out.println(body);
+			count = JSONObject.parseObject(body).getInteger("total");
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		log.info("getSnapshotCount:"+count);
+		return count;
+	}
+
 	@GetMapping("/getW3STCount")
-	@ApiOperation(value = "getW3STCount")
+	@ApiOperation(value = "getW3STCount(未集成)")
 	public R<Integer> getW3STCount(@ApiParam(value = "查W3STCount需要的address",required = true)@RequestParam(value = "address",required = true)String address) {
 		int lensFollowing = getW3STCount(address, null);
 		return R.data(lensFollowing);
@@ -315,7 +384,7 @@ public class CollectInfoController {
 	}
 
 	@GetMapping("/getGasTotal")
-	@ApiOperation(value = "getGasTotal")
+	@ApiOperation(value = "getGasTotal(仅集成了ETH)")
 	public R<String> getGasTotal(@ApiParam(value = "查手续费需要的address",required = true)@RequestParam(value = "address",required = true)String address) {
 		BigDecimal ethGasPrice = getETHGasPrice(address, null);
 		return R.data(ethGasPrice.toString());
@@ -376,9 +445,9 @@ public class CollectInfoController {
 //		getLensFollows("5",proxy);
 //		getLensFollowing("0x148D59faF10b52063071eDdf4Aaf63A395f2d41c",proxy);
 //		getW3STCount("0x148D59faF10b52063071eDdf4Aaf63A395f2d41c",proxy);
-		getNFTCount("0x5ac69c26a15cfaaeb066043dcc932f7d01faf182",proxy);
+//		getNFTCount("0x5ac69c26a15cfaaeb066043dcc932f7d01faf182",proxy);
 //		getETHGasPrice("0xc5102fE9359FD9a28f877a67E36B0F050d81a3CC",proxy);
-
+		getSnapshotCount("0x3A5bd1E37b099aE3386D13947b6a90d97675e5e3",proxy);
 
 //		scoreCharisma("4","0xD790D1711A9dCb3970F47fd775f2f9A2f0bCc348","shiyu");
 	}
@@ -441,7 +510,25 @@ public class CollectInfoController {
 	@GetMapping("/scoreWisdom")
 	@ApiOperation(value = "感知")
 	public  R<Integer> scoreWisdom(@ApiParam(value = "address", required = true) @RequestParam(value = "address") String address) {
-		return R.fail("暂未集成");
+		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
+		int snapshotCount = getSnapshotCount(address, proxy);
+
+		int count = snapshotCount;
+		double x = 0;
+		if(count == 0){
+			x = 20;
+		}else if(count < 220){
+			x = Math.log(count) * 11 + 40;
+			if(x > 100){
+				x = 100;
+			}
+		}else {
+			x = 100;
+		}
+
+		log.info("score:"+(int)x);
+
+		return R.data((int)x);
 	}
 
 	@GetMapping("/scoreEnergy")
@@ -642,4 +729,5 @@ public class CollectInfoController {
 
 		return R.data(SoulMatch.intValue());
 	}
+
 }

@@ -74,6 +74,10 @@ public class PFPTokenPO extends BasePO {
 	 */
 	private String mintTxnHash;
 	/**
+	 * 铸造时，用户的标签
+	 */
+	private String mintUserTags;
+	/**
 	 *铸造时间
 	 */
 	private Date mintTime;

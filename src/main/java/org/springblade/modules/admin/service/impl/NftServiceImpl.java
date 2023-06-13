@@ -9,6 +9,7 @@ import org.springblade.core.tool.api.ResultCode;
 import org.springblade.modules.admin.dao.MemberMapper;
 import org.springblade.modules.admin.dao.PFPTokenMapper;
 import org.springblade.modules.admin.dao.PFPTransactionMapper;
+import org.springblade.modules.admin.pojo.enums.UserTagsEnum;
 import org.springblade.modules.admin.pojo.po.MemberPO;
 import org.springblade.modules.admin.pojo.po.PFPContractPO;
 import org.springblade.modules.admin.pojo.po.PFPTokenPO;
@@ -49,6 +50,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -123,12 +125,14 @@ public class NftServiceImpl implements NftService {
 		pfpTokenPO.initForInsert();
 
 		//TODO 算分
-		pfpTokenPO.setCharisma(RandomUtil.randomInt(20,100));
-		pfpTokenPO.setExtroversion(RandomUtil.randomInt(20,100));
-		pfpTokenPO.setEnergy(RandomUtil.randomInt(20,100));
-		pfpTokenPO.setWisdom(RandomUtil.randomInt(20,100));
-		pfpTokenPO.setArt(RandomUtil.randomInt(20,100));
-		pfpTokenPO.setCourage(RandomUtil.randomInt(20,100));
+		pfpTokenPO.setCharisma(RandomUtil.randomInt(10,100));
+		pfpTokenPO.setExtroversion(RandomUtil.randomInt(10,100));
+		pfpTokenPO.setEnergy(RandomUtil.randomInt(10,100));
+		pfpTokenPO.setWisdom(RandomUtil.randomInt(10,100));
+		pfpTokenPO.setArt(RandomUtil.randomInt(10,100));
+		pfpTokenPO.setCourage(RandomUtil.randomInt(10,100));
+		pfpTokenPO.setMintUserTags(getRandomTags());
+
 		//计算总分
 		pfpTokenPO.setLevelScore(pfpTokenPO.getCharisma() + pfpTokenPO.getExtroversion() + pfpTokenPO.getEnergy() +
 			pfpTokenPO.getWisdom() + pfpTokenPO.getArt() + pfpTokenPO.getCourage());
@@ -200,5 +204,28 @@ public class NftServiceImpl implements NftService {
 
 			return result;
 		}
+	}
+
+	/**
+	 * 获得随机标签
+	 * @return
+	 */
+	private static String getRandomTags() {
+		List<String> tags = new ArrayList<>();
+		for (UserTagsEnum value : UserTagsEnum.values()) {
+			int code = value.getCode();
+			tags.add(code + "");
+		}
+
+		List<String> integers = RandomUtil.randomEleList(tags, 3);
+
+		String userTags = integers.stream().collect(Collectors.joining(","));
+		System.out.println("userTags:"+userTags);
+
+		return userTags;
+	}
+
+	public static void main(String[] args) {
+		getRandomTags();
 	}
 }

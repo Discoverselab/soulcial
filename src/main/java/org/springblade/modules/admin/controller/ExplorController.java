@@ -18,6 +18,7 @@ import org.springblade.modules.admin.pojo.vo.PFPTokenDetailVo;
 import org.springblade.modules.admin.pojo.vo.PFPTokenPageVo;
 import org.springblade.modules.admin.service.BNBService;
 import org.springblade.modules.admin.service.NftService;
+import org.springblade.modules.admin.util.ScoreUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -89,13 +90,23 @@ public class ExplorController {
 		result.setRecords(pfpTokenPageVos);
 
 		boolean isLogin = StpUtil.isLogin();
+		MemberPO memberPO = new MemberPO();
+		if(isLogin){
+			memberPO = memberMapper.selectById(StpUtil.getLoginIdAsLong());
+		}
+
 		//TODO 相似度匹配
-		result.getRecords().forEach(x->{
+		for (PFPTokenPageVo x : result.getRecords()) {
 			if(isLogin){
 				//TODO 计算相似度
-				x.setMatch(RandomUtil.randomInt(10,80));
+				x.setMatch(ScoreUtil.getMatch(memberPO.getUserTags(),
+					memberPO.getCharisma(),memberPO.getExtroversion(),memberPO.getEnergy(),
+					memberPO.getWisdom(),memberPO.getArt(),memberPO.getCourage(),
+					x.getMintUserTags(),
+					x.getCharisma(),x.getExtroversion(),x.getEnergy(),
+					x.getWisdom(),x.getArt(),x.getCourage()));
 			}
-		});
+		}
 
 		return R.data(result);
 	}
@@ -123,9 +134,16 @@ public class ExplorController {
 		boolean isLogin = StpUtil.isLogin();
 		if(isLogin){
 			Long userId = StpUtil.getLoginIdAsLong();
+			MemberPO memberPO = memberMapper.selectById(userId);
 
 			//TODO 计算相似度
-			result.setMatch(RandomUtil.randomInt(10,80));
+//			result.setMatch(RandomUtil.randomInt(10,80));
+			result.setMatch(ScoreUtil.getMatch(memberPO.getUserTags(),
+				memberPO.getCharisma(),memberPO.getExtroversion(),memberPO.getEnergy(),
+				memberPO.getWisdom(),memberPO.getArt(),memberPO.getCourage(),
+				result.getMintUserTags(),
+				result.getCharisma(),result.getExtroversion(),result.getEnergy(),
+				result.getWisdom(),result.getArt(),result.getCourage()));
 
 			//是否为本人铸造
 			if(pfpTokenPO.getMintUserId().equals(userId)){

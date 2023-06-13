@@ -113,6 +113,12 @@ public class PFPTokenDetailVo implements Serializable {
 //	private Date mintTime;
 
 	/**
+	 *铸造时，用户的标签
+	 */
+	@ApiModelProperty("铸造时，用户的标签")
+	private String mintUserTags;
+
+	/**
 	 *图片url
 	 */
 	@ApiModelProperty("图片url")

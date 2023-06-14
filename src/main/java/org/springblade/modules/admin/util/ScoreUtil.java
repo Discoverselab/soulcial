@@ -27,9 +27,9 @@ public class ScoreUtil {
 							   Integer art2,
 							   Integer courage2){
 		BigDecimal tagMatch = BigDecimal.ZERO;
-		//任意一个为空，则为
+		//任意一个为空，则为60
 		if(StringUtil.isBlank(userTags) || StringUtil.isBlank(nftTags)){
-			tagMatch = BigDecimal.ZERO;
+			tagMatch = new BigDecimal("60");
 		}else {
 
 			List<String> tags1 = Arrays.asList(userTags.split(","));
@@ -46,7 +46,8 @@ public class ScoreUtil {
 			//并集长度
 			int union = tags1.size();
 
-			tagMatch = new BigDecimal(intersection).multiply(new BigDecimal(40)).divide(new BigDecimal(union),2,BigDecimal.ROUND_HALF_UP).add(new BigDecimal(60));
+			tagMatch = new BigDecimal(intersection).multiply(new BigDecimal(40)).divide(new BigDecimal(union),2,BigDecimal.ROUND_HALF_UP);
+			tagMatch = tagMatch.add(new BigDecimal(60));
 			tagMatch = tagMatch.setScale(0,BigDecimal.ROUND_HALF_UP);
 		}
 
@@ -54,10 +55,13 @@ public class ScoreUtil {
 		int diff = Math.abs(charisma1 - charisma2) + Math.abs(extroversion1 - extroversion2) + Math.abs(energy1 - energy2)
 			+ Math.abs(wisdom1 - wisdom2) + Math.abs(art1 - art2) + Math.abs(courage1 - courage2);
 
-		BigDecimal DMatch = new BigDecimal("100").subtract(new BigDecimal(diff).multiply(BigDecimal.TEN).divide(new BigDecimal("6"),2,BigDecimal.ROUND_HALF_UP));
+		BigDecimal divide = new BigDecimal(diff).divide(new BigDecimal("15"), 2, BigDecimal.ROUND_HALF_UP);
+		BigDecimal DMatch = new BigDecimal("100").subtract(divide);
 		DMatch = DMatch.setScale(0,BigDecimal.ROUND_HALF_UP);
 
-		BigDecimal SoulMatch = tagMatch.add(DMatch.multiply(new BigDecimal(5))).divide(new BigDecimal(6),0,BigDecimal.ROUND_HALF_UP);
+		BigDecimal SoulMatch = DMatch.multiply(new BigDecimal(6));
+		SoulMatch = tagMatch.add(SoulMatch);
+		SoulMatch =	SoulMatch.divide(new BigDecimal(7),0,BigDecimal.ROUND_HALF_UP);
 
 		return SoulMatch.intValue();
 	}

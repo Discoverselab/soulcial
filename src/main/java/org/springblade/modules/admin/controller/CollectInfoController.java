@@ -23,6 +23,7 @@ import org.springblade.modules.admin.pojo.po.CollectInfoPO;
 import org.springblade.modules.admin.pojo.po.MemberPO;
 import org.springblade.modules.admin.pojo.po.PFPTokenPO;
 import org.springblade.modules.admin.pojo.query.CollectInfoQuery;
+import org.springblade.modules.admin.util.ScoreUtil;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -374,7 +375,7 @@ public class CollectInfoController {
 			String body = httpRequest.execute().body();
 			System.out.println("body:"+body);
 			JSONObject jsonObject = JSONObject.parseObject(body);
-			count = jsonObject.getInteger("mint_num");
+			count = jsonObject.getInteger("nft_num");
 
 		}catch (Exception e){
 			e.printStackTrace();
@@ -391,10 +392,12 @@ public class CollectInfoController {
 	}
 
 	private static BigDecimal getETHGasPrice(String address,Proxy proxy) {
+		//TODO 替换apiKeyToken
+		String ethApiKeyToken = "HIMMQA97KPYSC6XGC5GBX5W3NVB9A9JI39";
+
 		BigDecimal ethUsedSum = BigDecimal.ZERO;
 		try {
-			//TODO 替换apiKeyToken
-			String ethApiKeyToken = "HIMMQA97KPYSC6XGC5GBX5W3NVB9A9JI39";
+
 			String ethUrl = "https://api.etherscan.io/api" +
 				"?module=account" +
 				"&action=txlist" +
@@ -429,9 +432,16 @@ public class CollectInfoController {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-		log.info("getETHGasPrice:"+ethUsedSum.toString());
+		log.info("ethUsedSum:"+ethUsedSum.toString());
 
-		BigDecimal ethPrice = new BigDecimal("1864.31");
+		String ETHpriceUrl = "https://api.etherscan.io/api?module=stats&action=ethprice&apikey=" + ethApiKeyToken;
+		String ethPriceBody = HttpUtil.get(ETHpriceUrl);
+		System.out.println("ethPriceBody:"+ethPriceBody);
+		JSONObject jsonObject = JSONObject.parseObject(ethPriceBody);
+		String ethPriceStr = jsonObject.getJSONObject("result").getString("ethusd");
+		System.out.println("ethPrice:"+ethPriceStr);
+
+		BigDecimal ethPrice = new BigDecimal(ethPriceStr);
 		BigDecimal usdtPrice = ethUsedSum.multiply(ethPrice).setScale(2, BigDecimal.ROUND_HALF_UP);
 		System.out.println("usdtPrice:"+usdtPrice);
 		return usdtPrice;
@@ -593,15 +603,16 @@ public class CollectInfoController {
 
 	@GetMapping("/scoreCharisma")
 	@ApiOperation(value = "魅力（目前仅对接了lens）")
-	public  R<Integer> scoreCharisma(@ApiParam(value = "查lensFollowers需要的profileId", required = true) @RequestParam(value = "profileId") String profileId
-											,@ApiParam(value = "查following需要的address", required = true) @RequestParam(value = "address") String address
+	public  R<Integer> scoreCharisma(//@ApiParam(value = "查lensFollowers需要的profileId", required = true) @RequestParam(value = "profileId") String profileId,
+									 @ApiParam(value = "查following需要的address", required = true) @RequestParam(value = "address") String address
 //										   ,@ApiParam(value = "查ccFollows需要的handle", required = true) @RequestParam(value = "handle") String handle
 											) {
 		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
 //		Proxy proxy = null;
 
 		//f1(x)
-		int lensFollows = getLensFollows(profileId, proxy);
+//		int lensFollows = getLensFollows(profileId, proxy);
+		int lensFollows = getLensProfileIdByAddress(address,proxy);
 		int ccFollows = 0;
 //		int ccFollows = getCCFollows(handle, address, proxy);
 
@@ -675,18 +686,18 @@ public class CollectInfoController {
 
 	@GetMapping("/getMatch")
 	@ApiOperation(value = "获取匹配度")
-	public  R<Integer> getMatch(@ApiParam(value = "tag1_1", required = true) @RequestParam(value = "tag1_1") Integer tag1_1,
-					   @ApiParam(value = "tag1_2", required = true) @RequestParam(value = "tag1_2") Integer tag1_2,
-					   @ApiParam(value = "tag1_3", required = true) @RequestParam(value = "tag1_3") Integer tag1_3,
+	public  R<Integer> getMatch(@ApiParam(value = "tag1_1", required = false) @RequestParam(value = "tag1_1",required = false) Integer tag1_1,
+					   @ApiParam(value = "tag1_2", required = false) @RequestParam(value = "tag1_2",required = false) Integer tag1_2,
+					   @ApiParam(value = "tag1_3", required = false) @RequestParam(value = "tag1_3",required = false) Integer tag1_3,
 					   @ApiParam(value = "charisma1", required = true) @RequestParam(value = "charisma1") Integer charisma1,
 					   @ApiParam(value = "extroversion1", required = true) @RequestParam(value = "extroversion1") Integer extroversion1,
 					   @ApiParam(value = "energy1", required = true) @RequestParam(value = "energy1") Integer energy1,
 					   @ApiParam(value = "wisdom1", required = true) @RequestParam(value = "wisdom1") Integer wisdom1,
 					   @ApiParam(value = "art1", required = true) @RequestParam(value = "art1") Integer art1,
 					   @ApiParam(value = "courage1", required = true) @RequestParam(value = "courage1") Integer courage1,
-					   @ApiParam(value = "tag2_1", required = true) @RequestParam(value = "tag2_1") Integer tag2_1,
-					   @ApiParam(value = "tag2_2", required = true) @RequestParam(value = "tag2_2") Integer tag2_2,
-					   @ApiParam(value = "tag2_3", required = true) @RequestParam(value = "tag2_3") Integer tag2_3,
+					   @ApiParam(value = "tag2_1", required = false) @RequestParam(value = "tag2_1",required = false) Integer tag2_1,
+					   @ApiParam(value = "tag2_2", required = false) @RequestParam(value = "tag2_2",required = false) Integer tag2_2,
+					   @ApiParam(value = "tag2_3", required = false) @RequestParam(value = "tag2_3",required = false) Integer tag2_3,
 					   @ApiParam(value = "charisma2", required = true) @RequestParam(value = "charisma2") Integer charisma2,
 					   @ApiParam(value = "extroversion2", required = true) @RequestParam(value = "extroversion2") Integer extroversion2,
 					   @ApiParam(value = "energy2", required = true) @RequestParam(value = "energy2") Integer energy2,
@@ -696,38 +707,51 @@ public class CollectInfoController {
 		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
 //		Proxy proxy = null;
 
-		List<Integer> tags1 = new ArrayList<>();
-		tags1.add(tag1_1);
-		tags1.add(tag1_2);
-		tags1.add(tag1_3);
+		String userTags = "";
+		String nftTags = "";
 
-		List<Integer> tags2 = new ArrayList<>();
-		tags2.add(tag2_1);
-		tags2.add(tag2_2);
-		tags2.add(tag2_3);
+		if(tag1_1 != null){
+			userTags = userTags + tag1_1 + ",";
+		}
+		if(tag1_2 != null){
+			userTags = userTags + tag1_2 + ",";
+		}
+		if(tag1_3 != null){
+			userTags = userTags + tag1_3 + ",";
+		}
+		if(userTags.length() > 0){
+			userTags.substring(0,userTags.length()-1);
+		}
 
-		tags1.removeAll(tags2);
+		if(tag2_1 != null){
+			nftTags = nftTags + tag2_1 + ",";
+		}
+		if(tag2_2 != null){
+			nftTags = nftTags + tag2_2 + ",";
+		}
+		if(tag2_3 != null){
+			nftTags = nftTags + tag2_3 + ",";
+		}
+		if(nftTags.length() > 0){
+			nftTags.substring(0,nftTags.length()-1);
+		}
 
-		//交集
-		int intersection = 3 - tags1.size();
-		tags1.addAll(tags2);
-		//并集
-		int union = tags1.size();
+		int match = ScoreUtil.getMatch(userTags,
+			charisma1,
+			extroversion1,
+			energy1,
+			wisdom1,
+			art1,
+			courage1,
+			nftTags,
+			charisma2,
+			extroversion2,
+			energy2,
+			wisdom2,
+			art2,
+			courage2);
 
-		BigDecimal tagMatch = new BigDecimal(intersection).multiply(new BigDecimal(40)).divide(new BigDecimal(union),2,BigDecimal.ROUND_HALF_UP).add(new BigDecimal(60));
-		tagMatch = tagMatch.setScale(0,BigDecimal.ROUND_HALF_UP);
-
-
-
-		int diff = Math.abs(charisma1 - charisma2) + Math.abs(extroversion1 - extroversion2) + Math.abs(energy1 - energy2)
-			+ Math.abs(wisdom1 - wisdom2) + Math.abs(art1 - art2) + Math.abs(courage1 - courage2);
-
-		BigDecimal DMatch = new BigDecimal("100").subtract(new BigDecimal(diff).multiply(BigDecimal.TEN).divide(new BigDecimal("6"),2,BigDecimal.ROUND_HALF_UP));
-		DMatch = DMatch.setScale(0,BigDecimal.ROUND_HALF_UP);
-
-		BigDecimal SoulMatch = tagMatch.add(DMatch.multiply(new BigDecimal(5))).divide(new BigDecimal(6),0,BigDecimal.ROUND_HALF_UP);
-
-		return R.data(SoulMatch.intValue());
+		return R.data(match);
 	}
 
 }

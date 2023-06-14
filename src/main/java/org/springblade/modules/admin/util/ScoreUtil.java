@@ -32,8 +32,14 @@ public class ScoreUtil {
 			tagMatch = new BigDecimal("60");
 		}else {
 
-			List<String> tags1 = Arrays.asList(userTags.split(","));
-			List<String> tags2 = Arrays.asList(nftTags.split(","));
+			List<String> tags1 = new ArrayList<>();
+			for (String s : userTags.split(",")) {
+				tags1.add(s);
+			}
+			List<String> tags2 = new ArrayList<>();
+			for (String s : nftTags.split(",")) {
+				tags2.add(s);
+			}
 
 			//原长度
 			int oldSize = tags1.size();

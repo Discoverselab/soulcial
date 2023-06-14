@@ -527,8 +527,8 @@ public class CollectInfoController {
 		double x = 0;
 		if(count == 0){
 			x = 20;
-		}else if(count < 220){
-			x = Math.log(count) * 11 + 40;
+		}else if(count < 100){
+			x = Math.log(count) * 13 + 40;
 			if(x > 100){
 				x = 100;
 			}
@@ -632,11 +632,8 @@ public class CollectInfoController {
 		log.info("f1:"+f1);
 
 		//f2(x)
-		int lensFollowing = getLensFollowing(address, proxy);
-		int ccFollowing = 0;
-//		int ccFollowing = getCCFollowing(address, proxy);
+		int count2 = 0;
 
-		int count2 = lensFollowing + ccFollowing;
 		double f2 = 0;
 		if(count2 == 0){
 			f2 = 0;

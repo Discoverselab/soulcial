@@ -16,10 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springblade.core.tool.api.R;
 import org.springblade.core.tool.utils.BeanUtil;
 import org.springblade.core.tool.utils.StringUtil;
-import org.springblade.modules.admin.dao.CollectInfoMapper;
 import org.springblade.modules.admin.pojo.enums.NFTLevelEnum;
 import org.springblade.modules.admin.pojo.po.BasePO;
-import org.springblade.modules.admin.pojo.po.CollectInfoPO;
 import org.springblade.modules.admin.pojo.po.MemberPO;
 import org.springblade.modules.admin.pojo.po.PFPTokenPO;
 import org.springblade.modules.admin.pojo.query.CollectInfoQuery;
@@ -38,9 +36,6 @@ import java.util.*;
 @Slf4j
 public class CollectInfoController {
 
-
-	@Resource
-	CollectInfoMapper collectInfoMapper;
 
 	private final static int timeout = HttpGlobalConfig.getTimeout();
 	private final static String knn3AuthKey = "a97c41edaf7bbcde96dfc31ab15226a2e09c1d15913551f85d56847d3ee10ef8";

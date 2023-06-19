@@ -11,9 +11,9 @@ import lombok.Data;
  *
  */
 @Data
-@ApiModel("收藏信息PO")
-@TableName("tb_pfp_collect")
-public class PFPCollectPO extends BasePO {
+@ApiModel("点赞信息PO")
+@TableName("tb_pfp_likes")
+public class PFPLikesPO extends BasePO {
 
 	private static final long serialVersionUID = 1L;
 

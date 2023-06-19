@@ -12,60 +12,20 @@ import lombok.Data;
  *
  */
 @Data
-@ApiModel("用户信息PO")
-@TableName("tb_member")
-public class MemberPO extends BasePO {
+@ApiModel("用户分数历史记录表PO")
+@TableName("tb_member_score_history")
+public class MemberScoreHistoryPO extends BasePO {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	*主键
+	* 用户id
 	*/
-	private Long id;
+	private Long userId;
 	/**
 	*钱包地址
 	*/
 	private String address;
-	/**
-	 *个人简介
-	 */
-	private String bio;
-	/**
-	*年龄
-	*/
-//	private Integer age;
-	/**
-	*性别：0-女 1-男
-	*/
-	private Integer sex;
-	/**
-	*联系方式
-	*/
-//	private String phone;
-	/**
-	*邮箱
-	*/
-//	private String email;
-	/**
-	*微信/QQ
-	*/
-//	private String contact;
-	/**
-	*免费铸造：0-未使用 1-已使用
-	*/
-	private Integer freeMint;
-	/**
-	 *用户标签（多个用逗号隔开）
-	 */
-	private String userTags;
-	/**
-	 * 昵称
-	 */
-	private String userName;
-	/**
-	 * 头像
-	 */
-	private String avatar;
 
 	/**
 	 * 等级分数：整数0-600

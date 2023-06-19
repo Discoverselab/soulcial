@@ -2,8 +2,7 @@ package org.springblade.modules.admin.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.springblade.modules.admin.pojo.po.CollectInfoPO;
-import org.springblade.modules.admin.pojo.po.PFPCollectPO;
+import org.springblade.modules.admin.pojo.po.MemberScoreHistoryPO;
 
 /**
  * ExchangeCodePO的Dao接口
@@ -12,6 +11,6 @@ import org.springblade.modules.admin.pojo.po.PFPCollectPO;
  *
  */
 @Mapper
-public interface PFPCollectMapper extends BaseMapper<PFPCollectPO> {
+public interface MemberScoreHistoryMapper extends BaseMapper<MemberScoreHistoryPO> {
 
 }

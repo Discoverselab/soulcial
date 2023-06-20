@@ -16,6 +16,9 @@ public class UserInfoVo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@ApiModelProperty("用户id")
+	private Long id;
+
 	@ApiModelProperty("用户昵称")
 	private String userName;
 
@@ -51,5 +54,8 @@ public class UserInfoVo implements Serializable {
 
 	@ApiModelProperty("courage(6边型算分)")
 	private Integer courage;
+
+	@ApiModelProperty("dataverse：stream_id")
+	private String streamId;
 
 }

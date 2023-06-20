@@ -95,6 +95,9 @@ public class MemberPO extends BasePO {
 	@ApiModelProperty("courage(6边型算分)")
 	private Integer courage;
 
+	@ApiModelProperty("dataverse：stream_id")
+	private String streamId;
+
 	public void countLevel(){
 		if(this.levelScore == null || this.levelScore < 200){
 			this.level = 1;

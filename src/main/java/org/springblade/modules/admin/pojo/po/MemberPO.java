@@ -19,9 +19,15 @@ public class MemberPO extends BasePO {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	*主键
-	*/
-	private Long id;
+	 * 登录类型：0-钱包 1-particle
+	 */
+	Integer loginType;
+
+	/**
+	 * particleType类型：传数字每个数字分别代表一种类型
+	 */
+	Integer particleType;
+
 	/**
 	*钱包地址
 	*/

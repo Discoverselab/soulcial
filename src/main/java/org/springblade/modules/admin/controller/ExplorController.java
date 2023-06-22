@@ -14,6 +14,7 @@ import org.springblade.modules.admin.dao.PFPTokenMapper;
 import org.springblade.modules.admin.pojo.po.BasePO;
 import org.springblade.modules.admin.pojo.po.MemberPO;
 import org.springblade.modules.admin.pojo.po.PFPTokenPO;
+import org.springblade.modules.admin.pojo.query.CollectNFTQuery;
 import org.springblade.modules.admin.pojo.vo.PFPTokenDetailVo;
 import org.springblade.modules.admin.pojo.vo.PFPTokenPageVo;
 import org.springblade.modules.admin.service.BNBService;
@@ -22,6 +23,7 @@ import org.springblade.modules.admin.util.ScoreUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -157,5 +159,18 @@ public class ExplorController {
 		}
 
 		return R.data(result);
+	}
+
+
+	@PostMapping("/collectNFT")
+	@ApiOperation(value = "购买NFT")
+	public R<PFPTokenDetailVo> collectNFT(@Valid @RequestBody CollectNFTQuery collectNFTQuery) {
+
+		R result = nftService.collectNFT(collectNFTQuery);
+		if(result.getCode() != 200){
+			return result;
+		}
+
+		return getNFTDetail(collectNFTQuery.getTokenId());
 	}
 }

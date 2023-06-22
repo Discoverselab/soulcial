@@ -26,6 +26,7 @@ import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.core.methods.response.*;
 import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.StaticGasProvider;
@@ -66,6 +67,8 @@ public class BNBServiceImpl implements BNBService {
 	private static final String coinKeystorePathLinux = "/opt/peic/keystore/bnb";
 	private static final String coinWalletFile = "UTC--2023-06-05T15-42-39.669000000Z--e52e23326668117034a0ec6a288e5bb117b7f2c6.json";
 
+	private static final String coinWalletFile2 = "UTC--2023-06-22T18-49-03.182000000Z--ad028d3bf652ddab9a7f46d73a20ee24c672e656.json";
+
 	//代币合约地址
 	private static final String tokenContractAddress = "";
 
@@ -75,6 +78,55 @@ public class BNBServiceImpl implements BNBService {
 	//PFP合约地址
 	private static final String contractAddress = "0x37a7860b29ffF81CDE90C9F1cB741186D3290A0D";
 
+	public void testApprove() throws Exception{
+		//0xad028d3bf652ddab9a7f46d73a20ee24c672e656
+		//授权
+		try {
+//			String coinKeystorePath = null;
+//			if(activeProfiles != null && activeProfiles.size() > 0){
+//				if(activeProfiles.get(0).equalsIgnoreCase("dev")){
+//					coinKeystorePath = coinKeystorePathWindows;
+//				}else {
+//					coinKeystorePath = coinKeystorePathLinux;
+//				}
+//			}
+
+			String coinKeystorePath = coinKeystorePathWindows;
+			//獲取密鑰文件
+			String walletFile = coinKeystorePath + "/" + coinWalletFile2;
+			//獲取密鑰
+			Credentials credentials = WalletUtils.loadCredentials(coinCreatePwd, walletFile);
+			//獲取gasprice
+			BigInteger gasPrice = getGasPrice();
+			log.info("獲取gasPrice成功：" + gasPrice);
+			BigInteger gasLimit = new BigInteger("1000000");
+			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
+			//判斷餘額是否足夠最小手續費0.007
+//			BigDecimal balance = bnbService.getBalance(credentials.getAddress());
+//			if (balance.compareTo(new BigDecimal("0.007")) < 0) {
+//				return new MessageResult(500, "賬戶餘額不足，請先充值");
+//			}
+			//加載NFT
+			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
+			log.info("加載NFT成功：" + contract);
+
+			BigInteger tokenId = new BigInteger("17");
+			String send2 = contract.admin().send();
+			System.out.println(send2);
+//			TransactionReceipt send = contract.ownerOf(tokenId).send();
+//			TransactionReceipt send1 = contract.getApproved(tokenId).send();
+
+			System.out.println("adminAddress:" + adminAddress);
+//			System.out.println("fromAddress:" + fromAddress);
+			//System.out.println("approvedAddress:"+approvedAddress);
+//			if (!adminAddress.equals(fromAddress)) {
+//				logger.info("fromAddress不是admin");
+//				return new MessageResult(500, "付款地址不是admin");
+//			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
 
 
     public String createNewWallet(String password) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException, CipherException {
@@ -326,7 +378,7 @@ public class BNBServiceImpl implements BNBService {
 			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
 			log.info("加載NFT成功：" + contract);
 			//校驗擁有者
-			TransactionReceipt send = contract.admin().send();
+//			TransactionReceipt send = contract.admin().send();
 
 			System.out.println("adminAddress:" + adminAddress);
 //			System.out.println("fromAddress:" + fromAddress);

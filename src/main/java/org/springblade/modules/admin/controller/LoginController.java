@@ -6,6 +6,7 @@ import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springblade.core.tool.api.R;
 import org.springblade.modules.admin.dao.MemberMapper;
 import org.springblade.modules.admin.pojo.po.BasePO;
@@ -32,7 +33,13 @@ public class LoginController {
 
 	@PostMapping("/login")
 	@ApiOperation(value = "登录")
-	public R<MemberVo> login(@RequestParam("address") String address) {
+	public R<MemberVo> login(@RequestParam("address") String address,
+							 @ApiParam(value = "登录类型：0-钱包 1-particle",required = true) @RequestParam("loginType") Integer loginType,
+							 @ApiParam(value = "particleType类型：传数字每个数字分别代表一种类型",required = false) @RequestParam(value = "particleType",required = false) Integer particleType) {
+		if(loginType == 1 && particleType == null){
+			return R.fail("particleType must not be null!");
+		}
+
 		address = address.toLowerCase();
 		MemberPO memberPO = memberMapper.selectOne(new LambdaQueryWrapper<MemberPO>()
 			.eq(BasePO::getIsDeleted, 0)
@@ -70,6 +77,9 @@ public class LoginController {
 			//设置level
 			memberPO.countLevel();
 
+			memberPO.setLoginType(loginType);
+			memberPO.setParticleType(particleType);
+
 			memberMapper.insert(memberPO);
 		}
 
@@ -84,6 +94,9 @@ public class LoginController {
 
 		memberVo.setAddress(memberPO.getAddress());
 		memberVo.setFreeMint(memberPO.getFreeMint());
+
+		memberVo.setLoginType(memberPO.getLoginType());
+		memberVo.setParticleType(memberPO.getParticleType());
 
 		return R.data(memberVo);
 	}

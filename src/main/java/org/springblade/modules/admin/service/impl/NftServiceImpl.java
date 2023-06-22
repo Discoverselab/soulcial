@@ -3,6 +3,7 @@ package org.springblade.modules.admin.service.impl;
 //import com.googlecode.jsonrpc4j.JsonRpcHttpClient;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.RandomUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springblade.core.tool.api.R;
 import org.springblade.core.tool.api.ResultCode;
@@ -10,10 +11,8 @@ import org.springblade.modules.admin.dao.MemberMapper;
 import org.springblade.modules.admin.dao.PFPTokenMapper;
 import org.springblade.modules.admin.dao.PFPTransactionMapper;
 import org.springblade.modules.admin.pojo.enums.UserTagsEnum;
-import org.springblade.modules.admin.pojo.po.MemberPO;
-import org.springblade.modules.admin.pojo.po.PFPContractPO;
-import org.springblade.modules.admin.pojo.po.PFPTokenPO;
-import org.springblade.modules.admin.pojo.po.PFPTransactionPO;
+import org.springblade.modules.admin.pojo.po.*;
+import org.springblade.modules.admin.pojo.query.CollectNFTQuery;
 import org.springblade.modules.admin.pojo.vo.MintNftVo;
 import org.springblade.modules.admin.service.BNBService;
 import org.springblade.modules.admin.service.NftService;
@@ -206,6 +205,80 @@ public class NftServiceImpl implements NftService {
 		}
 	}
 
+	@Override
+	public R collectNFT(CollectNFTQuery collectNFTQuery) {
+		String txn = collectNFTQuery.getTxn();
+		Long tokenId = collectNFTQuery.getTokenId();
+
+		Long userId = StpUtil.getLoginIdAsLong();
+		MemberPO memberPO = memberMapper.selectById(userId);
+		String toAddress = memberPO.getAddress();
+
+		PFPTokenPO pfpTokenPO = pfpTokenMapper.selectById(tokenId);
+		String ownerAddress = pfpTokenPO.getOwnerAddress();
+		Long ownerUserId = pfpTokenPO.getOwnerUserId();
+
+		//校验转账交易是否被使用
+		PFPTransactionPO pfpTransactionPO = pfpTransactionMapper.selectOne(new LambdaQueryWrapper<PFPTransactionPO>()
+			.eq(BasePO::getIsDeleted, 0)
+			.eq(PFPTransactionPO::getMoneyTxnHash, txn));
+
+		if(pfpTransactionPO != null){
+			//翻译
+			return R.fail("交易hash已被使用");
+		}
+
+		//创建订单
+		pfpTransactionPO = new PFPTransactionPO();
+		pfpTransactionPO.setTokenId(userId);
+		pfpTransactionPO.setAdminAddress(pfpTokenPO.getAdminAddress());
+		pfpTransactionPO.setLinkType(pfpTokenPO.getLinkType());
+		pfpTransactionPO.setNetwork(pfpTokenPO.getNetwork());
+		pfpTransactionPO.setContractAddress(pfpTokenPO.getContractAddress());
+		pfpTransactionPO.setContractName(pfpTokenPO.getContractName());
+		pfpTransactionPO.setFromAddress(ownerAddress);
+		pfpTransactionPO.setToAddress(toAddress);
+		pfpTransactionPO.setFromUserId(ownerUserId);
+		pfpTransactionPO.setToUserId(userId);
+//		交易状态：0-未交易 1-已付款未交易PFP 2-交易完成 3-交易取消
+		pfpTransactionPO.setTransactionStatus(1);
+		pfpTransactionPO.setMoneyTxnHash(txn);
+//		pfpTransactionPO.setPfpTxnHash();
+		pfpTransactionPO.setMintUserId(pfpTokenPO.getMintUserId());
+		pfpTransactionPO.setMintUserAddress(pfpTokenPO.getMintUserAddress());
+
+		pfpTransactionPO.initForInsert();
+		pfpTransactionMapper.insert(pfpTransactionPO);
+
+		//TODO 链上校验交易哈希是否成功、金额是否正确
+
+		//TODO NFT是否授权校验
+
+		//TODO NFT转账
+
+		//TODO NFT转账校验
+
+		//TODO BNB手续费计算
+
+		//TODO BNB转账
+
+		//TODO BNB转账校验
+
+		pfpTransactionPO.setPfpTxnHash("pfpTxnHash");
+		pfpTransactionMapper.updateById(pfpTransactionPO);
+
+
+		//修改持有人
+		pfpTokenPO.setOwnerAddress(toAddress);
+		pfpTokenPO.setOwnerUserId(userId);
+
+		pfpTokenPO.initForUpdate();
+
+		pfpTokenMapper.updateById(pfpTokenPO);
+
+		return R.success("success");
+	}
+
 	/**
 	 * 获得随机标签
 	 * @return
@@ -225,7 +298,4 @@ public class NftServiceImpl implements NftService {
 		return userTags;
 	}
 
-	public static void main(String[] args) {
-		getRandomTags();
-	}
 }

@@ -58,4 +58,17 @@ public class UserInfoVo implements Serializable {
 	@ApiModelProperty("dataverse：stream_id")
 	private String streamId;
 
+	/**
+	 * 登录类型：0-钱包 1-particle
+	 */
+	@ApiModelProperty("登录类型：0-钱包 1-particle")
+	Integer loginType;
+
+	/**
+	 * particleType类型：传数字每个数字分别代表一种类型
+	 */
+	@ApiModelProperty("particleType类型：传数字每个数字分别代表一种类型")
+	Integer particleType;
+
+
 }

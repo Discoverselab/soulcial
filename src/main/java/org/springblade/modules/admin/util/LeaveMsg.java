@@ -285,12 +285,14 @@ public class LeaveMsg extends Contract {
         return unpausedEventFlowable(filter);
     }
 
-    public RemoteCall<TransactionReceipt> admin() {
+    public RemoteCall<String> admin() {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_ADMIN,
                 Arrays.<Type>asList(),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
+//                Collections.<TypeReference<?>>emptyList());
+				Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
+//        return executeRemoteCallTransaction(function);
+        return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
     public RemoteCall<TransactionReceipt> approve(String to, BigInteger tokenId) {

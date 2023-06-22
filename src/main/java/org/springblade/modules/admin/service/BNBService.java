@@ -9,4 +9,6 @@ public interface BNBService {
 	String createAdminWallet();
 
 	R<String> mintNFT(String adminAddress, String contractAddress, String adminJsonFile, String toAddress,Long tokenId);
+
+	void testApprove() throws Exception;
 }

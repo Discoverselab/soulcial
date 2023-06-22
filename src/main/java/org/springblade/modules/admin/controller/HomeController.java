@@ -314,4 +314,11 @@ public class HomeController {
 		}
 	}
 
+	@PostMapping("/testApprove")
+	@ApiOperation(value = "testApprove")
+	public R testApprove() throws Exception{
+		bnbService.testApprove();
+		return null;
+	}
+
 }

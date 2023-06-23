@@ -57,6 +57,20 @@ public class ScoreUtil {
 			tagMatch = tagMatch.setScale(0,BigDecimal.ROUND_HALF_UP);
 		}
 
+		if(charisma1 == null){charisma1 = 0;}
+		if(charisma2 == null){charisma2 = 0;}
+		if(extroversion1 == null){extroversion1 = 0;}
+		if(extroversion2 == null){extroversion2 = 0;}
+		if(energy1 == null){energy1 = 0;}
+		if(energy2== null){energy2= 0;}
+		if(wisdom1 == null){wisdom1 = 0;}
+		if(wisdom2 == null){wisdom2 = 0;}
+		if(art1 == null){art1 = 0;}
+		if(art2== null){art2 = 0;}
+		if(courage1 == null){courage1 = 0;}
+		if(courage2 == null){courage2 = 0;}
+
+
 
 		int diff = Math.abs(charisma1 - charisma2) + Math.abs(extroversion1 - extroversion2) + Math.abs(energy1 - energy2)
 			+ Math.abs(wisdom1 - wisdom2) + Math.abs(art1 - art2) + Math.abs(courage1 - courage2);

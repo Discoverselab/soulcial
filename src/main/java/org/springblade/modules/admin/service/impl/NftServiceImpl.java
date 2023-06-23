@@ -2,7 +2,6 @@ package org.springblade.modules.admin.service.impl;
 
 //import com.googlecode.jsonrpc4j.JsonRpcHttpClient;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springblade.core.tool.api.R;
@@ -10,7 +9,6 @@ import org.springblade.core.tool.api.ResultCode;
 import org.springblade.modules.admin.dao.MemberMapper;
 import org.springblade.modules.admin.dao.PFPTokenMapper;
 import org.springblade.modules.admin.dao.PFPTransactionMapper;
-import org.springblade.modules.admin.pojo.enums.UserTagsEnum;
 import org.springblade.modules.admin.pojo.po.*;
 import org.springblade.modules.admin.pojo.query.CollectNFTQuery;
 import org.springblade.modules.admin.pojo.vo.MintNftVo;
@@ -18,38 +16,11 @@ import org.springblade.modules.admin.service.BNBService;
 import org.springblade.modules.admin.service.NftService;
 import org.springblade.modules.admin.service.PfpContractService;
 import org.springblade.modules.admin.util.AddressUtil;
-import org.springblade.modules.admin.util.LeaveMsg;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-import org.web3j.crypto.CipherException;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.WalletUtils;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.core.methods.response.*;
-import org.web3j.tx.gas.ContractGasProvider;
-import org.web3j.tx.gas.StaticGasProvider;
-import org.web3j.utils.Convert;
-import org.web3j.utils.Numeric;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -75,29 +46,25 @@ public class NftServiceImpl implements NftService {
 		Long userId = StpUtil.getLoginIdAsLong();
 		MemberPO memberPO = memberMapper.selectById(userId);
 		if(memberPO == null){
-			//TODO 翻译
-			return R.fail("用户不存在");
+			return R.fail("user not exist!");
 		}
 
 		if(memberPO.getFreeMint() == 1){
-			//TODO 翻译
-			return R.fail("免费铸造权益已使用");
+			return R.fail("you have used free mint chance!");
 		}
 
 		String toAddress = memberPO.getAddress();
 
 		//校验钱包地址合法性
 		if(!AddressUtil.isETHAddress(toAddress)){
-			//TODO 翻译
-			return R.fail("账号钱包地址不正确");
+			return R.fail("address is not illegal");
 		}
 
 		//获取合约
 		PFPContractPO contract = pfpContractService.getContract();
 
 		if(contract == null){
-			//TODO 翻译
-			return R.fail("合约异常");
+			return R.fail("contract error");
 		}
 		//新建token
 		PFPTokenPO pfpTokenPO = new PFPTokenPO();
@@ -123,18 +90,17 @@ public class NftServiceImpl implements NftService {
 		pfpTokenPO.setLikes(0);
 		pfpTokenPO.initForInsert();
 
-		//TODO 算分
-		pfpTokenPO.setCharisma(RandomUtil.randomInt(10,100));
-		pfpTokenPO.setExtroversion(RandomUtil.randomInt(10,100));
-		pfpTokenPO.setEnergy(RandomUtil.randomInt(10,100));
-		pfpTokenPO.setWisdom(RandomUtil.randomInt(10,100));
-		pfpTokenPO.setArt(RandomUtil.randomInt(10,100));
-		pfpTokenPO.setCourage(RandomUtil.randomInt(10,100));
-		pfpTokenPO.setMintUserTags(getRandomTags());
+		//算分
+		pfpTokenPO.setCharisma(memberPO.getCharisma());
+		pfpTokenPO.setExtroversion(memberPO.getExtroversion());
+		pfpTokenPO.setEnergy(memberPO.getEnergy());
+		pfpTokenPO.setWisdom(memberPO.getWisdom());
+		pfpTokenPO.setArt(memberPO.getArt());
+		pfpTokenPO.setCourage(memberPO.getCourage());
+		pfpTokenPO.setMintUserTags(memberPO.getUserTags());
 
 		//计算总分
-		pfpTokenPO.setLevelScore(pfpTokenPO.getCharisma() + pfpTokenPO.getExtroversion() + pfpTokenPO.getEnergy() +
-			pfpTokenPO.getWisdom() + pfpTokenPO.getArt() + pfpTokenPO.getCourage());
+		pfpTokenPO.countLevelScore();
 
 		//设置level
 		pfpTokenPO.countLevel();
@@ -218,10 +184,14 @@ public class NftServiceImpl implements NftService {
 		String ownerAddress = pfpTokenPO.getOwnerAddress();
 		Long ownerUserId = pfpTokenPO.getOwnerUserId();
 
+		if(pfpTokenPO.getPrice() == null){
+			return R.fail("collect is not support");
+		}
+
 		//校验转账交易是否被使用
 		PFPTransactionPO pfpTransactionPO = pfpTransactionMapper.selectOne(new LambdaQueryWrapper<PFPTransactionPO>()
 			.eq(BasePO::getIsDeleted, 0)
-			.eq(PFPTransactionPO::getMoneyTxnHash, txn));
+			.eq(PFPTransactionPO::getBuyerMoneyTxnHash, txn));
 
 		if(pfpTransactionPO != null){
 			//翻译
@@ -230,7 +200,7 @@ public class NftServiceImpl implements NftService {
 
 		//创建订单
 		pfpTransactionPO = new PFPTransactionPO();
-		pfpTransactionPO.setTokenId(userId);
+		pfpTransactionPO.setTokenId(pfpTokenPO.getId());
 		pfpTransactionPO.setAdminAddress(pfpTokenPO.getAdminAddress());
 		pfpTransactionPO.setLinkType(pfpTokenPO.getLinkType());
 		pfpTransactionPO.setNetwork(pfpTokenPO.getNetwork());
@@ -242,10 +212,13 @@ public class NftServiceImpl implements NftService {
 		pfpTransactionPO.setToUserId(userId);
 //		交易状态：0-未交易 1-已付款未交易PFP 2-交易完成 3-交易取消
 		pfpTransactionPO.setTransactionStatus(1);
-		pfpTransactionPO.setMoneyTxnHash(txn);
+		pfpTransactionPO.setBuyerMoneyTxnHash(txn);
 //		pfpTransactionPO.setPfpTxnHash();
 		pfpTransactionPO.setMintUserId(pfpTokenPO.getMintUserId());
 		pfpTransactionPO.setMintUserAddress(pfpTokenPO.getMintUserAddress());
+
+		//计算费用
+		pfpTransactionPO.setListPrice(pfpTokenPO.getPrice());
 
 		pfpTransactionPO.initForInsert();
 		pfpTransactionMapper.insert(pfpTransactionPO);
@@ -264,6 +237,7 @@ public class NftServiceImpl implements NftService {
 
 		//TODO BNB转账校验
 
+		pfpTransactionPO.setTransactionStatus(2);
 		pfpTransactionPO.setPfpTxnHash("pfpTxnHash");
 		pfpTransactionMapper.updateById(pfpTransactionPO);
 
@@ -271,6 +245,167 @@ public class NftServiceImpl implements NftService {
 		//修改持有人
 		pfpTokenPO.setOwnerAddress(toAddress);
 		pfpTokenPO.setOwnerUserId(userId);
+		pfpTokenPO.setPrice(null);
+
+		pfpTokenPO.initForUpdate();
+
+		pfpTokenMapper.updateById(pfpTokenPO);
+
+		return R.success("success");
+	}
+
+	@Override
+	public R checkApprove(Long tokenId, Long userId) {
+		MemberPO memberPO = memberMapper.selectById(userId);
+		String address = memberPO.getAddress();
+		R result = bnbService.checkApprove(tokenId,address);
+		return result;
+	}
+
+	@Override
+	public PFPTransactionPO getLastTransaction(Long tokenId) {
+
+		//降序获取交易记录
+		List<PFPTransactionPO> pfpTransactionPOS = pfpTransactionMapper.selectList(new LambdaQueryWrapper<PFPTransactionPO>()
+			.eq(BasePO::getIsDeleted, 0)
+			.eq(PFPTransactionPO::getTokenId, tokenId)
+			//已完成
+			.eq(PFPTransactionPO::getTransactionStatus, 2)
+			.orderByDesc(BasePO::getUpdateTime).last("limit 1"));
+
+		if(pfpTransactionPOS != null && pfpTransactionPOS.size() > 0){
+			return pfpTransactionPOS.get(0);
+		}else {
+			return new PFPTransactionPO();
+		}
+
+	}
+
+	//TODO 事务优化
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public R collectNFTOnline(CollectNFTQuery collectNFTQuery) throws Exception{
+		String txn = collectNFTQuery.getTxn();
+		Long tokenId = collectNFTQuery.getTokenId();
+
+		Long userId = StpUtil.getLoginIdAsLong();
+		MemberPO memberPO = memberMapper.selectById(userId);
+		String toAddress = memberPO.getAddress();
+
+		PFPTokenPO pfpTokenPO = pfpTokenMapper.selectById(tokenId);
+		String ownerAddress = pfpTokenPO.getOwnerAddress();
+		Long ownerUserId = pfpTokenPO.getOwnerUserId();
+
+		//校验转账交易是否被使用
+		PFPTransactionPO pfpTransactionPO = pfpTransactionMapper.selectOne(new LambdaQueryWrapper<PFPTransactionPO>()
+			.eq(BasePO::getIsDeleted, 0)
+			.eq(PFPTransactionPO::getBuyerMoneyTxnHash, txn));
+
+		if(pfpTransactionPO != null){
+			return R.fail("transaction number :" +  txn + " has been used");
+		}
+
+		if(pfpTokenPO.getPrice() == null){
+			return R.fail("collect is not support");
+		}
+
+		//链上校验交易哈希是否成功、金额是否正确
+		int reTryCount = 0;
+		Boolean checkFlag = false;
+		while (reTryCount < 100){
+			R<Boolean> checkBNBTransResult = bnbService.checkBNBTransacation(txn, pfpTokenPO.getPrice());
+			if(checkBNBTransResult.getCode() == 200){
+				//终止循环
+				reTryCount = 100;
+				checkFlag = checkBNBTransResult.getData();
+			}else {
+				// 休眠3秒再进行重试
+				Thread.sleep(3000);
+				reTryCount++;
+			}
+		}
+
+		if(!checkFlag){
+			//未校验通过
+			return R.fail("bnb transacation check failed: bnb transfer failed!");
+		}
+
+		//创建订单
+		pfpTransactionPO = new PFPTransactionPO();
+		pfpTransactionPO.setTokenId(pfpTokenPO.getId());
+		pfpTransactionPO.setAdminAddress(pfpTokenPO.getAdminAddress());
+		pfpTransactionPO.setLinkType(pfpTokenPO.getLinkType());
+		pfpTransactionPO.setNetwork(pfpTokenPO.getNetwork());
+		pfpTransactionPO.setContractAddress(pfpTokenPO.getContractAddress());
+		pfpTransactionPO.setContractName(pfpTokenPO.getContractName());
+		pfpTransactionPO.setFromAddress(ownerAddress);
+		pfpTransactionPO.setToAddress(toAddress);
+		pfpTransactionPO.setFromUserId(ownerUserId);
+		pfpTransactionPO.setToUserId(userId);
+//		交易状态：0-未交易 1-已付款未交易PFP 2-交易完成 3-交易取消
+		pfpTransactionPO.setTransactionStatus(1);
+		pfpTransactionPO.setBuyerMoneyTxnHash(txn);
+//		pfpTransactionPO.setPfpTxnHash();
+		pfpTransactionPO.setMintUserId(pfpTokenPO.getMintUserId());
+		pfpTransactionPO.setMintUserAddress(pfpTokenPO.getMintUserAddress());
+
+		//计算费用
+		pfpTransactionPO.setListPrice(pfpTokenPO.getPrice());
+
+		pfpTransactionPO.initForInsert();
+		pfpTransactionMapper.insert(pfpTransactionPO);
+
+		//NFT是否授权校验
+		R approveCheckResult = checkApprove(pfpTokenPO.getId(), pfpTokenPO.getOwnerUserId());
+		if(approveCheckResult.getCode() != 200){
+			return approveCheckResult;
+		}
+
+		//NFT转账
+		R<String> transferNFTResult = bnbService.approveTransferNFT(ownerAddress,toAddress,tokenId);
+		if(transferNFTResult.getCode() != 200){
+			return transferNFTResult;
+		}
+		String transferNFTTxn = transferNFTResult.getData();
+		pfpTransactionPO.setPfpTxnHash(transferNFTTxn);
+
+		//NFT转账校验
+		reTryCount = 0;
+		Boolean checkNFTOwner = false;
+		while (reTryCount < 10){
+			checkNFTOwner = bnbService.checkNFTOwner(toAddress,tokenId);
+			if(checkNFTOwner){
+				//终止循环
+				reTryCount = 10;
+			}else {
+				// 休眠3秒再进行重试
+				Thread.sleep(3000);
+				reTryCount++;
+			}
+		}
+
+		if(!checkNFTOwner){
+			return R.fail("NFT transfer check failed:NFT owner is not correct");
+		}
+
+		//BNB转账
+		R<String> transferBNBResult = bnbService.transferBNB(ownerAddress,pfpTransactionPO.getSellerEarnPrice());
+		if(transferBNBResult.getCode() != 200){
+			//TODO 稍后再次尝试
+		}
+
+		String sellerMoneyTxnHash = transferBNBResult.getData();
+		pfpTransactionPO.setSellerMoneyTxnHash(sellerMoneyTxnHash);
+
+		//TODO 铸造者收益
+
+		pfpTransactionPO.setTransactionStatus(2);
+		pfpTransactionMapper.updateById(pfpTransactionPO);
+
+		//修改持有人
+		pfpTokenPO.setOwnerAddress(toAddress);
+		pfpTokenPO.setOwnerUserId(userId);
+		pfpTokenPO.setPrice(null);
 
 		pfpTokenPO.initForUpdate();
 
@@ -283,19 +418,19 @@ public class NftServiceImpl implements NftService {
 	 * 获得随机标签
 	 * @return
 	 */
-	private static String getRandomTags() {
-		List<String> tags = new ArrayList<>();
-		for (UserTagsEnum value : UserTagsEnum.values()) {
-			int code = value.getCode();
-			tags.add(code + "");
-		}
-
-		List<String> integers = RandomUtil.randomEleList(tags, 3);
-
-		String userTags = integers.stream().collect(Collectors.joining(","));
-		System.out.println("userTags:"+userTags);
-
-		return userTags;
-	}
+//	private static String getRandomTags() {
+//		List<String> tags = new ArrayList<>();
+//		for (UserTagsEnum value : UserTagsEnum.values()) {
+//			int code = value.getCode();
+//			tags.add(code + "");
+//		}
+//
+//		List<String> integers = RandomUtil.randomEleList(tags, 3);
+//
+//		String userTags = integers.stream().collect(Collectors.joining(","));
+//		System.out.println("userTags:"+userTags);
+//
+//		return userTags;
+//	}
 
 }

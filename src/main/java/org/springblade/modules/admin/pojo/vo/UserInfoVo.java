@@ -25,6 +25,9 @@ public class UserInfoVo implements Serializable {
 	@ApiModelProperty("用户头像")
 	private String avatar;
 
+	@ApiModelProperty("用户简介(bio)")
+	private String bio;
+
 	@ApiModelProperty("用户标签：多个用逗号隔开")
 	private String userTags;
 
@@ -70,5 +73,6 @@ public class UserInfoVo implements Serializable {
 	@ApiModelProperty("particleType类型：传数字每个数字分别代表一种类型")
 	Integer particleType;
 
-
+	@ApiModelProperty("是否为当前登录用户:0-否 1-是")
+	Integer isLoginUser;
 }

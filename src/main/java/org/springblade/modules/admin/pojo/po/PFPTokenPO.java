@@ -144,6 +144,17 @@ public class PFPTokenPO extends BasePO {
 	private Integer art;
 	private Integer courage;
 
+	public void countLevelScore(){
+		int courage = this.courage == null ? 0 : this.courage;
+		int charisma = this.charisma == null ? 0 : this.charisma;
+		int extroversion = this.extroversion == null ? 0 : this.extroversion;
+		int energy = this.energy == null ? 0 : this.energy;
+		int wisdom = this.wisdom == null ? 0 : this.wisdom;
+		int art = this.art == null ? 0 : this.art;
+
+		this.levelScore = courage + charisma + extroversion + energy + wisdom + art;
+	}
+
 	public void countLevel(){
 		if(this.levelScore == null || this.levelScore < 200){
 			this.level = 1;

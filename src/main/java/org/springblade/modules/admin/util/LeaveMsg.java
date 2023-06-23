@@ -320,13 +320,12 @@ public class LeaveMsg extends Contract {
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteCall<TransactionReceipt> getApproved(BigInteger tokenId) {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
-                FUNC_GETAPPROVED,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(tokenId)),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
-    }
+	public RemoteCall<String> getApproved(BigInteger tokenId) {
+		final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETAPPROVED,
+			Arrays.<Type>asList(new Uint256(tokenId)),
+			Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
+		return executeRemoteCallSingleValueReturn(function, String.class);
+	}
 
     public RemoteCall<TransactionReceipt> isApprovedForAll(String owner, String operator) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
@@ -345,13 +344,12 @@ public class LeaveMsg extends Contract {
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteCall<TransactionReceipt> ownerOf(BigInteger tokenId) {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
-                FUNC_OWNEROF,
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(tokenId)),
-                Collections.<TypeReference<?>>emptyList());
-        return executeRemoteCallTransaction(function);
-    }
+	public RemoteCall<String> ownerOf(BigInteger tokenId) {
+		final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_OWNEROF,
+			Arrays.<Type>asList(new Uint256(tokenId)),
+			Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
+		return executeRemoteCallSingleValueReturn(function, String.class);
+	}
 
     public RemoteCall<TransactionReceipt> paused() {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(

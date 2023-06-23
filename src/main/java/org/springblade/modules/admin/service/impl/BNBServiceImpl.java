@@ -21,9 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Function;
-import org.web3j.crypto.CipherException;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.WalletUtils;
+import org.web3j.crypto.*;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.RemoteCall;
@@ -78,22 +76,54 @@ public class BNBServiceImpl implements BNBService {
 	//PFP合约地址
 	private static final String contractAddress = "0x37a7860b29ffF81CDE90C9F1cB741186D3290A0D";
 
-	public void testApprove() throws Exception{
-		//0xad028d3bf652ddab9a7f46d73a20ee24c672e656
-		//授权
+	public Boolean testApprove(String txid) throws Exception{
 		try {
-//			String coinKeystorePath = null;
-//			if(activeProfiles != null && activeProfiles.size() > 0){
-//				if(activeProfiles.get(0).equalsIgnoreCase("dev")){
-//					coinKeystorePath = coinKeystorePathWindows;
-//				}else {
-//					coinKeystorePath = coinKeystorePathLinux;
-//				}
-//			}
+			EthTransaction transaction = web3j.ethGetTransactionByHash(txid).send();
+			try {
+				if (transaction != null && transaction.getTransaction() != null && transaction.getTransaction().get() != null) {
+					Transaction tx = transaction.getTransaction().get();
+					if (!tx.getBlockHash().equalsIgnoreCase("0x0000000000000000000000000000000000000000000000000000000000000000")) {
+						EthGetTransactionReceipt receipt = web3j.ethGetTransactionReceipt(txid).send();
+						if (receipt != null && receipt.getTransactionReceipt() != null
+									&& receipt.getTransactionReceipt().get() != null
+									&& ("0x1").equalsIgnoreCase(receipt.getTransactionReceipt().get().getStatus())) {
 
-			String coinKeystorePath = coinKeystorePathWindows;
+							EthTransaction send = web3j.ethGetTransactionByHash(txid).send();
+							BigInteger value = send.getTransaction().get().getValue();
+
+							if(value != null){
+								//转账金额
+								System.out.println("value:"+value);
+								BigDecimal transValue = Convert.fromWei(value.toString(), Convert.Unit.ETHER);
+							}
+							return false;
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+			return false;
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public R checkApprove(Long tokenId, String address) {
+		try {
+			String coinKeystorePath = null;
+			if (activeProfiles != null && activeProfiles.size() > 0) {
+				if (activeProfiles.get(0).equalsIgnoreCase("dev")) {
+					coinKeystorePath = coinKeystorePathWindows;
+				} else {
+					coinKeystorePath = coinKeystorePathLinux;
+				}
+			}
 			//獲取密鑰文件
-			String walletFile = coinKeystorePath + "/" + coinWalletFile2;
+			String walletFile = coinKeystorePath + "/" + coinWalletFile;
 			//獲取密鑰
 			Credentials credentials = WalletUtils.loadCredentials(coinCreatePwd, walletFile);
 			//獲取gasprice
@@ -101,35 +131,111 @@ public class BNBServiceImpl implements BNBService {
 			log.info("獲取gasPrice成功：" + gasPrice);
 			BigInteger gasLimit = new BigInteger("1000000");
 			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
-			//判斷餘額是否足夠最小手續費0.007
-//			BigDecimal balance = bnbService.getBalance(credentials.getAddress());
-//			if (balance.compareTo(new BigDecimal("0.007")) < 0) {
-//				return new MessageResult(500, "賬戶餘額不足，請先充值");
-//			}
 			//加載NFT
 			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
 			log.info("加載NFT成功：" + contract);
 
-			BigInteger tokenId = new BigInteger("17");
-			String send2 = contract.admin().send();
-			System.out.println(send2);
-//			TransactionReceipt send = contract.ownerOf(tokenId).send();
-//			TransactionReceipt send1 = contract.getApproved(tokenId).send();
+			BigInteger token_id = new BigInteger(tokenId.toString());
 
-			System.out.println("adminAddress:" + adminAddress);
-//			System.out.println("fromAddress:" + fromAddress);
-			//System.out.println("approvedAddress:"+approvedAddress);
-//			if (!adminAddress.equals(fromAddress)) {
-//				logger.info("fromAddress不是admin");
-//				return new MessageResult(500, "付款地址不是admin");
-//			}
+			//admin地址
+			String admin_address = contract.admin().send();
+
+			//链上持有者地址
+			String owner_address = contract.ownerOf(token_id).send();
+			if(!address.equalsIgnoreCase(owner_address)){
+				return R.fail("check owner failed:This nft's owner is not you!");
+			}
+
+			//授权地址
+			String approved_address = contract.getApproved(token_id).send();
+			if(!admin_address.equalsIgnoreCase(approved_address)){
+				return R.fail("check approved failed:This nft has not approved!");
+			}
 		}catch (Exception e){
 			e.printStackTrace();
 		}
+
+		return R.success("check success");
 	}
 
+	@Override
+	public R<Boolean> checkBNBTransacation(String txn, BigDecimal price) {
+		try {
+			EthTransaction transaction = web3j.ethGetTransactionByHash(txn).send();
+			if (transaction != null && transaction.getTransaction() != null && transaction.getTransaction().get() != null) {
+				Transaction tx = transaction.getTransaction().get();
+				if (!tx.getBlockHash().equalsIgnoreCase("0x0000000000000000000000000000000000000000000000000000000000000000")) {
+					EthGetTransactionReceipt receipt = web3j.ethGetTransactionReceipt(txn).send();
+					if (receipt != null && receipt.getTransactionReceipt() != null
+						&& receipt.getTransactionReceipt().get() != null
+						&& ("0x1").equalsIgnoreCase(receipt.getTransactionReceipt().get().getStatus())) {
 
-    public String createNewWallet(String password) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException, CipherException {
+						BigInteger value = tx.getValue();
+
+						if(value != null){
+							//转账金额
+							System.out.println("value:"+value);
+							BigDecimal transValue = Convert.fromWei(value.toString(), Convert.Unit.ETHER);
+							//金额相等
+							if(transValue.compareTo(price) == 0){
+								return R.data(true);
+							}
+						}
+						return R.data(false);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return R.fail("Exception");
+		}
+		return R.fail("not success");
+	}
+
+	@Override
+	public R<String> approveTransferNFT(String fromAddress,String toAddress, Long tokenId) {
+		try {
+			System.out.println("fromAddress:"+fromAddress);
+			System.out.println("toAddress:"+toAddress);
+			System.out.println("tokenId:"+tokenId);
+
+			LeaveMsg leaveMsg = loadAdminContract();
+			BigInteger token_id = new BigInteger(tokenId.toString());
+
+			//轉賬
+			TransactionReceipt receipt = leaveMsg.transferFrom(fromAddress, toAddress, token_id).send();
+			//獲取交易hash
+			String transactionHash = receipt.getTransactionHash();
+			log.info("approveTransferNFT:transactionHash："+transactionHash);
+			if(transactionHash == null){
+				return R.fail("transfer nft failed");
+			}else{
+				return R.data(transactionHash);
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+			return R.fail("exception");
+		}
+	}
+
+	@Override
+	public Boolean checkNFTOwner(String toAddress, Long tokenId) {
+		try {
+			LeaveMsg leaveMsg = loadAdminContract();
+			BigInteger token_id = new BigInteger(tokenId.toString());
+
+			String owner = leaveMsg.ownerOf(token_id).send();
+			if(toAddress.equalsIgnoreCase(owner)){
+				return true;
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	public String createNewWallet(String password) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException, CipherException {
         log.info("====>  Generate new wallet file for BNB.");
         String fileName = WalletUtils.generateNewWalletFile(password, new File(coinKeystorePathWindows), true);
         Credentials credentials = WalletUtils.loadCredentials(password, coinKeystorePathWindows + "/" + fileName);
@@ -477,5 +583,78 @@ public class BNBServiceImpl implements BNBService {
 		}
 		//TODO 翻译
 		return R.fail("铸造失败，请联系管理员");
+	}
+
+	private LeaveMsg loadAdminContract() throws Exception{
+		String coinKeystorePath = null;
+		if (activeProfiles != null && activeProfiles.size() > 0) {
+			if (activeProfiles.get(0).equalsIgnoreCase("dev")) {
+				coinKeystorePath = coinKeystorePathWindows;
+			} else {
+				coinKeystorePath = coinKeystorePathLinux;
+			}
+		}
+		//獲取密鑰文件
+		String walletFile = coinKeystorePath + "/" + coinWalletFile;
+		//獲取密鑰
+		Credentials credentials = WalletUtils.loadCredentials(coinCreatePwd, walletFile);
+		//獲取gasprice
+		BigInteger gasPrice = getGasPrice();
+		log.info("獲取gasPrice成功：" + gasPrice);
+		BigInteger gasLimit = new BigInteger("1000000");
+		ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
+		//加載NFT
+		LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
+		log.info("加載NFT成功：" + contract);
+		return contract;
+	}
+
+	@Override
+	public R<String> transferBNB(String toAddress,BigDecimal amount) {
+		try {
+			String coinKeystorePath = null;
+			if (activeProfiles != null && activeProfiles.size() > 0) {
+				if (activeProfiles.get(0).equalsIgnoreCase("dev")) {
+					coinKeystorePath = coinKeystorePathWindows;
+				} else {
+					coinKeystorePath = coinKeystorePathLinux;
+				}
+			}
+			//獲取密鑰文件
+			String walletFile = coinKeystorePath + "/" + coinWalletFile;
+			//獲取密鑰
+			Credentials credentials = WalletUtils.loadCredentials(coinCreatePwd, walletFile);
+
+			EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(credentials.getAddress(), DefaultBlockParameterName.PENDING)
+				.sendAsync()
+				.get();
+
+			BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+			BigInteger gasPrice = getGasPrice();
+			BigInteger value = Convert.toWei(amount, Convert.Unit.ETHER).toBigInteger();
+
+			BigInteger maxGas = new BigInteger("1000000");
+			log.info("value={},gasPrice={},gasLimit={},nonce={},address={}", value, gasPrice, maxGas, nonce, toAddress);
+			RawTransaction rawTransaction = RawTransaction.createEtherTransaction(
+				nonce, gasPrice, maxGas, toAddress, value);
+
+			//TODO BNB测试链
+//			long chainId = 56L;
+			long chainId = 97L;
+
+			byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, chainId, credentials);
+			String hexValue = Numeric.toHexString(signedMessage);
+			EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).sendAsync().get();
+			String transactionHash = ethSendTransaction.getTransactionHash();
+			log.info("txid = {}", transactionHash);
+			if (StringUtils.isEmpty(transactionHash)) {
+				return R.fail("transfer bnb failed");
+			} else {
+				return R.data(transactionHash);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return R.fail("exception");
+		}
 	}
 }

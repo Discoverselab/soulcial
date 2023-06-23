@@ -79,6 +79,11 @@ public class MemberPO extends BasePO {
 	private Integer levelScore;
 
 	/**
+	 * lens账号，多个用逗号隔开
+	 */
+	private String lensProfile;
+
+	/**
 	 * 用户等级（level）
 	 */
 	private Integer level;
@@ -116,5 +121,16 @@ public class MemberPO extends BasePO {
 		} else {
 			this.level = 5;
 		}
+	}
+
+	public void countLevelScore(){
+		int courage = this.courage == null ? 0 : this.courage;
+		int charisma = this.charisma == null ? 0 : this.charisma;
+		int extroversion = this.extroversion == null ? 0 : this.extroversion;
+		int energy = this.energy == null ? 0 : this.energy;
+		int wisdom = this.wisdom == null ? 0 : this.wisdom;
+		int art = this.art == null ? 0 : this.art;
+
+		this.levelScore = courage + charisma + extroversion + energy + wisdom + art;
 	}
 }

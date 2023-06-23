@@ -163,10 +163,22 @@ public class ExplorController {
 
 
 	@PostMapping("/collectNFT")
-	@ApiOperation(value = "购买NFT")
+	@ApiOperation(value = "购买NFT(不上链)")
 	public R<PFPTokenDetailVo> collectNFT(@Valid @RequestBody CollectNFTQuery collectNFTQuery) {
 
 		R result = nftService.collectNFT(collectNFTQuery);
+		if(result.getCode() != 200){
+			return result;
+		}
+
+		return getNFTDetail(collectNFTQuery.getTokenId());
+	}
+
+	@PostMapping("/collectNFTOnline")
+	@ApiOperation(value = "购买NFT(上链)")
+	public R<PFPTokenDetailVo> collectNFTOnline(@Valid @RequestBody CollectNFTQuery collectNFTQuery) throws Exception{
+
+		R result = nftService.collectNFTOnline(collectNFTQuery);
 		if(result.getCode() != 200){
 			return result;
 		}

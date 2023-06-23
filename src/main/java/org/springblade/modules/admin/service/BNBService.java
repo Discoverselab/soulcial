@@ -2,6 +2,8 @@ package org.springblade.modules.admin.service;
 
 import org.springblade.core.tool.api.R;
 
+import java.math.BigDecimal;
+
 public interface BNBService {
 
 	R mintPFP(String toAddress);
@@ -10,5 +12,15 @@ public interface BNBService {
 
 	R<String> mintNFT(String adminAddress, String contractAddress, String adminJsonFile, String toAddress,Long tokenId);
 
-	void testApprove() throws Exception;
+	Boolean testApprove(String txid) throws Exception;
+
+    R checkApprove(Long tokenId, String address);
+
+	R<Boolean> checkBNBTransacation(String txn, BigDecimal price);
+
+	R<String> approveTransferNFT(String fromAddress,String toAddress, Long tokenId);
+
+	Boolean checkNFTOwner(String toAddress, Long tokenId);
+
+	R<String> transferBNB(String ownerAddress, BigDecimal sellerEarnPrice);
 }

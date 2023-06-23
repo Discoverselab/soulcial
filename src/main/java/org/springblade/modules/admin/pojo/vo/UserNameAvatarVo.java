@@ -22,5 +22,8 @@ public class UserNameAvatarVo implements Serializable {
 	@ApiModelProperty("用户头像：不传则不更新该字段")
 	private String avatar;
 
+	@ApiModelProperty("用户简介（bio）：不传则不更新该字段")
+	private String bio;
+
 
 }

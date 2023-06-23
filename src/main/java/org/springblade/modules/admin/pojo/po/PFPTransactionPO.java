@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * tb_pfp_transaction实体类
  *
@@ -66,9 +68,17 @@ public class PFPTransactionPO extends BasePO {
 	*/
 	private Integer transactionStatus;
 	/**
-	*钱的交易哈希
+	* 买方付款的交易哈希
 	*/
-	private String moneyTxnHash;
+	private String buyerMoneyTxnHash;
+	/**
+	 * 卖方收款的交易哈希
+	 */
+	private String sellerMoneyTxnHash;
+	/**
+	 * 铸造者收款的交易哈希
+	 */
+	private String minterMoneyTxnHash;
 	/**
 	*PFP的交易哈希
 	*/
@@ -81,5 +91,39 @@ public class PFPTransactionPO extends BasePO {
 	*代币铸造用户地址
 	*/
 	private String mintUserAddress;
+
+	/**
+	 * 成交价格
+	 */
+	private BigDecimal listPrice;
+
+	/**
+	 * 卖家获得金额
+	 */
+	private BigDecimal sellerEarnPrice;
+
+	/**
+	 * 铸造者获得金额
+	 */
+	private BigDecimal minterEarnPrice;
+
+	/**
+	 * 平台获得金额
+	 */
+	private BigDecimal platformEarnPrice;
+
+	public void setListPrice(BigDecimal listPrice){
+		if(listPrice != null){
+			listPrice = listPrice.setScale(2, BigDecimal.ROUND_HALF_UP);
+			this.listPrice = listPrice;
+
+			this.sellerEarnPrice = listPrice.multiply(new BigDecimal("0.95"));
+			BigDecimal earnPrice = listPrice.multiply(new BigDecimal("0.025"));
+
+			this.platformEarnPrice = earnPrice;
+			this.minterEarnPrice = earnPrice;
+		}
+	}
+
 
 }

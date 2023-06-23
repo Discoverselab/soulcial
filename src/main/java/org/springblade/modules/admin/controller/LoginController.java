@@ -2,6 +2,7 @@ package org.springblade.modules.admin.controller;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.annotations.Api;
@@ -13,6 +14,7 @@ import org.springblade.modules.admin.pojo.po.BasePO;
 import org.springblade.modules.admin.pojo.po.MemberPO;
 import org.springblade.modules.admin.pojo.vo.MemberVo;
 import org.springblade.modules.admin.service.BNBService;
+import org.springblade.modules.admin.service.UserScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +32,9 @@ public class LoginController {
 
 	@Autowired
 	MemberMapper memberMapper;
+
+	@Autowired
+	UserScoreService userScoreService;
 
 	@PostMapping("/login")
 	@ApiOperation(value = "登录")
@@ -65,22 +70,29 @@ public class LoginController {
 			memberPO.setAvatar(avatarList.get(RandomUtil.randomInt(0,3)));
 
 			//TODO 用户注册。刷新分数
-			memberPO.setCharisma(RandomUtil.randomInt(20,100));
-			memberPO.setExtroversion(RandomUtil.randomInt(20,100));
-			memberPO.setEnergy(RandomUtil.randomInt(20,100));
-			memberPO.setWisdom(RandomUtil.randomInt(20,100));
-			memberPO.setArt(RandomUtil.randomInt(20,100));
-			memberPO.setCourage(RandomUtil.randomInt(20,100));
-			//计算总分
-			memberPO.setLevelScore(memberPO.getCharisma() + memberPO.getExtroversion() + memberPO.getEnergy() +
-				memberPO.getWisdom() + memberPO.getArt() + memberPO.getCourage());
-			//设置level
-			memberPO.countLevel();
+//			memberPO.setCharisma(RandomUtil.randomInt(20,100));
+//			memberPO.setExtroversion(RandomUtil.randomInt(20,100));
+//			memberPO.setEnergy(RandomUtil.randomInt(20,100));
+//			memberPO.setWisdom(RandomUtil.randomInt(20,100));
+//			memberPO.setArt(RandomUtil.randomInt(20,100));
+//			memberPO.setCourage(RandomUtil.randomInt(20,100));
+//			//计算总分
+//			memberPO.setLevelScore(memberPO.getCharisma() + memberPO.getExtroversion() + memberPO.getEnergy() +
+//				memberPO.getWisdom() + memberPO.getArt() + memberPO.getCourage());
+//			//设置level
+//			memberPO.countLevel();
 
 			memberPO.setLoginType(loginType);
 			memberPO.setParticleType(particleType);
 
 			memberMapper.insert(memberPO);
+
+			Long userId = memberPO.getId();
+
+			//开启线程刷新用户分数
+			ThreadUtil.execAsync(()->{
+				userScoreService.updateUserScore(userId);
+			});
 		}
 
 		Long userId = memberPO.getId();

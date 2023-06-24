@@ -1,0 +1,358 @@
+.earn {
+    padding: 26px 24px 100px 24px;
+    box-sizing: border-box;
+
+    .earnings {
+        margin-top: 54px;
+    }
+
+    .TabCont {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .Tab_list {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            padding-right: 24px;
+            font-size: 14px;
+            height: 30px;
+            line-height: 30px;
+            text-transform: uppercase;
+            color: #7B7B77;
+
+            &.Tab_list_Active {
+                font-style: normal;
+                font-weight: 900;
+                font-size: 18px;
+                color: #000;
+            }
+        }
+    }
+
+    .earn_list {
+        padding-bottom: 23px;
+        background: #F5F5ED;
+        border-bottom: 2px solid #DFDFCE;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+
+        &.earn_list_one {
+            margin-bottom: 50px;
+        }
+
+        .list_left {
+            display: flex;
+            align-items: center;
+
+            img {
+                display: block;
+                width: 16px;
+                margin-right: 26px;
+            }
+
+            .times {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 600;
+                font-size: 12px;
+                margin-top: 10px;
+                color: #989895;
+            }
+        }
+
+        .list_right {
+            border: none;
+            display: block;
+            width: 88px;
+            height: 32px;
+            box-sizing: border-box;
+            padding: 5px 8px;
+            background: #5CD685;
+            border-radius: 4px;
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 14px;
+
+            &.list_right_fu {
+                background-color: #E03131;
+                color: #FFF;
+            }
+        }
+
+        .list_name {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .emptys {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 150%;
+            color: #E03131;
+            margin-top: 10px;
+        }
+
+        .balance {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 32px;
+            color: #000;
+        }
+
+        .er_balance {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 20px;
+            color: #000;
+        }
+    }
+
+    .earn_list_title {
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        background: #F5F5ED;
+        border-bottom: 2px solid #DFDFCE;
+
+        .title {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 24px;
+        }
+    }
+
+    .set_but {
+        box-sizing: border-box;
+        margin-top: 150px;
+        button {
+            &:active {
+                opacity: 0.8;
+            }
+
+            &.disabled {
+                background-color: #F1F1E7;
+                color: #c4c4be;
+                border: 2px solid #c4c4be;
+            }
+
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 26px;
+            gap: 10px;
+            width: 342px;
+            height: 40px;
+            background: #FFFFFF;
+            border: 2px solid #000000;
+            border-radius: 45px;
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 18px;
+            color: #000;
+        }
+    }
+
+    // collections
+    .collections {
+        margin-top: 30.5px;
+
+        // 二级tab
+        .ercont_cont {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px 15px 24px;
+            box-sizing: border-box;
+            border-bottom: 2px solid #DFDFCE;
+            width: calc(100% + 48px);
+            margin-left: -24px;
+
+            .ercont {
+                display: flex;
+                align-items: center;
+
+                .ercont_list {
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 14px;
+                    height: 17px;
+                    line-height: 17px;
+                    text-transform: uppercase;
+                    color: #7B7B77;
+                    margin-right: 24px;
+
+                    &.ercont_list_active {
+                        color: #000;
+                    }
+                }
+            }
+
+            .Tab_right {
+                img {
+                    display: block;
+                    width: 16.25px;
+                    height: 16.88px;
+                }
+            }
+        }
+
+        // NFT List
+        .nft_cont {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px 10px;
+
+            .nft_list {
+                background: #F5F5ED;
+                border: 1px solid #DFDFCE;
+
+                .img_cont {
+                    width: 163px;
+                    height: 163px;
+                    background: #F5F5ED;
+                    border: 2px solid #DFDFCE;
+                    position: relative;
+
+                    .nftUrl {
+                        display: block;
+                        width: 100%;
+                        height: 100%;
+                    }
+
+                    .subtract {
+                        position: absolute;
+                        left: 12px;
+                        top: 12px;
+                        display: block;
+                        width: 16px;
+                        height: 16px;
+                    }
+
+                    .point {
+                        position: absolute;
+                        right: 13.5px;
+                        top: 15.5px;
+                        display: flex;
+                        align-items: center;
+
+                        span {
+                            display: inline-block;
+                            margin-left: 2px;
+                            background-color: #000;
+                            border-radius: 50%;
+                            width: 4.5px;
+                            height: 4.5px;
+                        }
+                    }
+                }
+
+                .nft_infor {
+                    padding: 10px 12px;
+
+                    .top_name_price {
+                        display: flex;
+                        align-items: center;
+
+                        .name {
+                            color: #7B7B77;
+                            display: inline-block;
+                            font-family: 'Inter';
+                            font-style: normal;
+                            font-weight: 500;
+                            font-size: 10px;
+                            margin-right: 4px;
+                        }
+
+                        .price {
+                            font-family: 'Inter';
+                            font-style: normal;
+                            font-weight: 700;
+                            font-size: 14px;
+                            color: #000;
+                        }
+                    }
+
+                    .flow_id {
+                        margin: 8px 0 14px 0;
+                        display: flex;
+                        align-items: center;
+
+                        .flow {
+                            display: inline-block;
+                            margin: 0 8px 0 6px;
+                            font-family: 'Inter';
+                            font-style: normal;
+                            font-weight: 600;
+                            font-size: 12px;
+                            color: #000;
+                        }
+
+                        .flow_lin {
+                            font-family: 'Inter';
+                            font-style: normal;
+                            font-weight: 600;
+                            font-size: 12px;
+                            color: #000;
+                        }
+                        img{
+                            display: block;
+                            width: 14.76px;
+                        }
+                    }
+
+                    .Listing {
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 8px;
+
+                        span {
+                            display: inline-block;
+                            font-family: 'Inter';
+                            font-style: normal;
+                            font-weight: 500;
+                            font-size: 10px;
+                            color: #7B7B77;
+
+                            &:nth-child(1) {
+                                margin-right: 25px;
+                            }
+                        }
+
+                    }
+
+                    .price_botm {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+
+                        span {
+                            font-family: 'Inter';
+                            font-style: normal;
+                            font-weight: 600;
+                            font-size: 12px;
+                            color: rgb(98, 98, 95);
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}

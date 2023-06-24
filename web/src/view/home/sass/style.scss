@@ -1,0 +1,381 @@
+.home {
+    padding-bottom: 120px;
+
+    .user_infor {
+        padding: 30px 24px 40px 24px;
+        background-color: #FFF;
+
+        .set_top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .set_right {
+                display: flex;
+                align-items: center;
+                margin-bottom: 15px;
+
+                .label {
+                    display: block;
+                    width: 17.5px;
+                    height: 16.25px;
+                    margin-right: 22px;
+                }
+
+                .set {
+                    width: 18.75px;
+                    height: 18.75px;
+                }
+            }
+        }
+
+        .userinfo {
+            display: flex;
+            align-items: center;
+
+            .portrait {
+                display: block;
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                margin-right: 16px;
+            }
+
+            .nameAddres {
+                .name {
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 700;
+                    font-size: 24px;
+                    color: #000;
+                    margin-bottom: 6px;
+                }
+
+                .address {
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 500;
+                    font-size: 16px;
+                    color: #666666;
+                    display: flex;
+                    align-items: center;
+
+                    img {
+                        display: block;
+                        width: 16px;
+                        height: auto;
+                        object-fit: cover;
+                        margin-left: 10px;
+                    }
+
+
+                }
+
+            }
+        }
+
+        // label
+        .label_cont {
+            border-bottom: 2px solid #F5F5ED;
+            padding-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 30px 0 20px 0;
+
+            .label_left {
+                display: flex;
+                align-items: center;
+
+                .label {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 700;
+                    font-size: 14px;
+
+                    &.label1 {
+                        width: 78px;
+                        height: 24.5px;
+                        background-image: url("../../assets/label1.png");
+                        background-size: 100% 100%;
+                    }
+
+                    &.label2 {
+                        width: 75px;
+                        height: 24px;
+                        background-image: url("../../assets/label2.png");
+                        background-size: 100% 100%;
+                    }
+
+                    &.label3 {
+                        width: 50px;
+                        height: 24px;
+                        background-image: url("../../assets/label3.png");
+                        background-size: 100% 100%;
+                    }
+                }
+            }
+
+            .edit {
+                display: block;
+                width: 20px;
+                height: auto;
+            }
+        }
+
+        // Calculate points
+        .Calculate {
+            padding-bottom: 20px;
+            border-bottom: 2px solid #F5F5ED;
+
+            img {
+                display: block;
+                width: 248px;
+                height: 271.34px;
+                margin: 0 auto;
+                object-fit: cover;
+            }
+
+            .rank_cont {
+                padding: 0 25px;
+                margin-top: 70px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .rank_list {
+                    text-align: center;
+
+                    .value {
+                        font-family: 'Inter';
+                        font-style: normal;
+                        font-weight: 700;
+                        font-size: 20px;
+                        margin-bottom: 4px;
+                        color: #000;
+                        margin-bottom: 5px;
+                    }
+
+                    .key {
+                        font-family: 'Inter';
+                        font-style: normal;
+                        font-weight: 600;
+                        font-size: 12px;
+                        color: #666;
+                    }
+                }
+            }
+        }
+    }
+
+    .TabCont {
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        margin: 40px 0 26.5px 0;
+
+        .Tab_list {
+            margin-right: 24px;
+            height: 19px;
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 19px;
+            color: #7B7B77;
+            text-transform: uppercase;
+
+            &.Tab_list_Active {
+                font-style: normal;
+                font-weight: 900;
+                font-size: 20px;
+                color: #000;
+            }
+        }
+    }
+
+    .set_but {
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 24px;
+
+        button {
+            &:active {
+                opacity: 0.8;
+            }
+
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 26px;
+            gap: 10px;
+            width: 342px;
+            height: 40px;
+            background: #FFFFFF;
+            border: 2px solid #000000;
+            border-radius: 45px;
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 18px;
+            color: #000;
+        }
+    }
+
+    // NFT List
+    .nft_cont {
+        padding: 0 24px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px 10px;
+
+        .nft_list {
+            background: #F5F5ED;
+            border: 1px solid #DFDFCE;
+
+            .img_cont {
+                width: 163px;
+                height: 163px;
+                background: #F5F5ED;
+                border: 2px solid #DFDFCE;
+                position: relative;
+
+                .nftUrl {
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                }
+
+                .subtract {
+                    position: absolute;
+                    left: 12px;
+                    top: 12px;
+                    display: block;
+                    width: 16px;
+                    height: 16px;
+                }
+
+                .point {
+                    position: absolute;
+                    right: 13.5px;
+                    top: 15.5px;
+                    display: flex;
+                    align-items: center;
+
+                    span {
+                        display: inline-block;
+                        margin-left: 2px;
+                        background-color: #000;
+                        border-radius: 50%;
+                        width: 4.5px;
+                        height: 4.5px;
+                    }
+                }
+            }
+
+            .nft_infor {
+                padding: 10px 12px;
+
+                .top_name_price {
+                    display: flex;
+                    align-items: center;
+
+                    .name {
+                        color: #7B7B77;
+                        display: inline-block;
+                        font-family: 'Inter';
+                        font-style: normal;
+                        font-weight: 500;
+                        font-size: 10px;
+                        margin-right: 4px;
+                    }
+
+                    .price {
+                        font-family: 'Inter';
+                        font-style: normal;
+                        font-weight: 700;
+                        font-size: 14px;
+                        color: #000;
+                    }
+                }
+
+                .flow_id {
+                    margin: 8px 0 14px 0;
+                    display: flex;
+                    align-items: center;
+
+                    .flow {
+                        display: inline-block;
+                        margin: 0 8px 0 6px;
+                        font-family: 'Inter';
+                        font-style: normal;
+                        font-weight: 600;
+                        font-size: 12px;
+                        color: #000;
+                    }
+
+                    .flow_lin {
+                        font-family: 'Inter';
+                        font-style: normal;
+                        font-weight: 600;
+                        font-size: 12px;
+                        color: #000;
+                    }
+
+                    img {
+                        display: block;
+                        width: 13px;
+                        object-fit: cover;
+                    }
+                }
+
+                .Listing {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 8px;
+
+                    span {
+                        display: inline-block;
+                        font-family: 'Inter';
+                        font-style: normal;
+                        font-weight: 500;
+                        font-size: 10px;
+                        color: #7B7B77;
+
+                        &:nth-child(1) {
+                            margin-right: 25px;
+                        }
+                    }
+
+                }
+
+                .price_botm {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    span {
+                        font-family: 'Inter';
+                        font-style: normal;
+                        font-weight: 600;
+                        font-size: 12px;
+                        color: rgb(98, 98, 95);
+                    }
+                }
+            }
+        }
+
+    }
+    .ovrlay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+}

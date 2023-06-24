@@ -1,0 +1,7 @@
+@font-face {
+    font-family: 'DINCond-Bold';
+    src: url('dincond-bold.woff2') format('woff2'),
+        url('dincond-bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}

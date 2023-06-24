@@ -1,0 +1,83 @@
+.congr {
+    padding: 90px 24px 50px 24px;
+
+    .title {
+        font-family: 'DINCond-Bold';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 40px;
+        text-transform: uppercase;
+        color: #000000;
+        text-align: center;
+    }
+
+    .title_infor {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 150%;
+        color: #000000;
+        text-align: center;
+        margin: 10px 0 70px 0;
+    }
+
+    .mark {
+        display: block;
+        width: 248px;
+        margin: 80px auto;
+    }
+
+    .cudset_but {
+        box-sizing: border-box;
+        margin-top: 60px;
+
+        button {
+            position: relative;
+
+            &:active {
+                opacity: 0.8;
+            }
+
+            &.disabled {
+                background-color: #F1F1E7;
+                color: #c4c4be;
+                border: 2px solid #c4c4be;
+            }
+
+            .FREE {
+                box-sizing: border-box;
+                position: absolute;
+                width: 70px;
+                height: 25px;
+                line-height: 25px;
+                text-align: center;
+                right: 0;
+                top: -12.5px;
+                background: #5CD685;
+                border: 2px solid #000000;
+                border-radius: 28px;
+            }
+
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 26px;
+            gap: 10px;
+            width: 342px;
+            height: 40px;
+            background: #FFFFFF;
+            text-transform: uppercase;
+            border: 2px solid #000000;
+            border-radius: 45px;
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 18px;
+            color: #000;
+        }
+    }
+}

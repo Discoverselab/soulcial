@@ -1,0 +1,108 @@
+.chat {
+    padding: 30px 24px 120px 24px;
+
+    .chat_top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        span {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 900;
+            font-size: 20px;
+        }
+
+        img {
+            display: block;
+            width: 14px;
+            height: 17px;
+        }
+    }
+
+    .chat_cont {
+        margin-top: 48px;
+
+        .chat_list {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #DFDFCE;
+            margin-bottom: 16px;
+
+            .list_left {
+                width: 100%;
+                display: flex;
+
+                .portrait {
+                    position: relative;
+                    display: inline-block;
+                    margin-right: 16px;
+
+                    .portrait_img {
+                        display: block;
+                        width: 46px;
+                        height: 46px;
+                        object-fit: cover;
+                    }
+
+                    .online {
+                        position: absolute;
+                        bottom: 0;
+                        right: 0;
+                    }
+                }
+
+                .name_news {
+                    width: 100%;
+
+                    .name {
+                        font-family: 'Inter';
+                        font-style: normal;
+                        font-weight: 600;
+                        font-size: 16px;
+                        margin-bottom: 5px;
+                    }
+
+                    .news {
+                        width: 190px;
+                        font-family: 'Inter';
+                        font-style: normal;
+                        font-weight: 500;
+                        font-size: 12px;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                        -o-text-overflow: ellipsis;
+                    }
+                }
+            }
+
+            .list_right {
+                margin-left: 55px;
+                min-width: 40px;
+                text-align: right;
+
+                .times {
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 500;
+                    font-size: 10px;
+                    margin-bottom: 3px;
+                }
+
+                .numbers {
+                    display: inline-block;
+                    padding: 2px 5px;
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 12px;
+                    background: #E03131;
+                    border-radius: 20px;
+                    color: #FFFFFF;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,117 @@
+.welcome {
+    padding: 90px 24px 50px 24px;
+
+    .title {
+        font-family: 'DINCond-Bold';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 70px;
+        text-transform: uppercase;
+        color: #000000;
+        text-align: center;
+    }
+
+    .title_infor {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 150%;
+        color: #000000;
+        text-align: center;
+        margin: 10px 0 20px 0;
+    }
+
+    .userportrait {
+        margin-top: 50px;
+
+        .userportrait {
+            display: block;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 24px auto;
+        }
+
+        .humphry {
+            font-family: 'DINCond-Bold';
+            font-style: normal;
+            font-weight: 500;
+            font-size: 36px;
+            color: #000;
+            text-transform: uppercase;
+            text-align: center;
+            position: relative;
+            z-index: 9;
+        }
+
+        .con_lin {
+            display: block;
+            width: 150px;
+            height: 16px;
+            position: relative;
+            top: -20px;
+            margin: 0 auto;
+        }
+    }
+
+    .cudset_but {
+        box-sizing: border-box;
+        margin-top: 60px;
+        position: relative;
+        z-index: 99;
+        button {
+            &:active {
+                opacity: 0.8;
+            }
+
+            &.disabled {
+                background-color: #F1F1E7;
+                color: #c4c4be;
+                border: 2px solid #c4c4be;
+            }
+
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 26px;
+            gap: 10px;
+            width: 342px;
+            height: 40px;
+            background: #FFFFFF;
+            border: 2px solid #000000;
+            border-radius: 45px;
+            font-family: 'Inter';
+            font-style: normal;
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 18px;
+            color: #000;
+        }
+    }
+
+    .link_img {
+        position: absolute;
+        display: block;
+
+        &.link_img1 {
+            width: 93px;
+            top: 179px;
+            left: 0;
+        }
+
+        &.link_img2 {
+            width: 108px;
+            bottom: 54px;
+            right: 0;
+        }
+
+        &.link_img3 {
+            width: 390px;
+            bottom: 0px;
+            left: 0;
+        }
+    }
+}

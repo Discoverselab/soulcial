@@ -138,26 +138,32 @@ public class NftController {
 		List<MintPictureVo> result = new ArrayList<>();
 		for (int i=0;i<6;i++){
 			MintPictureVo mintPictureVo = new MintPictureVo();
-			mintPictureVo.setColorAttribute(20);
+
 
 			if(i == 0){
 				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935016998465536.png");
 				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/12/1667935749877592064.png");
+				mintPictureVo.setColorAttribute(166);
 			} else if (i == 1) {
 				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603439399104512.png");
 				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603329093103616.png");
+				mintPictureVo.setColorAttribute(-42);
 			} else if(i == 2){
 				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603730555105280.png");
 				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603551709982720.png");
+				mintPictureVo.setColorAttribute(20);
 			} else if (i == 3) {
 				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603875980013568.png");
 				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603822204841984.png");
+				mintPictureVo.setColorAttribute(-26);
 			} else if(i == 4){
 				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668604008863952896.png");
 				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668603945051811840.png");
+				mintPictureVo.setColorAttribute(41);
 			} else if (i == 5) {
 				mintPictureVo.setSquarePictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668604170780864512.png");
 				mintPictureVo.setPictureUrl("https://sfhmaster-1313464417.cos.ap-nanjing.myqcloud.com/2023/06/13/1668604086018174976.png");
+				mintPictureVo.setColorAttribute(-15);
 			}
 
 			result.add(mintPictureVo);

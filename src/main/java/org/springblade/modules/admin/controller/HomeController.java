@@ -208,21 +208,21 @@ public class HomeController {
 		return getUserInfo(null);
 	}
 
-	@PostMapping("/setUserStreamId")
-	@ApiOperation(value = "设置dataverse的stream_id")
-	public R setUserStreamId(@Valid @RequestBody UserStreamIdQurey userStreamIdQurey) {
-
-		Long userId = StpUtil.getLoginIdAsLong();
-		MemberPO memberPO = memberMapper.selectById(userId);
-		if(StringUtil.isNotBlank(memberPO.getStreamId())){
-			//TODO 翻译
-			return R.fail("该用户已设置过stream_id");
-		}
-		memberPO.setStreamId(userStreamIdQurey.getStreamId());
-		memberMapper.updateById(memberPO);
-
-		return R.success("success");
-	}
+//	@PostMapping("/setUserStreamId")
+//	@ApiOperation(value = "设置dataverse的stream_id")
+//	public R setUserStreamId(@Valid @RequestBody UserStreamIdQurey userStreamIdQurey) {
+//
+//		Long userId = StpUtil.getLoginIdAsLong();
+//		MemberPO memberPO = memberMapper.selectById(userId);
+//		if(StringUtil.isNotBlank(memberPO.getStreamId())){
+//			//TODO 翻译
+//			return R.fail("该用户已设置过stream_id");
+//		}
+//		memberPO.setStreamId(userStreamIdQurey.getStreamId());
+//		memberMapper.updateById(memberPO);
+//
+//		return R.success("success");
+//	}
 
 	@PostMapping("/setUserTags")
 	@ApiOperation(value = "设置用户标签(1到12,多个用逗号隔开)")

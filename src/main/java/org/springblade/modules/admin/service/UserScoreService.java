@@ -7,4 +7,5 @@ public interface UserScoreService {
 
 	void updateUserScore(Long userId);
 
+	String getLensNameByAddress(String address);
 }

@@ -1,31 +1,22 @@
 package org.springblade.modules.admin.service.impl;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.*;
 
 //import com.googlecode.jsonrpc4j.JsonRpcHttpClient;
-import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.http.HttpGlobalConfig;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import org.springblade.core.tool.api.R;
 import org.springblade.modules.admin.dao.MemberMapper;
-import org.springblade.modules.admin.dao.PFPContractMapper;
 import org.springblade.modules.admin.pojo.po.MemberPO;
-import org.springblade.modules.admin.pojo.po.PFPContractPO;
-import org.springblade.modules.admin.pojo.vo.UserInfoVo;
-import org.springblade.modules.admin.service.PfpContractService;
 import org.springblade.modules.admin.service.UserScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.Proxy;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -334,6 +325,88 @@ public class UserScoreServiceImpl implements UserScoreService {
 		}
 		log.info("getLensProfileIdByAddress:lensProfileIds:"+lensProfileIds);
 		return lensProfileIds;
+	}
+
+	/**
+	 * 根据地址查询lens的用户名
+	 * @param address
+	 * @return
+	 */
+	@Override
+	public String getLensNameByAddress(String address) {
+		String lensName = null;
+		try {
+			Map<String,Object> paramMap = new HashMap<String,Object>();
+			paramMap.put("address",address);
+
+			HttpRequest httpRequest = HttpRequest.get(LensProfileIdsByAddressUrl).form(paramMap).header("auth-key", knn3AuthKey).timeout(timeout);
+			String body = httpRequest.execute().body();
+
+			System.out.println("getLensNameByAddress:body:"+body);
+
+			JSONObject jsonObject = JSONObject.parseObject(body);
+			JSONArray list = jsonObject.getJSONArray("list");
+
+			List<JSONObject> profiles = new ArrayList<>();
+			for (int i=0;i<list.size();i++){
+				JSONObject profileObj = list.getJSONObject(i);
+				profiles.add(profileObj);
+			}
+
+			List<String> collect = profiles.stream().sorted(Comparator.comparing(x -> {
+					return x.getInteger("profileId");
+				}))
+				.map(x -> {
+					return x.getString("handle");
+				}).collect(Collectors.toList());
+
+			lensName = collect.get(0);
+
+			log.info("getLensNameByAddress:lensProfileIds:" + lensName);
+			return lensName;
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public static void main(String[] args) {
+		String address = "0x7241DDDec3A6aF367882eAF9651b87E1C7549Dff";
+
+		String lensName = null;
+		try {
+			Map<String,Object> paramMap = new HashMap<String,Object>();
+			paramMap.put("address",address);
+
+			HttpRequest httpRequest = HttpRequest.get(LensProfileIdsByAddressUrl).form(paramMap).header("auth-key", knn3AuthKey).timeout(timeout);
+			String body = httpRequest.execute().body();
+
+			System.out.println("getLensNameByAddress:body:"+body);
+
+			JSONObject jsonObject = JSONObject.parseObject(body);
+			JSONArray list = jsonObject.getJSONArray("list");
+
+			List<JSONObject> profiles = new ArrayList<>();
+			for (int i=0;i<list.size();i++){
+				JSONObject profileObj = list.getJSONObject(i);
+				profiles.add(profileObj);
+			}
+
+			List<String> collect = profiles.stream().sorted(Comparator.comparing(x -> {
+					return x.getInteger("profileId");
+				}))
+				.map(x -> {
+					return x.getString("handle");
+				}).collect(Collectors.toList());
+
+			lensName = collect.get(0);
+
+			log.info("getLensNameByAddress:lensProfileIds:" + lensName);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
 	}
 
 	private static int getLensFollows(String lensProfileIds) {

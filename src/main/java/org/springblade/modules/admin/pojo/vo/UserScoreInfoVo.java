@@ -45,4 +45,7 @@ public class UserScoreInfoVo implements Serializable {
 
 	@ApiModelProperty("dataverse：stream_id")
 	private String streamId;
+
+	@ApiModelProperty("是否为注册：0-否 1-是")
+	private Integer isRegister;
 }

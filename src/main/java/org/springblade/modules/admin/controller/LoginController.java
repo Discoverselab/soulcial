@@ -40,6 +40,7 @@ public class LoginController {
 	@GetMapping("/checkSteamId")
 	@ApiOperation(value = "查询是否已生成steam_id")
 	public R<UserScoreInfoVo> checkSteamId(@RequestParam("address") String address,
+							 @ApiParam(value = "是否刷新分数：0-否 1-是（不传默认为1）") @RequestParam(value = "refreshScore",required = false) Integer refreshScore,
 							 @ApiParam(value = "登录类型：0-钱包 1-particle",required = true) @RequestParam("loginType") Integer loginType,
 							 @ApiParam(value = "particleType类型：传数字每个数字分别代表一种类型",required = false) @RequestParam(value = "particleType",required = false) Integer particleType) {
 
@@ -53,16 +54,24 @@ public class LoginController {
 			.eq(MemberPO::getAddress, address.toLowerCase()));
 
 		UserScoreInfoVo userScoreInfoVo = new UserScoreInfoVo();
+		userScoreInfoVo.setIsRegister(0);
 		if(memberPO == null){
 			//创建用户
 			memberPO = createUser(address, loginType, particleType);
+			//是注册
+			userScoreInfoVo.setIsRegister(1);
 		}
 
 		Long userId = memberPO.getId();
-		if(memberPO.getCharisma() == null){
-			//刷新分数
-			userScoreService.updateUserScore(userId);
+
+		//是否刷新分数
+		if(refreshScore != null && refreshScore != 1){
+			if(memberPO.getCharisma() == null){
+				//刷新分数
+				userScoreService.updateUserScore(userId);
+			}
 		}
+
 
 		memberPO = memberMapper.selectById(userId);
 		BeanUtil.copyProperties(memberPO,userScoreInfoVo);
@@ -91,10 +100,10 @@ public class LoginController {
 
 		Long userId = memberPO.getId();
 
-		if(memberPO.getCharisma() == null){
-			//刷新分数
-			userScoreService.updateUserScore(userId);
-		}
+//		if(memberPO.getCharisma() == null){
+//			//刷新分数
+//			userScoreService.updateUserScore(userId);
+//		}
 
 		//dataverse steam_Id
 		if(StringUtil.isBlank(memberPO.getStreamId()) && StringUtil.isNotBlank(streamId)){

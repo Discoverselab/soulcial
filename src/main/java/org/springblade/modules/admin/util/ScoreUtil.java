@@ -27,8 +27,11 @@ public class ScoreUtil {
 							   Integer art2,
 							   Integer courage2){
 		BigDecimal tagMatch = BigDecimal.ZERO;
-		//任意一个为空，则为60
-		if(StringUtil.isBlank(userTags) || StringUtil.isBlank(nftTags)){
+		if(StringUtil.isBlank(userTags) && StringUtil.isBlank(nftTags)){
+			//都为空，则为100
+			tagMatch = new BigDecimal("100");
+		} else if (StringUtil.isBlank(userTags) || StringUtil.isBlank(nftTags)){
+			//任意一个为空，则为60
 			tagMatch = new BigDecimal("60");
 		}else {
 

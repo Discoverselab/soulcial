@@ -20,7 +20,10 @@ public class PfpContractServiceImpl implements PfpContractService {
 
 	@Override
 	public PFPContractPO getContract() {
-		PFPContractPO pfpContractPO = pfpContractMapper.selectById(1L);
+		//TODO BSC合约
+//		PFPContractPO pfpContractPO = pfpContractMapper.selectById(1L);
+		//TODO ETH合约
+		PFPContractPO pfpContractPO = pfpContractMapper.selectById(2L);
 		return pfpContractPO;
 	}
 }

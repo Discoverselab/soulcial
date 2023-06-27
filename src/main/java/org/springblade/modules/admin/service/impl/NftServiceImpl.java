@@ -13,6 +13,7 @@ import org.springblade.modules.admin.pojo.po.*;
 import org.springblade.modules.admin.pojo.query.CollectNFTQuery;
 import org.springblade.modules.admin.pojo.vo.MintNftVo;
 import org.springblade.modules.admin.service.BNBService;
+import org.springblade.modules.admin.service.ETHService;
 import org.springblade.modules.admin.service.NftService;
 import org.springblade.modules.admin.service.PfpContractService;
 import org.springblade.modules.admin.util.AddressUtil;
@@ -35,8 +36,11 @@ public class NftServiceImpl implements NftService {
 	@Autowired
 	PFPTokenMapper pfpTokenMapper;
 
+//	@Autowired
+//	BNBService bnbService;
+
 	@Autowired
-	BNBService bnbService;
+	ETHService ethService;
 
 	@Autowired
 	PFPTransactionMapper pfpTransactionMapper;
@@ -113,7 +117,7 @@ public class NftServiceImpl implements NftService {
 
 		memberMapper.updateById(memberPO);
 
-		R<String> result = bnbService.mintNFT(contract.getAdminAddress(),contract.getContractAddress(),contract.getAdminJsonFile(),toAddress,pfpTokenPO.getId());
+		R<String> result = ethService.mintNFT(contract.getAdminAddress(),contract.getContractAddress(),contract.getAdminJsonFile(),toAddress,pfpTokenPO.getId());
 
 		if(result.getCode() == ResultCode.SUCCESS.getCode()){
 			String txnHash = result.getData();
@@ -258,7 +262,7 @@ public class NftServiceImpl implements NftService {
 	public R checkApprove(Long tokenId, Long userId) {
 		MemberPO memberPO = memberMapper.selectById(userId);
 		String address = memberPO.getAddress();
-		R result = bnbService.checkApprove(tokenId,address);
+		R result = ethService.checkApprove(tokenId,address);
 		return result;
 	}
 
@@ -287,6 +291,7 @@ public class NftServiceImpl implements NftService {
 	public R collectNFTOnline(CollectNFTQuery collectNFTQuery) throws Exception{
 		String txn = collectNFTQuery.getTxn();
 		Long tokenId = collectNFTQuery.getTokenId();
+		String payAddress = collectNFTQuery.getPayAddress();
 
 		Long userId = StpUtil.getLoginIdAsLong();
 		MemberPO memberPO = memberMapper.selectById(userId);
@@ -294,6 +299,7 @@ public class NftServiceImpl implements NftService {
 
 		PFPTokenPO pfpTokenPO = pfpTokenMapper.selectById(tokenId);
 		String ownerAddress = pfpTokenPO.getOwnerAddress();
+		String minterAddress = pfpTokenPO.getMintUserAddress();
 		Long ownerUserId = pfpTokenPO.getOwnerUserId();
 
 		//校验转账交易是否被使用
@@ -313,7 +319,7 @@ public class NftServiceImpl implements NftService {
 		int reTryCount = 0;
 		Boolean checkFlag = false;
 		while (reTryCount < 100){
-			R<Boolean> checkBNBTransResult = bnbService.checkBNBTransacation(txn, pfpTokenPO.getPrice());
+			R<Boolean> checkBNBTransResult = ethService.checkBNBTransacation(txn, pfpTokenPO.getPrice(),payAddress,pfpTokenPO.getAdminAddress());
 			if(checkBNBTransResult.getCode() == 200){
 				//终止循环
 				reTryCount = 100;
@@ -362,7 +368,7 @@ public class NftServiceImpl implements NftService {
 		}
 
 		//NFT转账
-		R<String> transferNFTResult = bnbService.approveTransferNFT(ownerAddress,toAddress,tokenId);
+		R<String> transferNFTResult = ethService.approveTransferNFT(ownerAddress,toAddress,tokenId);
 		if(transferNFTResult.getCode() != 200){
 			return transferNFTResult;
 		}
@@ -373,7 +379,7 @@ public class NftServiceImpl implements NftService {
 		reTryCount = 0;
 		Boolean checkNFTOwner = false;
 		while (reTryCount < 10){
-			checkNFTOwner = bnbService.checkNFTOwner(toAddress,tokenId);
+			checkNFTOwner = ethService.checkNFTOwner(toAddress,tokenId);
 			if(checkNFTOwner){
 				//终止循环
 				reTryCount = 10;
@@ -388,16 +394,24 @@ public class NftServiceImpl implements NftService {
 			return R.fail("NFT transfer check failed:NFT owner is not correct");
 		}
 
-		//BNB转账
-		R<String> transferBNBResult = bnbService.transferBNB(ownerAddress,pfpTransactionPO.getSellerEarnPrice());
+		//BNB转账：卖NFT收益
+		R<String> transferBNBResult = ethService.transferBNB(ownerAddress,pfpTransactionPO.getSellerEarnPrice());
 		if(transferBNBResult.getCode() != 200){
 			//TODO 稍后再次尝试
 		}
-
+		//售卖者收款流水号
 		String sellerMoneyTxnHash = transferBNBResult.getData();
 		pfpTransactionPO.setSellerMoneyTxnHash(sellerMoneyTxnHash);
 
-		//TODO 铸造者收益
+		//BNB转账：铸造者收益
+		R<String> mintTransferBNBResult = ethService.transferBNB(minterAddress,pfpTransactionPO.getMinterEarnPrice());
+		if(mintTransferBNBResult.getCode() != 200){
+			//TODO 稍后再次尝试
+		}
+		//铸造者收益流水号
+		String minterMoneyTxnHash = mintTransferBNBResult.getData();
+		pfpTransactionPO.setMinterMoneyTxnHash(minterMoneyTxnHash);
+
 
 		pfpTransactionPO.setTransactionStatus(2);
 		pfpTransactionMapper.updateById(pfpTransactionPO);

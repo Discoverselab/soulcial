@@ -13,7 +13,6 @@ import org.springblade.modules.admin.pojo.po.MemberPO;
 import org.springblade.modules.admin.pojo.vo.EnumVo;
 import org.springblade.modules.admin.pojo.vo.MintNftVo;
 import org.springblade.modules.admin.pojo.vo.MintPictureVo;
-import org.springblade.modules.admin.service.BNBService;
 import org.springblade.modules.admin.service.NftService;
 import org.springblade.modules.admin.util.AddressUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +27,6 @@ import java.util.List;
 @Api(value = "铸造NFT",tags = "铸造NFT")
 public class NftController {
 
-	@Autowired
-	BNBService bnbService;
 
 	@Autowired
 	MemberMapper memberMapper;

@@ -29,7 +29,7 @@ public class Web3jConfig  {
 	/**
 	 * BSC测试网网链ID
 	 */
-	public static final String BSC_CHAIN_ID_TEST = "97";
+	public static final Long BSC_CHAIN_ID_TEST = 97L;
 
 	/**
 	 * BSC正式网RPC
@@ -39,7 +39,17 @@ public class Web3jConfig  {
 	/**
 	 * BSC正式网链ID
 	 */
-	public static final String BSC_CHAIN_ID = "56";
+	public static final Long BSC_CHAIN_ID = 56L;
+
+	/**
+	 * ETH_SEPOLIA测试网RPC
+	 */
+	public static final String ETH_SEPOLIA_RPC = "https://eth-sepolia.g.alchemy.com/v2/VAaFGT2RIlmQ-BLDfaWS9YXwDEZE-aCr";
+
+	/**
+	 * ETH_SEPOLIA测试网链ID
+	 */
+	public static final Long ETH_SEPOLIA_CHAIN_ID = 11155111L;
 
 	@Bean(name = "bscWeb3j")
     public Web3j bscWeb3j(){
@@ -52,5 +62,18 @@ public class Web3jConfig  {
 		Web3j web3j = Web3j.build(new HttpService(BSC_RPC_TEST, httpClient, false));
 		return web3j;
     }
+
+
+	@Bean(name = "ethWeb3j")
+	public Web3j ethWeb3j(){
+		OkHttpClient.Builder builder = new OkHttpClient.Builder();
+		builder.connectTimeout(30 * 1000, TimeUnit.MILLISECONDS);
+		builder.writeTimeout(30 * 1000, TimeUnit.MILLISECONDS);
+		builder.readTimeout(30 * 1000, TimeUnit.MILLISECONDS);
+		OkHttpClient httpClient = builder.build();
+		//TODO ETH_SEPOLIA测试网
+		Web3j web3j = Web3j.build(new HttpService(ETH_SEPOLIA_RPC, httpClient, false));
+		return web3j;
+	}
 
 }

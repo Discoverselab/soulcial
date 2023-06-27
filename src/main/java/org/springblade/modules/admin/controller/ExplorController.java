@@ -17,7 +17,6 @@ import org.springblade.modules.admin.pojo.po.PFPTokenPO;
 import org.springblade.modules.admin.pojo.query.CollectNFTQuery;
 import org.springblade.modules.admin.pojo.vo.PFPTokenDetailVo;
 import org.springblade.modules.admin.pojo.vo.PFPTokenPageVo;
-import org.springblade.modules.admin.service.BNBService;
 import org.springblade.modules.admin.service.NftService;
 import org.springblade.modules.admin.util.ScoreUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +30,6 @@ import java.util.List;
 @RequestMapping("/api/admin/explor")
 @Api(value = "NFT列表相关接口(Explor)",tags = "NFT列表相关接口(Explor)")
 public class ExplorController {
-
-	@Autowired
-	BNBService bnbService;
 
 	@Autowired
 	MemberMapper memberMapper;

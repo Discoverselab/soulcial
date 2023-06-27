@@ -118,7 +118,7 @@ public class UserScoreServiceImpl implements UserScoreService {
 		//计算level
 		memberPO.countLevel();
 
-		memberPO.initForUpdate();
+		memberPO.setUpdateTime(new Date());
 
 		memberMapper.updateById(memberPO);
 	}

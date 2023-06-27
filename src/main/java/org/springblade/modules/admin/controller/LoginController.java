@@ -17,7 +17,6 @@ import org.springblade.modules.admin.pojo.po.MemberPO;
 import org.springblade.modules.admin.pojo.vo.MemberVo;
 import org.springblade.modules.admin.pojo.vo.UserInfoVo;
 import org.springblade.modules.admin.pojo.vo.UserScoreInfoVo;
-import org.springblade.modules.admin.service.BNBService;
 import org.springblade.modules.admin.service.UserScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

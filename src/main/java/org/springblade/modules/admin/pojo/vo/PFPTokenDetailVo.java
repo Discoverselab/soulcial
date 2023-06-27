@@ -38,6 +38,12 @@ public class PFPTokenDetailVo implements Serializable {
 	private String network;
 
 	/**
+	 *合约创建者地址
+	 */
+	@ApiModelProperty("合约创建者地址（adminAddress）")
+	private String adminAddress;
+
+	/**
 	 *合约地址
 	 */
 	@ApiModelProperty("Contract Address(合约地址)")

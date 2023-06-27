@@ -1,14 +1,12 @@
 package org.springblade.modules.admin.service.impl;
 
 //import com.googlecode.jsonrpc4j.JsonRpcHttpClient;
-import io.undertow.security.idm.Account;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springblade.core.tool.api.R;
 import org.springblade.modules.admin.config.Web3jConfig;
-import org.springblade.modules.admin.service.BNBService;
+import org.springblade.modules.admin.service.ETHService;
 import org.springblade.modules.admin.util.LeaveMsg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,12 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.web3j.abi.FunctionEncoder;
-import org.web3j.abi.datatypes.Function;
 import org.web3j.crypto.*;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.core.methods.response.*;
 import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.StaticGasProvider;
@@ -40,15 +35,18 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
-public class BNBServiceImpl implements BNBService {
+public class ETHServiceImpl implements ETHService {
 
 
     @Autowired
-	@Qualifier("bscWeb3j")
+	@Qualifier("ethWeb3j")
     private Web3j web3j;
 
 	@Value("${spring.profiles.active}")
@@ -74,8 +72,11 @@ public class BNBServiceImpl implements BNBService {
 	//admin钱包地址
 	private static final String adminAddress = "0xe52e23326668117034a0ec6a288e5bb117b7f2c6";
 
-	//PFP合约地址
-	private static final String contractAddress = "0x37a7860b29ffF81CDE90C9F1cB741186D3290A0D";
+	//BSC合约地址
+//	private static final String contractAddress = "0x37a7860b29ffF81CDE90C9F1cB741186D3290A0D";
+
+	//ETH合约地址
+	private static final String contractAddress = "0xa947AF197bD5105d7f7C454139215fc37829cc86";
 
 	public Boolean testApprove(String txid) throws Exception{
 		try {
@@ -160,7 +161,7 @@ public class BNBServiceImpl implements BNBService {
 	}
 
 	@Override
-	public R<Boolean> checkBNBTransacation(String txn, BigDecimal price) {
+	public R<Boolean> checkBNBTransacation(String txn, BigDecimal price,String fromAddress,String toAddress) {
 		try {
 			EthTransaction transaction = web3j.ethGetTransactionByHash(txn).send();
 			if (transaction != null && transaction.getTransaction() != null && transaction.getTransaction().get() != null) {
@@ -170,6 +171,11 @@ public class BNBServiceImpl implements BNBService {
 					if (receipt != null && receipt.getTransactionReceipt() != null
 						&& receipt.getTransactionReceipt().get() != null
 						&& ("0x1").equalsIgnoreCase(receipt.getTransactionReceipt().get().getStatus())) {
+						//校验付款方、收款方
+						if(!tx.getFrom().equalsIgnoreCase(fromAddress) || !tx.getTo().equalsIgnoreCase(toAddress)){
+							log.info("付款方、收款方 不正确：from="+tx.getFrom() + ";to="+tx.getTo());
+							return R.data(false);
+						}
 
 						BigInteger value = tx.getValue();
 
@@ -639,8 +645,8 @@ public class BNBServiceImpl implements BNBService {
 			RawTransaction rawTransaction = RawTransaction.createEtherTransaction(
 				nonce, gasPrice, maxGas, toAddress, value);
 
-			//TODO BNB测试链
-			Long chainId = Web3jConfig.BSC_CHAIN_ID_TEST;
+			//TODO ETH测试链
+			Long chainId = Web3jConfig.ETH_SEPOLIA_CHAIN_ID;
 
 			byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, chainId, credentials);
 			String hexValue = Numeric.toHexString(signedMessage);

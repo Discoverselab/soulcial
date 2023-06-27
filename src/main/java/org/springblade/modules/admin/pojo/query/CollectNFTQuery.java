@@ -26,4 +26,8 @@ public class CollectNFTQuery implements Serializable {
 	@ApiModelProperty("转账BNB的交易流水号，先随便传未链上校验")
 	private String txn;
 
+	@NotBlank
+	@ApiModelProperty("支出BNB的钱包地址")
+	private String payAddress;
+
 }

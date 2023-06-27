@@ -19,7 +19,7 @@ import org.springblade.modules.admin.pojo.po.*;
 import org.springblade.modules.admin.pojo.query.FollowUserQuery;
 import org.springblade.modules.admin.pojo.query.UserStreamIdQurey;
 import org.springblade.modules.admin.pojo.vo.*;
-import org.springblade.modules.admin.service.BNBService;
+import org.springblade.modules.admin.service.ETHService;
 import org.springblade.modules.admin.service.NftService;
 import org.springblade.modules.admin.service.UserScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ import java.util.List;
 public class HomeController {
 
 	@Autowired
-	BNBService bnbService;
+	ETHService ethService;
 
 	@Autowired
 	MemberMapper memberMapper;
@@ -421,9 +421,9 @@ public class HomeController {
 	@PostMapping("/testApprove")
 	@ApiOperation(value = "testApprove")
 	public R testApprove(@RequestParam(value = "txid",required = false)String txid) throws Exception{
-		Boolean checkNFTOwner = bnbService.checkNFTOwner("0x3d4289432e7B7DE5Ac146f51f7eA48Be8F20341f", 27L);
+		Boolean checkNFTOwner = ethService.checkNFTOwner("0x3d4289432e7B7DE5Ac146f51f7eA48Be8F20341f", 27L);
 		System.out.println("checkNFTOwner:"+checkNFTOwner);
-//		bnbService.approveTransferNFT("0xAd028d3bF652ddab9a7f46d73A20eE24C672e656","0x3d4289432e7B7DE5Ac146f51f7eA48Be8F20341f",27L);
+//		ethService.approveTransferNFT("0xAd028d3bF652ddab9a7f46d73A20eE24C672e656","0x3d4289432e7B7DE5Ac146f51f7eA48Be8F20341f",27L);
 		return null;
 	}
 

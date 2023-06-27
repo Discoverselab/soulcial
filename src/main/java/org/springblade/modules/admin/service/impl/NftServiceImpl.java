@@ -422,6 +422,9 @@ public class NftServiceImpl implements NftService {
 		pfpTokenPO.setPrice(null);
 
 		pfpTokenPO.initForUpdate();
+		//设置最新成交价
+		pfpTokenPO.setLastSale(pfpTransactionPO.getListPrice());
+		pfpTokenPO.setLastSaleTime(new Date());
 
 		pfpTokenMapper.updateById(pfpTokenPO);
 

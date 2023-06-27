@@ -217,4 +217,10 @@ public class PFPTokenDetailVo implements Serializable {
 	@ApiModelProperty("是否为自己持有的：0-否 1-是")
 	private Integer isMineOwner;
 
+	@ApiModelProperty("上次交易价格（Last Sale）")
+	private BigDecimal lastSale;
+
+	@ApiModelProperty("最高出价（Best Pick）")
+	private BigDecimal bestPick;
+
 }

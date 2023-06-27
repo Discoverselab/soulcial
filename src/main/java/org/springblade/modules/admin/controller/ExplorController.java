@@ -126,6 +126,9 @@ public class ExplorController {
 		result.setOwnerUserName(ownerUser.getUserName());
 		result.setOwnerUserAvatar(ownerUser.getAvatar());
 
+		//TODO 设置最高出价
+		result.setBestPick(null);
+
 		result.setIsMineMint(0);
 		result.setIsMineOwner(0);
 

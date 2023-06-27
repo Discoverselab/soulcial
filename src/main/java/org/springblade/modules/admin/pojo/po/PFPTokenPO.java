@@ -144,6 +144,10 @@ public class PFPTokenPO extends BasePO {
 	private Integer art;
 	private Integer courage;
 
+	private BigDecimal lastSale;
+
+	private Date lastSaleTime;
+
 	public void countLevelScore(){
 		int courage = this.courage == null ? 0 : this.courage;
 		int charisma = this.charisma == null ? 0 : this.charisma;
@@ -168,5 +172,4 @@ public class PFPTokenPO extends BasePO {
 			this.level = 5;
 		}
 	}
-
 }

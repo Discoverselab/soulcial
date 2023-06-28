@@ -48,4 +48,10 @@ public class UserScoreInfoVo implements Serializable {
 
 	@ApiModelProperty("是否为注册：0-否 1-是")
 	private Integer isRegister;
+
+	/**
+	 * lens账号，多个用逗号隔开
+	 */
+	@ApiModelProperty("lens账号，多个用逗号隔开")
+	private String lensProfile;
 }

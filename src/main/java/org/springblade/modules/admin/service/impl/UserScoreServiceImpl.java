@@ -66,7 +66,8 @@ public class UserScoreServiceImpl implements UserScoreService {
 		//getLensProfileIdByAddress
 		String lensProfile = getLensProfileIdByAddress(address);
 		if(lensProfile != null && lensProfile.length() > 0){
-			memberPO.setLensProfile(lensProfile);
+			//TODO 正式网的时候放开该注释
+//			memberPO.setLensProfile(lensProfile);
 		}
 
 		//getLensFollowing

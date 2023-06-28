@@ -82,7 +82,8 @@ public class LoginController {
 	@PostMapping("/login")
 	@ApiOperation(value = "登录")
 	public R<MemberVo> login(@RequestParam("address") String address,
-							 @RequestParam(value = "dataverse-streamId",required = false) String streamId,
+							 @ApiParam(value = "lens账号lensProfile，多个用逗号隔开") @RequestParam(value = "lensProfile",required = false) String lensProfile,
+							 @ApiParam(value = "dataverse-streamId") @RequestParam(value = "dataverse-streamId",required = false) String streamId,
 							 @ApiParam(value = "登录类型：0-钱包 1-particle",required = true) @RequestParam("loginType") Integer loginType,
 							 @ApiParam(value = "particleType类型：传数字每个数字分别代表一种类型",required = false) @RequestParam(value = "particleType",required = false) Integer particleType) {
 		if(loginType == 1 && particleType == null){
@@ -96,6 +97,12 @@ public class LoginController {
 
 		if(memberPO == null){
 			memberPO = createUser(address, loginType, particleType);
+		}
+
+		//TODO 目前暂定由前端传入lensProfile
+		if(StringUtil.isNotBlank(lensProfile)){
+			memberPO.setLensProfile(lensProfile);
+			memberMapper.updateById(memberPO);
 		}
 
 		Long userId = memberPO.getId();

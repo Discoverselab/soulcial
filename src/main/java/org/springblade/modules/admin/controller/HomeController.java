@@ -17,6 +17,7 @@ import org.springblade.modules.admin.pojo.enums.NFTColorEnum;
 import org.springblade.modules.admin.pojo.enums.UserTagsEnum;
 import org.springblade.modules.admin.pojo.po.*;
 import org.springblade.modules.admin.pojo.query.FollowUserQuery;
+import org.springblade.modules.admin.pojo.query.IdQurey;
 import org.springblade.modules.admin.pojo.query.UserStreamIdQurey;
 import org.springblade.modules.admin.pojo.vo.*;
 import org.springblade.modules.admin.service.ETHService;
@@ -364,6 +365,27 @@ public class HomeController {
 		}
 	}
 
+	@PostMapping("/cancelList")
+	@ApiOperation(value = "取消NFT的出价(cancelList)")
+	public R cancelList(@Valid  @RequestBody IdQurey idQurey) {
+		Long tokenId = idQurey.getId();
+
+		Long userId = StpUtil.getLoginIdAsLong();
+		PFPTokenPO pfpTokenPO = pfpTokenMapper.selectById(tokenId);
+		if(pfpTokenPO != null && pfpTokenPO.getMintStatus() == 1 && pfpTokenPO.getOwnerUserId().equals(userId) && pfpTokenPO.getIsDeleted() == 0){
+
+			pfpTokenPO.setPrice(null);
+			pfpTokenPO.setPriceTime(new Date());
+			pfpTokenPO.initForUpdate();
+
+			pfpTokenMapper.updateById(pfpTokenPO);
+			return R.success("Cancel list success");
+		}else {
+			//TODO 翻译
+			return R.fail("请刷新后重试");
+		}
+	}
+
 	@PostMapping("/listNFT")
 	@ApiOperation(value = "设置NFT出售价格：不授权(approve)")
 	public R<Page<PFPTokenMinePageVo>> listNFT(@Valid  @RequestBody ListNFTVo listNFTVo) {
@@ -402,10 +424,10 @@ public class HomeController {
 			//是当前用户的资产
 
 			//校验approve
-			R result = nftService.checkApprove(tokenId,userId);
-			if(result.getCode() != 200){
-				return result;
-			}
+//			R result = nftService.checkApprove(tokenId,userId);
+//			if(result.getCode() != 200){
+//				return result;
+//			}
 
 			pfpTokenPO.setPrice(price);
 			pfpTokenPO.setPriceTime(new Date());

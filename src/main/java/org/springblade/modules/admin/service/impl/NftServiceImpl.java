@@ -250,6 +250,7 @@ public class NftServiceImpl implements NftService {
 		pfpTokenPO.setOwnerAddress(toAddress);
 		pfpTokenPO.setOwnerUserId(userId);
 		pfpTokenPO.setPrice(null);
+		pfpTokenPO.setPriceTime(null);
 
 		pfpTokenPO.initForUpdate();
 
@@ -420,6 +421,7 @@ public class NftServiceImpl implements NftService {
 		pfpTokenPO.setOwnerAddress(toAddress);
 		pfpTokenPO.setOwnerUserId(userId);
 		pfpTokenPO.setPrice(null);
+		pfpTokenPO.setPriceTime(null);
 
 		pfpTokenPO.initForUpdate();
 		//设置最新成交价

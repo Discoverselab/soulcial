@@ -512,8 +512,8 @@ public class CollectInfoController {
 		double x = 0;
 		if(count == 0){
 			x = 20;
-		}else if(count < 100){
-			x = Math.log(count) * 13 + 40;
+		}else if(count < 20){
+			x = Math.log(count) * 20 + 40;
 			if(x > 100){
 				x = 100;
 			}
@@ -566,9 +566,9 @@ public class CollectInfoController {
 		int count1 = lensFollowing + ccFollowing;
 		double f1 = 0;
 		if(count1 == 0){
-			f1 = 20;
-		}else if(count1 < 1800){
-			f1 = Math.log(count1) * 8 + 40;
+			f1 = 30;
+		}else if(count1 < 28){
+			f1 = Math.log(count1) * 18 + 40;
 			if(f1 > 100){
 				f1 = 100;
 			}
@@ -578,7 +578,8 @@ public class CollectInfoController {
 
 		log.info("f1:"+f1);
 		//TODO
-		double x = f1 * 0.2;
+//		double x = f1 * 0.2;
+		double x = f1;
 
 		log.info("score:"+(int)x);
 
@@ -604,9 +605,9 @@ public class CollectInfoController {
 		int count1 = lensFollows + ccFollows;
 		double f1 = 0;
 		if(count1 == 0){
-			f1 = 10;
-		}else if(count1 < 100*10000){
-			f1 = Math.log(count1) * 6 + 18;
+			f1 = 30;
+		}else if(count1 < 28){
+			f1 = Math.log(count1) * 18 + 40;
 			if(f1 > 100){
 				f1 = 100;
 			}
@@ -632,7 +633,8 @@ public class CollectInfoController {
 		}
 		log.info("f2:"+f2);
 
-		double x = f1 * 0.8 + f2 * 0.2;
+//		double x = f1 * 0.8 + f2 * 0.2;
+		double x = f1;
 
 		log.info("score:"+(int)x);
 

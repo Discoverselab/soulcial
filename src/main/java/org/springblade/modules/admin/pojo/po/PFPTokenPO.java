@@ -1,11 +1,10 @@
 package org.springblade.modules.admin.pojo.po;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.ibatis.type.JdbcType;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -115,11 +114,13 @@ public class PFPTokenPO extends BasePO {
 	/**
 	 *出售价格
 	 */
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
 	private BigDecimal price;
 
 	/**
 	 *设置出售价格的时间
 	 */
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
 	private Date priceTime;
 
 	/**

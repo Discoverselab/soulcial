@@ -44,7 +44,8 @@ public class Web3jConfig  {
 	/**
 	 * ETH_SEPOLIA测试网RPC
 	 */
-	public static final String ETH_SEPOLIA_RPC = "https://eth-sepolia.g.alchemy.com/v2/VAaFGT2RIlmQ-BLDfaWS9YXwDEZE-aCr";
+//	public static final String ETH_SEPOLIA_RPC = "https://eth-sepolia.g.alchemy.com/v2/VAaFGT2RIlmQ-BLDfaWS9YXwDEZE-aCr";
+	public static final String ETH_SEPOLIA_RPC = "https://eth-sepolia.g.alchemy.com/v2/G0t3sPN8quwUxWAPpuQA8p2lDBR3olhM";
 
 	/**
 	 * ETH_SEPOLIA测试网链ID

@@ -55,8 +55,8 @@ public class ETHServiceImpl implements ETHService {
 	@Value("${spring.profiles.active}")
 	List<String> activeProfiles;
 
-	@Autowired
-	RedisTemplate<String,Object> redisTemplate;
+//	@Autowired
+//	RedisTemplate<String,Object> redisTemplate;
 
 //	private final static BigInteger gasLimit = new BigInteger("1000000");
 	private final static BigInteger gasLimit = Contract.GAS_LIMIT;
@@ -129,7 +129,15 @@ public class ETHServiceImpl implements ETHService {
 		try {
 
 			//加載NFT
-			LeaveMsg contract = loadAdminContract();
+//			LeaveMsg contract = loadAdminContract();
+
+			Credentials credentials = loadCredentials();
+			//獲取gasprice
+			BigInteger gasPrice = getGasPrice();
+			log.info("獲取gasPrice成功：" + gasPrice);
+			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
+			//加載NFT
+			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
 			log.info("加載NFT成功：" + contract);
 
 			BigInteger token_id = new BigInteger(tokenId.toString());
@@ -201,11 +209,20 @@ public class ETHServiceImpl implements ETHService {
 			System.out.println("toAddress:"+toAddress);
 			System.out.println("tokenId:"+tokenId);
 
-			LeaveMsg leaveMsg = loadAdminContract();
+//			LeaveMsg leaveMsg = loadAdminContract();
+			Credentials credentials = loadCredentials();
+			//獲取gasprice
+			BigInteger gasPrice = getGasPrice();
+			log.info("獲取gasPrice成功：" + gasPrice);
+			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
+			//加載NFT
+			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
+			log.info("加載NFT成功：" + contract);
+
 			BigInteger token_id = new BigInteger(tokenId.toString());
 
 			//轉賬
-			TransactionReceipt receipt = leaveMsg.transferFrom(fromAddress, toAddress, token_id).send();
+			TransactionReceipt receipt = contract.transferFrom(fromAddress, toAddress, token_id).send();
 			//獲取交易hash
 			String transactionHash = receipt.getTransactionHash();
 			log.info("approveTransferNFT:transactionHash："+transactionHash);
@@ -223,10 +240,20 @@ public class ETHServiceImpl implements ETHService {
 	@Override
 	public Boolean checkNFTOwner(String toAddress, Long tokenId) {
 		try {
-			LeaveMsg leaveMsg = loadAdminContract();
+//			LeaveMsg leaveMsg = loadAdminContract();
+
+			Credentials credentials = loadCredentials();
+			//獲取gasprice
+			BigInteger gasPrice = getGasPrice();
+			log.info("獲取gasPrice成功：" + gasPrice);
+			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
+			//加載NFT
+			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
+			log.info("加載NFT成功：" + contract);
+
 			BigInteger token_id = new BigInteger(tokenId.toString());
 
-			String owner = leaveMsg.ownerOf(token_id).send();
+			String owner = contract.ownerOf(token_id).send();
 			if(toAddress.equalsIgnoreCase(owner)){
 				return true;
 			}
@@ -467,8 +494,17 @@ public class ETHServiceImpl implements ETHService {
 	@Override
 	public synchronized R<String> mintNFT(String adminAddress, String contractAddress, String adminJsonFile, String toAddress,Long tokenId) {
 		try {
-			LeaveMsg contract = loadAdminContract();
+//			LeaveMsg contract = loadAdminContract();
+
+			Credentials credentials = loadCredentials();
+			//獲取gasprice
+			BigInteger gasPrice = getGasPrice();
+			log.info("獲取gasPrice成功：" + gasPrice);
+			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
+			//加載NFT
+			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
 			log.info("加載NFT成功：" + contract);
+
 			//校驗擁有者
 //			TransactionReceipt send = contract.admin().send();
 
@@ -502,10 +538,10 @@ public class ETHServiceImpl implements ETHService {
 
 	private LeaveMsg loadAdminContract() throws Exception{
 
-		LeaveMsg contract = (LeaveMsg) redisTemplate.opsForValue().get("contract");
-		if(contract != null){
-			return contract;
-		}
+//		LeaveMsg contract = (LeaveMsg) redisTemplate.opsForValue().get("contract");
+//		if(contract != null){
+//			return contract;
+//		}
 
 		//獲取密鑰
 		Credentials credentials = loadCredentials();
@@ -514,10 +550,10 @@ public class ETHServiceImpl implements ETHService {
 		log.info("獲取gasPrice成功：" + gasPrice);
 		ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
 		//加載NFT
-		contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
+		LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
 		log.info("加載NFT成功：" + contract);
 
-		redisTemplate.opsForValue().set("contract",contract);
+//		redisTemplate.opsForValue().set("contract",contract);
 
 		return contract;
 	}

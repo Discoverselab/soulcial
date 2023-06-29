@@ -120,7 +120,7 @@ public class HomeController {
 			.eq(MemberFollowPO::getSubscribeUserId, userId));
 
 		for (MemberFollowPO x : list) {
-			Long subscribeUserId = x.getSubscribeUserId();
+			Long subscribeUserId = x.getUserId();
 			MemberPO memberPO = memberMapper.selectById(subscribeUserId);
 
 			SubscribeFollowUserVo subscribeFollowUserVo = new SubscribeFollowUserVo();

@@ -22,6 +22,7 @@ import org.web3j.crypto.*;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.*;
+import org.web3j.tx.Contract;
 import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.StaticGasProvider;
 import org.web3j.utils.Convert;
@@ -51,6 +52,11 @@ public class ETHServiceImpl implements ETHService {
 
 	@Value("${spring.profiles.active}")
 	List<String> activeProfiles;
+
+//	private final static BigInteger gasLimit = new BigInteger("1000000");
+	private final static BigInteger gasLimit = Contract.GAS_LIMIT;
+
+	private final static BigInteger gasPrice = Contract.GAS_PRICE;
 
 
 //    @Autowired
@@ -131,7 +137,6 @@ public class ETHServiceImpl implements ETHService {
 			//獲取gasprice
 			BigInteger gasPrice = getGasPrice();
 			log.info("獲取gasPrice成功：" + gasPrice);
-			BigInteger gasLimit = new BigInteger("1000000");
 			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
 			//加載NFT
 			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
@@ -294,6 +299,10 @@ public class ETHServiceImpl implements ETHService {
     public BigInteger getGasPrice() throws IOException {
         EthGasPrice gasPrice = web3j.ethGasPrice().send();
         BigInteger baseGasPrice = gasPrice.getGasPrice();
+
+		//TODO ETH测试链固定gasPrice
+		baseGasPrice = Contract.GAS_PRICE;
+
 //        return new BigDecimal(baseGasPrice).multiply(coin.getGasSpeedUp()).toBigInteger();
         return baseGasPrice;
     }
@@ -374,11 +383,6 @@ public class ETHServiceImpl implements ETHService {
 //        }
 //        return EthConvert.fromWei(new BigDecimal(balance), contract.getUnit());
 //    }
-
-    public BigDecimal getMinerFee(BigInteger gasLimit) throws IOException {
-        BigDecimal fee = new BigDecimal(getGasPrice().multiply(gasLimit));
-        return Convert.fromWei(fee, Convert.Unit.ETHER);
-    }
 
     public Boolean isTransactionSuccess(String txid) throws IOException {
         EthTransaction transaction = web3j.ethGetTransactionByHash(txid).send();
@@ -480,7 +484,7 @@ public class ETHServiceImpl implements ETHService {
 			log.info("獲取gasPrice成功：" + gasPrice);
 			//設置gaslimt(mint大概需要130000，設置為1000000)
 			//正式網需要70000 （0.0007  約等於1.3RMB）
-			BigInteger gasLimit = new BigInteger("1000000");
+
 			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
 			//判斷餘額是否足夠最小手續費0.007
 //			BigDecimal balance = bnbService.getBalance(credentials.getAddress());
@@ -551,7 +555,6 @@ public class ETHServiceImpl implements ETHService {
 			log.info("獲取gasPrice成功：" + gasPrice);
 			//設置gaslimt(mint大概需要130000，設置為1000000)
 			//正式網需要70000 （0.0007  約等於1.3RMB）
-			BigInteger gasLimit = new BigInteger("1000000");
 			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
 			//判斷餘額是否足夠最小手續費0.007
 //			BigDecimal balance = bnbService.getBalance(credentials.getAddress());
@@ -608,7 +611,6 @@ public class ETHServiceImpl implements ETHService {
 		//獲取gasprice
 		BigInteger gasPrice = getGasPrice();
 		log.info("獲取gasPrice成功：" + gasPrice);
-		BigInteger gasLimit = new BigInteger("1000000");
 		ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
 		//加載NFT
 		LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
@@ -640,10 +642,9 @@ public class ETHServiceImpl implements ETHService {
 			BigInteger gasPrice = getGasPrice();
 			BigInteger value = Convert.toWei(amount, Convert.Unit.ETHER).toBigInteger();
 
-			BigInteger maxGas = new BigInteger("1000000");
-			log.info("value={},gasPrice={},gasLimit={},nonce={},address={}", value, gasPrice, maxGas, nonce, toAddress);
+			log.info("value={},gasPrice={},gasLimit={},nonce={},address={}", value, gasPrice, gasLimit, nonce, toAddress);
 			RawTransaction rawTransaction = RawTransaction.createEtherTransaction(
-				nonce, gasPrice, maxGas, toAddress, value);
+				nonce, gasPrice, gasLimit, toAddress, value);
 
 			//TODO ETH测试链
 			Long chainId = Web3jConfig.ETH_SEPOLIA_CHAIN_ID;

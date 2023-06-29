@@ -103,44 +103,59 @@ public class HomeController {
 
 	@GetMapping("/getFollowers")
 	@ApiOperation(value = "被关注列表（FOLLOWERS）")
-	public R<List<SubscribeFollowUserVo>> getFollowers() {
+	public R<List<SubscribeFollowUserVo>> getFollowers(@ApiParam("用户id：不传的话默认查自己，不登录时查自己会报错")@RequestParam(value = "userId",required = false) Long userId) {
 
 		List<SubscribeFollowUserVo> result = new ArrayList<>();
-		Long userId = StpUtil.getLoginIdAsLong();
+		//是否是其他人
+		boolean isOther = true;
+
+		if(userId == null){
+			//是本人
+			isOther = false;
+			userId = StpUtil.getLoginIdAsLong();
+		}
 		//关注
 		List<MemberFollowPO> list = memberFollowMapper.selectList(new LambdaQueryWrapper<MemberFollowPO>()
 			.eq(BasePO::getIsDeleted, 0)
 			.eq(MemberFollowPO::getSubscribeUserId, userId));
 
-		list.forEach(x->{
+		for (MemberFollowPO x : list) {
 			Long subscribeUserId = x.getSubscribeUserId();
 			MemberPO memberPO = memberMapper.selectById(subscribeUserId);
 
 			SubscribeFollowUserVo subscribeFollowUserVo = new SubscribeFollowUserVo();
 			BeanUtil.copyProperties(memberPO,subscribeFollowUserVo);
 
-			//查询是否互关
-			MemberFollowPO memberFollowPO = memberFollowMapper.selectOne(new LambdaQueryWrapper<MemberFollowPO>()
-				.eq(BasePO::getIsDeleted, 0)
-				.eq(MemberFollowPO::getUserId, userId)
-				.eq(MemberFollowPO::getSubscribeUserId, x.getUserId()));
-			if(memberFollowPO != null){
-				//互关
-				subscribeFollowUserVo.setIsFollow(1);
+			//是本人的时候，查询是否互关
+			if(!isOther){
+				//查询是否互关
+				MemberFollowPO memberFollowPO = memberFollowMapper.selectOne(new LambdaQueryWrapper<MemberFollowPO>()
+					.eq(BasePO::getIsDeleted, 0)
+					.eq(MemberFollowPO::getUserId, userId)
+					.eq(MemberFollowPO::getSubscribeUserId, x.getUserId()));
+				if(memberFollowPO != null){
+					//互关
+					subscribeFollowUserVo.setIsFollow(1);
+				}else {
+					//未互关
+					subscribeFollowUserVo.setIsFollow(0);
+				}
 			}
 
 			result.add(subscribeFollowUserVo);
-		});
+		}
 
 		return R.data(result);
 	}
 
 	@GetMapping("/getFollowing")
 	@ApiOperation(value = "关注列表（FOLLOWING）")
-	public R<List<FollowUserVo>> getFollowing() {
+	public R<List<FollowUserVo>> getFollowing(@ApiParam("用户id：不传的话默认查自己，不登录时查自己会报错")@RequestParam(value = "userId",required = false) Long userId) {
 
 		List<FollowUserVo> result = new ArrayList<>();
-		Long userId = StpUtil.getLoginIdAsLong();
+		if(userId == null){
+			userId = StpUtil.getLoginIdAsLong();
+		}
 		//关注
 		List<MemberFollowPO> list = memberFollowMapper.selectList(new LambdaQueryWrapper<MemberFollowPO>()
 			.eq(BasePO::getIsDeleted, 0)
@@ -184,6 +199,18 @@ public class HomeController {
 
 		userInfoVo.setIsLoginUser(getIsLoginUser(userId));
 
+		//获取被关注人数
+		Long followers = memberFollowMapper.selectCount(new LambdaQueryWrapper<MemberFollowPO>()
+			.eq(BasePO::getIsDeleted, 0)
+			.eq(MemberFollowPO::getSubscribeUserId, userId));
+		userInfoVo.setFollowers(followers);
+
+		//获取关注人数
+		Long following = memberFollowMapper.selectCount(new LambdaQueryWrapper<MemberFollowPO>()
+			.eq(BasePO::getIsDeleted, 0)
+			.eq(MemberFollowPO::getUserId, userId));
+		userInfoVo.setFollowing(following);
+
 		return R.data(userInfoVo);
 	}
 
@@ -208,22 +235,6 @@ public class HomeController {
 
 		return getUserInfo(null);
 	}
-
-//	@PostMapping("/setUserStreamId")
-//	@ApiOperation(value = "设置dataverse的stream_id")
-//	public R setUserStreamId(@Valid @RequestBody UserStreamIdQurey userStreamIdQurey) {
-//
-//		Long userId = StpUtil.getLoginIdAsLong();
-//		MemberPO memberPO = memberMapper.selectById(userId);
-//		if(StringUtil.isNotBlank(memberPO.getStreamId())){
-//			//TODO 翻译
-//			return R.fail("该用户已设置过stream_id");
-//		}
-//		memberPO.setStreamId(userStreamIdQurey.getStreamId());
-//		memberMapper.updateById(memberPO);
-//
-//		return R.success("success");
-//	}
 
 	@PostMapping("/setUserTags")
 	@ApiOperation(value = "设置用户标签(1到12,多个用逗号隔开)")

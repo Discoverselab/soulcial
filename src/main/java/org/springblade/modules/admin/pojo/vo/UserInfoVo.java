@@ -81,4 +81,10 @@ public class UserInfoVo implements Serializable {
 	 */
 	@ApiModelProperty("lens账号，多个用逗号隔开")
 	private String lensProfile;
+
+	@ApiModelProperty("被关注人数：followers")
+	Long followers = 0L;
+
+	@ApiModelProperty("关注人数：following")
+	Long following = 0L;
 }

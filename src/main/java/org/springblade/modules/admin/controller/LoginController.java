@@ -64,8 +64,13 @@ public class LoginController {
 
 		Long userId = memberPO.getId();
 
+		//如果refreshScore为空，默认刷分
+		if(refreshScore == null){
+			refreshScore = 1;
+		}
+
 		//是否刷新分数
-		if(refreshScore != null && refreshScore != 1){
+		if(refreshScore == 1){
 			if(memberPO.getCharisma() == null){
 				//刷新分数
 				userScoreService.updateUserScore(userId);

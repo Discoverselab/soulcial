@@ -83,6 +83,11 @@ public class HomeController {
 				memberFollowMapper.deleteById(memberFollowPO.getId());
 			}
 		}else {
+			if(userId.equals(subscribeUserId)){
+				//自己不能关注自己
+				return R.fail("can not follow yourself");
+			}
+
 			//关注
 			MemberFollowPO memberFollowPO = memberFollowMapper.selectOne(new LambdaQueryWrapper<MemberFollowPO>()
 				.eq(BasePO::getIsDeleted, 0)

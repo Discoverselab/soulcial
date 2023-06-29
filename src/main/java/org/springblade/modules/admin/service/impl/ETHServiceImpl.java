@@ -11,6 +11,8 @@ import org.springblade.modules.admin.util.LeaveMsg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -52,6 +54,9 @@ public class ETHServiceImpl implements ETHService {
 
 	@Value("${spring.profiles.active}")
 	List<String> activeProfiles;
+
+	@Autowired
+	RedisTemplate<String,Object> redisTemplate;
 
 //	private final static BigInteger gasLimit = new BigInteger("1000000");
 	private final static BigInteger gasLimit = Contract.GAS_LIMIT;
@@ -122,24 +127,9 @@ public class ETHServiceImpl implements ETHService {
 	@Override
 	public R checkApprove(Long tokenId, String address) {
 		try {
-			String coinKeystorePath = null;
-			if (activeProfiles != null && activeProfiles.size() > 0) {
-				if (activeProfiles.get(0).equalsIgnoreCase("dev")) {
-					coinKeystorePath = coinKeystorePathWindows;
-				} else {
-					coinKeystorePath = coinKeystorePathLinux;
-				}
-			}
-			//獲取密鑰文件
-			String walletFile = coinKeystorePath + "/" + coinWalletFile;
-			//獲取密鑰
-			Credentials credentials = WalletUtils.loadCredentials(coinCreatePwd, walletFile);
-			//獲取gasprice
-			BigInteger gasPrice = getGasPrice();
-			log.info("獲取gasPrice成功：" + gasPrice);
-			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
+
 			//加載NFT
-			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
+			LeaveMsg contract = loadAdminContract();
 			log.info("加載NFT成功：" + contract);
 
 			BigInteger token_id = new BigInteger(tokenId.toString());
@@ -297,11 +287,11 @@ public class ETHServiceImpl implements ETHService {
     }
 
     public BigInteger getGasPrice() throws IOException {
-        EthGasPrice gasPrice = web3j.ethGasPrice().send();
-        BigInteger baseGasPrice = gasPrice.getGasPrice();
+//        EthGasPrice gasPrice = web3j.ethGasPrice().send();
+//        BigInteger baseGasPrice = gasPrice.getGasPrice();
 
 		//TODO ETH测试链固定gasPrice
-		baseGasPrice = Contract.GAS_PRICE;
+		BigInteger baseGasPrice = Contract.GAS_PRICE;
 
 //        return new BigDecimal(baseGasPrice).multiply(coin.getGasSpeedUp()).toBigInteger();
         return baseGasPrice;
@@ -464,67 +454,6 @@ public class ETHServiceImpl implements ETHService {
         return map;
     }
 
-	@Override
-	public R mintPFP(String toAddress) {
-		try {
-			String coinKeystorePath = null;
-			if(activeProfiles != null && activeProfiles.size() > 0){
-				if(activeProfiles.get(0).equalsIgnoreCase("dev")){
-					coinKeystorePath = coinKeystorePathWindows;
-				}else {
-					coinKeystorePath = coinKeystorePathLinux;
-				}
-			}
-			//獲取密鑰文件
-			String walletFile = coinKeystorePath + "/" + coinWalletFile;
-			//獲取密鑰
-			Credentials credentials = WalletUtils.loadCredentials(coinCreatePwd, walletFile);
-			//獲取gasprice
-			BigInteger gasPrice = getGasPrice();
-			log.info("獲取gasPrice成功：" + gasPrice);
-			//設置gaslimt(mint大概需要130000，設置為1000000)
-			//正式網需要70000 （0.0007  約等於1.3RMB）
-
-			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
-			//判斷餘額是否足夠最小手續費0.007
-//			BigDecimal balance = bnbService.getBalance(credentials.getAddress());
-//			if (balance.compareTo(new BigDecimal("0.007")) < 0) {
-//				return new MessageResult(500, "賬戶餘額不足，請先充值");
-//			}
-			//加載NFT
-			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
-			log.info("加載NFT成功：" + contract);
-			//校驗擁有者
-//			TransactionReceipt send = contract.admin().send();
-
-			System.out.println("adminAddress:" + adminAddress);
-//			System.out.println("fromAddress:" + fromAddress);
-			//System.out.println("approvedAddress:"+approvedAddress);
-//			if (!adminAddress.equals(fromAddress)) {
-//				logger.info("fromAddress不是admin");
-//				return new MessageResult(500, "付款地址不是admin");
-//			}
-			BigInteger productId = new BigInteger("11030023230606001");
-			//鑄造
-			log.info("調用safeMint前：toAddress=" + toAddress + ";productId=" + productId);
-			TransactionReceipt receipt = contract.safeMint(toAddress, productId).send();
-			log.info("調用safeMint成功：" + receipt);
-			//TODO 判斷鑄造狀態是否成功
-			//獲取交易hash
-			String transactionHash = receipt.getTransactionHash();
-			log.info("==============NFT鑄造生成交易hash：" + transactionHash);
-			if (transactionHash == null) {
-				System.out.println("铸造失败");
-			} else {
-				System.out.println("铸造成功" + transactionHash);
-//				return MessageResult.success(transactionHash);
-			}
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-
-		return null;
-	}
 
 	@Override
 	public String createAdminWallet() {
@@ -538,31 +467,7 @@ public class ETHServiceImpl implements ETHService {
 	@Override
 	public synchronized R<String> mintNFT(String adminAddress, String contractAddress, String adminJsonFile, String toAddress,Long tokenId) {
 		try {
-			String coinKeystorePath = null;
-			if(activeProfiles != null && activeProfiles.size() > 0){
-				if(activeProfiles.get(0).equalsIgnoreCase("dev")){
-					coinKeystorePath = coinKeystorePathWindows;
-				}else {
-					coinKeystorePath = coinKeystorePathLinux;
-				}
-			}
-			//獲取密鑰文件
-			String walletFile = coinKeystorePath + "/" + adminJsonFile;
-			//獲取密鑰
-			Credentials credentials = WalletUtils.loadCredentials(coinCreatePwd, walletFile);
-			//獲取gasprice
-			BigInteger gasPrice = getGasPrice();
-			log.info("獲取gasPrice成功：" + gasPrice);
-			//設置gaslimt(mint大概需要130000，設置為1000000)
-			//正式網需要70000 （0.0007  約等於1.3RMB）
-			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
-			//判斷餘額是否足夠最小手續費0.007
-//			BigDecimal balance = bnbService.getBalance(credentials.getAddress());
-//			if (balance.compareTo(new BigDecimal("0.007")) < 0) {
-//				return new MessageResult(500, "賬戶餘額不足，請先充值");
-//			}
-			//加載NFT
-			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
+			LeaveMsg contract = loadAdminContract();
 			log.info("加載NFT成功：" + contract);
 			//校驗擁有者
 //			TransactionReceipt send = contract.admin().send();
@@ -596,6 +501,28 @@ public class ETHServiceImpl implements ETHService {
 	}
 
 	private LeaveMsg loadAdminContract() throws Exception{
+
+		LeaveMsg contract = (LeaveMsg) redisTemplate.opsForValue().get("contract");
+		if(contract != null){
+			return contract;
+		}
+
+		//獲取密鑰
+		Credentials credentials = loadCredentials();
+		//獲取gasprice
+		BigInteger gasPrice = getGasPrice();
+		log.info("獲取gasPrice成功：" + gasPrice);
+		ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
+		//加載NFT
+		contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
+		log.info("加載NFT成功：" + contract);
+
+		redisTemplate.opsForValue().set("contract",contract);
+
+		return contract;
+	}
+
+	private Credentials loadCredentials() throws Exception{
 		String coinKeystorePath = null;
 		if (activeProfiles != null && activeProfiles.size() > 0) {
 			if (activeProfiles.get(0).equalsIgnoreCase("dev")) {
@@ -604,35 +531,19 @@ public class ETHServiceImpl implements ETHService {
 				coinKeystorePath = coinKeystorePathLinux;
 			}
 		}
+
 		//獲取密鑰文件
 		String walletFile = coinKeystorePath + "/" + coinWalletFile;
 		//獲取密鑰
 		Credentials credentials = WalletUtils.loadCredentials(coinCreatePwd, walletFile);
-		//獲取gasprice
-		BigInteger gasPrice = getGasPrice();
-		log.info("獲取gasPrice成功：" + gasPrice);
-		ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
-		//加載NFT
-		LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
-		log.info("加載NFT成功：" + contract);
-		return contract;
+
+		return credentials;
 	}
 
 	@Override
 	public R<String> transferBNB(String toAddress,BigDecimal amount) {
 		try {
-			String coinKeystorePath = null;
-			if (activeProfiles != null && activeProfiles.size() > 0) {
-				if (activeProfiles.get(0).equalsIgnoreCase("dev")) {
-					coinKeystorePath = coinKeystorePathWindows;
-				} else {
-					coinKeystorePath = coinKeystorePathLinux;
-				}
-			}
-			//獲取密鑰文件
-			String walletFile = coinKeystorePath + "/" + coinWalletFile;
-			//獲取密鑰
-			Credentials credentials = WalletUtils.loadCredentials(coinCreatePwd, walletFile);
+			Credentials credentials = loadCredentials();
 
 			EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(credentials.getAddress(), DefaultBlockParameterName.PENDING)
 				.sendAsync()

@@ -6,8 +6,6 @@ import java.math.BigDecimal;
 
 public interface ETHService {
 
-	R mintPFP(String toAddress);
-
 	String createAdminWallet();
 
 	R<String> mintNFT(String adminAddress, String contractAddress, String adminJsonFile, String toAddress,Long tokenId);

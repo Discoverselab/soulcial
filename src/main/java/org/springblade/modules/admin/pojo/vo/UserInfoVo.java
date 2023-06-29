@@ -76,6 +76,9 @@ public class UserInfoVo implements Serializable {
 	@ApiModelProperty("是否为当前登录用户:0-否 1-是")
 	Integer isLoginUser;
 
+	@ApiModelProperty("是否已关注该用户:0-否 1-是")
+	Integer isFollow = 0;
+
 	/**
 	 * lens账号，多个用逗号隔开
 	 */

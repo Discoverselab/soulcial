@@ -103,7 +103,7 @@ public class HomeController {
 
 	@GetMapping("/getFollowers")
 	@ApiOperation(value = "被关注列表（FOLLOWERS）")
-	public R<List<SubscribeFollowUserVo>> getFollowers(@ApiParam("用户id：不传的话默认查自己，不登录时查自己会报错")@RequestParam(value = "userId",required = false) Long userId) {
+	public R<List<SubscribeFollowUserVo>> getFollowers(@ApiParam("用户id：不传的话默认查自己，不登录时userId必传")@RequestParam(value = "userId",required = false) Long userId) {
 
 		List<SubscribeFollowUserVo> result = new ArrayList<>();
 		//是否是其他人
@@ -150,7 +150,7 @@ public class HomeController {
 
 	@GetMapping("/getFollowing")
 	@ApiOperation(value = "关注列表（FOLLOWING）")
-	public R<List<FollowUserVo>> getFollowing(@ApiParam("用户id：不传的话默认查自己，不登录时查自己会报错")@RequestParam(value = "userId",required = false) Long userId) {
+	public R<List<FollowUserVo>> getFollowing(@ApiParam("用户id：不传的话默认查自己，不登录时userId必传")@RequestParam(value = "userId",required = false) Long userId) {
 
 		List<FollowUserVo> result = new ArrayList<>();
 		if(userId == null){
@@ -188,8 +188,12 @@ public class HomeController {
 
 	@GetMapping("/getUserInfo")
 	@ApiOperation(value = "获取用户信息")
-	public R<UserInfoVo> getUserInfo(@ApiParam("用户id：不传的话默认查自己，不登录时查自己会报错")@RequestParam(value = "userId",required = false) Long userId) {
+	public R<UserInfoVo> getUserInfo(@ApiParam("用户id：不传的话默认查自己，不登录时userId必传")@RequestParam(value = "userId",required = false) Long userId) {
+		//是否是其他人
+		boolean isOther = true;
 		if(userId == null){
+			//是本人
+			isOther = false;
 			userId = StpUtil.getLoginIdAsLong();
 		}
 
@@ -210,6 +214,22 @@ public class HomeController {
 			.eq(BasePO::getIsDeleted, 0)
 			.eq(MemberFollowPO::getUserId, userId));
 		userInfoVo.setFollowing(following);
+
+		//是其他人，并且已登录时，查询是否关注
+		if(isOther && StpUtil.isLogin()){
+			//查询是否互关
+			MemberFollowPO memberFollowPO = memberFollowMapper.selectOne(new LambdaQueryWrapper<MemberFollowPO>()
+				.eq(BasePO::getIsDeleted, 0)
+				.eq(MemberFollowPO::getUserId, StpUtil.getLoginIdAsLong())
+				.eq(MemberFollowPO::getSubscribeUserId, userId));
+			if(memberFollowPO != null){
+				//已经关注
+				userInfoVo.setIsFollow(1);
+			}else {
+				//未关注
+				userInfoVo.setIsFollow(0);
+			}
+		}
 
 		return R.data(userInfoVo);
 	}
@@ -283,7 +303,7 @@ public class HomeController {
 
 	@GetMapping("/getMintedNFTPage")
 	@ApiOperation(value = "获取我铸造的NFT分页")
-	public R<Page<PFPTokenMinePageVo>> getNFTPage(@ApiParam("用户id：不传的话默认查自己，不登录时查自己会报错")@RequestParam(value = "userId",required = false) Long userId,
+	public R<Page<PFPTokenMinePageVo>> getNFTPage(@ApiParam("用户id：不传的话默认查自己，不登录时userId必传")@RequestParam(value = "userId",required = false) Long userId,
 												  @ApiParam(value = "当前页",required = true) @RequestParam("current")Integer current,
 												  @ApiParam(value = "每页的数量",required = true) @RequestParam("size")Integer size) {
 		if(userId == null){
@@ -315,7 +335,7 @@ public class HomeController {
 
 	@GetMapping("/getCollectNFTPage")
 	@ApiOperation(value = "获取我购买的NFT分页")
-	public R<Page<PFPTokenMinePageVo>> getCollectNFTPage(@ApiParam("用户id：不传的话默认查自己，不登录时查自己会报错")@RequestParam(value = "userId",required = false) Long userId,
+	public R<Page<PFPTokenMinePageVo>> getCollectNFTPage(@ApiParam("用户id：不传的话默认查自己，不登录时userId必传")@RequestParam(value = "userId",required = false) Long userId,
 														 @ApiParam(value = "当前页",required = true) @RequestParam("current")Integer current,
 												  		 @ApiParam(value = "每页的数量",required = true) @RequestParam("size")Integer size) {
 		if(userId == null){

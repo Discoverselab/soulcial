@@ -29,6 +29,6 @@ public class SubscribeFollowUserVo implements Serializable {
 	private String address;
 
 	@ApiModelProperty("是否已关注对方：0-否 1-是")
-	private Integer isFollow;
+	private Integer isFollow = 0;
 
 }

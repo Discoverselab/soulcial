@@ -64,7 +64,7 @@ public class PFPTransactionPO extends BasePO {
 	*/
 	private Long toUserId;
 	/**
-	*交易状态：0-未交易 1-已付款未交易PFP 2-交易完成 3-交易取消
+	*交易状态：0-待付款 1-已验证付款未交易PFP 2-交易完成 3-交易取消 4-付款验证失败 5-已付款未验证
 	*/
 	private Integer transactionStatus;
 	/**

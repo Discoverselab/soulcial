@@ -14,6 +14,7 @@ import org.springblade.modules.admin.dao.PFPTokenMapper;
 import org.springblade.modules.admin.pojo.po.BasePO;
 import org.springblade.modules.admin.pojo.po.MemberPO;
 import org.springblade.modules.admin.pojo.po.PFPTokenPO;
+import org.springblade.modules.admin.pojo.query.CollectCreateOrderQuery;
 import org.springblade.modules.admin.pojo.query.CollectNFTQuery;
 import org.springblade.modules.admin.pojo.vo.PFPTokenDetailVo;
 import org.springblade.modules.admin.pojo.vo.PFPTokenPageVo;
@@ -161,17 +162,17 @@ public class ExplorController {
 	}
 
 
-	@PostMapping("/collectNFT")
-	@ApiOperation(value = "购买NFT(不上链)")
-	public R<PFPTokenDetailVo> collectNFT(@Valid @RequestBody CollectNFTQuery collectNFTQuery) {
-
-		R result = nftService.collectNFT(collectNFTQuery);
-		if(result.getCode() != 200){
-			return result;
-		}
-
-		return getNFTDetail(collectNFTQuery.getTokenId());
-	}
+//	@PostMapping("/collectNFT")
+//	@ApiOperation(value = "购买NFT(不上链)")
+//	public R<PFPTokenDetailVo> collectNFT(@Valid @RequestBody CollectNFTQuery collectNFTQuery) {
+//
+//		R result = nftService.collectNFT(collectNFTQuery);
+//		if(result.getCode() != 200){
+//			return result;
+//		}
+//
+//		return getNFTDetail(collectNFTQuery.getTokenId());
+//	}
 
 	@PostMapping("/collectNFTOnline")
 	@ApiOperation(value = "购买NFT(上链)")
@@ -183,5 +184,17 @@ public class ExplorController {
 		}
 
 		return getNFTDetail(collectNFTQuery.getTokenId());
+	}
+
+	@PostMapping("/collectCreateOrder")
+	@ApiOperation(value = "购买NFT创建订单")
+	public R<PFPTokenDetailVo> collectCreateOrder(@Valid @RequestBody CollectCreateOrderQuery collectCreateOrderQuery) throws Exception{
+
+		R result = nftService.collectCreateOrder(collectCreateOrderQuery);
+		if(result.getCode() != 200){
+			return result;
+		}
+
+		return getNFTDetail(collectCreateOrderQuery.getTokenId());
 	}
 }

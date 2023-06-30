@@ -133,8 +133,10 @@ public class ETHServiceImpl implements ETHService {
 
 			Credentials credentials = loadCredentials();
 			//獲取gasprice
-			BigInteger gasPrice = getGasPrice();
-			log.info("獲取gasPrice成功：" + gasPrice);
+//			BigInteger gasPrice = getGasPrice();
+//			log.info("獲取gasPrice成功：" + gasPrice);
+
+			BigInteger gasPrice = Contract.GAS_PRICE;
 			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
 			//加載NFT
 			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
@@ -244,8 +246,10 @@ public class ETHServiceImpl implements ETHService {
 
 			Credentials credentials = loadCredentials();
 			//獲取gasprice
-			BigInteger gasPrice = getGasPrice();
-			log.info("獲取gasPrice成功：" + gasPrice);
+//			BigInteger gasPrice = getGasPrice();
+//			log.info("獲取gasPrice成功：" + gasPrice);
+
+			BigInteger gasPrice = Contract.GAS_PRICE;
 			ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
 			//加載NFT
 			LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
@@ -314,11 +318,11 @@ public class ETHServiceImpl implements ETHService {
     }
 
     public BigInteger getGasPrice() throws IOException {
-//        EthGasPrice gasPrice = web3j.ethGasPrice().send();
-//        BigInteger baseGasPrice = gasPrice.getGasPrice();
+        EthGasPrice gasPrice = web3j.ethGasPrice().send();
+        BigInteger baseGasPrice = gasPrice.getGasPrice();
 
 		//TODO ETH测试链固定gasPrice
-		BigInteger baseGasPrice = Contract.GAS_PRICE;
+//		BigInteger baseGasPrice = Contract.GAS_PRICE;
 
 //        return new BigDecimal(baseGasPrice).multiply(coin.getGasSpeedUp()).toBigInteger();
         return baseGasPrice;
@@ -536,27 +540,20 @@ public class ETHServiceImpl implements ETHService {
 		return R.fail("铸造失败，请联系管理员");
 	}
 
-	private LeaveMsg loadAdminContract() throws Exception{
-
-//		LeaveMsg contract = (LeaveMsg) redisTemplate.opsForValue().get("contract");
-//		if(contract != null){
-//			return contract;
-//		}
-
-		//獲取密鑰
-		Credentials credentials = loadCredentials();
-		//獲取gasprice
-		BigInteger gasPrice = getGasPrice();
-		log.info("獲取gasPrice成功：" + gasPrice);
-		ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
-		//加載NFT
-		LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
-		log.info("加載NFT成功：" + contract);
-
-//		redisTemplate.opsForValue().set("contract",contract);
-
-		return contract;
-	}
+//	private LeaveMsg loadAdminContract() throws Exception{
+//
+//		//獲取密鑰
+//		Credentials credentials = loadCredentials();
+//		//獲取gasprice
+//		BigInteger gasPrice = getGasPrice();
+//		log.info("獲取gasPrice成功：" + gasPrice);
+//		ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
+//		//加載NFT
+//		LeaveMsg contract = LeaveMsg.load(contractAddress, web3j, credentials, gasProvider);
+//		log.info("加載NFT成功：" + contract);
+//
+//		return contract;
+//	}
 
 	private Credentials loadCredentials() throws Exception{
 		String coinKeystorePath = null;

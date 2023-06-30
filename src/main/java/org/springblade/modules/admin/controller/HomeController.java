@@ -386,6 +386,13 @@ public class HomeController {
 
 		PFPTokenPO pfpTokenPO = pfpTokenMapper.selectById(tokenId);
 		if(pfpTokenPO != null && pfpTokenPO.getMintStatus() == 1 && pfpTokenPO.getOwnerUserId().equals(userId) && pfpTokenPO.getIsDeleted() == 0){
+
+			//判断是否正在交易
+			//交易中
+			if(pfpTokenPO.getStatus() == 1){
+				return R.fail("This PFP is currently being traded");
+			}
+
 			pfpTokenPO.setPrice(null);
 			pfpTokenPO.setPriceTime(null);
 			pfpTokenPO.initForUpdate();
@@ -422,28 +429,28 @@ public class HomeController {
 //		}
 //	}
 
-	@PostMapping("/listNFT")
-	@ApiOperation(value = "设置NFT出售价格：不授权(approve)")
-	public R<Page<PFPTokenMinePageVo>> listNFT(@Valid  @RequestBody ListNFTVo listNFTVo) {
-		Long tokenId = listNFTVo.getId();
-		BigDecimal price = listNFTVo.getPrice();
-		price = price.setScale(2, BigDecimal.ROUND_HALF_UP);
-
-		Long userId = StpUtil.getLoginIdAsLong();
-
-		PFPTokenPO pfpTokenPO = pfpTokenMapper.selectById(tokenId);
-		if(pfpTokenPO != null && pfpTokenPO.getMintStatus() == 1 && pfpTokenPO.getOwnerUserId().equals(userId) && pfpTokenPO.getIsDeleted() == 0){
-			pfpTokenPO.setPrice(price);
-			pfpTokenPO.setPriceTime(new Date());
-			pfpTokenPO.initForUpdate();
-
-			pfpTokenMapper.updateById(pfpTokenPO);
-			return R.success("出价成功");
-		}else {
-			//TODO 翻译
-			return R.fail("请刷新后重试");
-		}
-	}
+//	@PostMapping("/listNFT")
+//	@ApiOperation(value = "设置NFT出售价格：不授权(approve)")
+//	public R<Page<PFPTokenMinePageVo>> listNFT(@Valid  @RequestBody ListNFTVo listNFTVo) {
+//		Long tokenId = listNFTVo.getId();
+//		BigDecimal price = listNFTVo.getPrice();
+//		price = price.setScale(2, BigDecimal.ROUND_HALF_UP);
+//
+//		Long userId = StpUtil.getLoginIdAsLong();
+//
+//		PFPTokenPO pfpTokenPO = pfpTokenMapper.selectById(tokenId);
+//		if(pfpTokenPO != null && pfpTokenPO.getMintStatus() == 1 && pfpTokenPO.getOwnerUserId().equals(userId) && pfpTokenPO.getIsDeleted() == 0){
+//			pfpTokenPO.setPrice(price);
+//			pfpTokenPO.setPriceTime(new Date());
+//			pfpTokenPO.initForUpdate();
+//
+//			pfpTokenMapper.updateById(pfpTokenPO);
+//			return R.success("出价成功");
+//		}else {
+//			//TODO 翻译
+//			return R.fail("请刷新后重试");
+//		}
+//	}
 
 	@PostMapping("/listNFTApprove")
 	@ApiOperation(value = "设置NFT出售价格：授权(approve)")
@@ -453,11 +460,22 @@ public class HomeController {
 		BigDecimal price = listNFTVo.getPrice();
 		price = price.setScale(2, BigDecimal.ROUND_HALF_UP);
 
+		//如果价格小于0.01
+		if(price.compareTo(new BigDecimal("0.01")) < 0){
+			return R.fail("Price must be greater then or equal to 0.01");
+		}
+
 		Long userId = StpUtil.getLoginIdAsLong();
 
 		PFPTokenPO pfpTokenPO = pfpTokenMapper.selectById(tokenId);
 		if(pfpTokenPO != null && pfpTokenPO.getMintStatus() == 1 && pfpTokenPO.getOwnerUserId().equals(userId) && pfpTokenPO.getIsDeleted() == 0){
 			//是当前用户的资产
+
+			//判断是否正在交易
+			//交易中
+			if(pfpTokenPO.getStatus() == 1){
+				return R.fail("This PFP is currently being traded");
+			}
 
 			//校验approve
 //			R result = nftService.checkApprove(tokenId,userId);
@@ -476,13 +494,13 @@ public class HomeController {
 		}
 	}
 
-	@PostMapping("/testApprove")
-	@ApiOperation(value = "testApprove")
-	public R testApprove(@RequestParam(value = "txid",required = false)String txid) throws Exception{
-		Boolean checkNFTOwner = ethService.checkNFTOwner("0x3d4289432e7B7DE5Ac146f51f7eA48Be8F20341f", 27L);
-		System.out.println("checkNFTOwner:"+checkNFTOwner);
-//		ethService.approveTransferNFT("0xAd028d3bF652ddab9a7f46d73A20eE24C672e656","0x3d4289432e7B7DE5Ac146f51f7eA48Be8F20341f",27L);
-		return null;
-	}
+//	@PostMapping("/testApprove")
+//	@ApiOperation(value = "testApprove")
+//	public R testApprove(@RequestParam(value = "txid",required = false)String txid) throws Exception{
+//		Boolean checkNFTOwner = ethService.checkNFTOwner("0x3d4289432e7B7DE5Ac146f51f7eA48Be8F20341f", 27L);
+//		System.out.println("checkNFTOwner:"+checkNFTOwner);
+////		ethService.approveTransferNFT("0xAd028d3bF652ddab9a7f46d73A20eE24C672e656","0x3d4289432e7B7DE5Ac146f51f7eA48Be8F20341f",27L);
+//		return null;
+//	}
 
 }

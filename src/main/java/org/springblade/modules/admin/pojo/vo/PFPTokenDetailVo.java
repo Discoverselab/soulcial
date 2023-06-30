@@ -223,4 +223,7 @@ public class PFPTokenDetailVo implements Serializable {
 	@ApiModelProperty("最高出价（Best Pick）")
 	private BigDecimal bestPick;
 
+	@ApiModelProperty("交易状态：0-可交易 1-交易中")
+	private Integer status;
+
 }

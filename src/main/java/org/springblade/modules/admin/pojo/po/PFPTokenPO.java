@@ -112,6 +112,11 @@ public class PFPTokenPO extends BasePO {
 	private Integer color;
 
 	/**
+	 * 交易状态：0-可交易 1-交易中
+	 */
+	private Integer status;
+
+	/**
 	 *出售价格
 	 */
 	@TableField(updateStrategy = FieldStrategy.IGNORED)

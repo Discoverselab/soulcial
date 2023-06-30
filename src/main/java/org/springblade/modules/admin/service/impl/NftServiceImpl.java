@@ -10,6 +10,7 @@ import org.springblade.modules.admin.dao.MemberMapper;
 import org.springblade.modules.admin.dao.PFPTokenMapper;
 import org.springblade.modules.admin.dao.PFPTransactionMapper;
 import org.springblade.modules.admin.pojo.po.*;
+import org.springblade.modules.admin.pojo.query.CollectCreateOrderQuery;
 import org.springblade.modules.admin.pojo.query.CollectNFTQuery;
 import org.springblade.modules.admin.pojo.vo.MintNftVo;
 import org.springblade.modules.admin.service.BNBService;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Component
@@ -431,6 +433,162 @@ public class NftServiceImpl implements NftService {
 		pfpTokenMapper.updateById(pfpTokenPO);
 
 		return R.success("success");
+	}
+
+	/**
+	 * 创建订单
+	 * @param collectCreateOrderQuery
+	 * @return
+	 */
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public R collectCreateOrder(CollectCreateOrderQuery collectCreateOrderQuery) {
+
+		Long userId = StpUtil.getLoginIdAsLong();
+		Long tokenId = collectCreateOrderQuery.getTokenId();
+
+		//购买方用户信息
+		MemberPO memberPO = memberMapper.selectById(tokenId);
+
+		//获取NFT信息
+		PFPTokenPO pfpTokenPO = pfpTokenMapper.selectById(tokenId);
+		//交易中
+		if(pfpTokenPO.getStatus() == 1){
+			return R.fail("This PFP is currently being traded");
+		}
+
+		BigDecimal price = pfpTokenPO.getPrice();
+		//如果价格小于0.01
+		if(price == null || price.compareTo(new BigDecimal("0.01")) < 0){
+			return R.fail("Price must be greater then or equal to 0.01");
+		}
+
+		//校验该用户是否有待付款的订单
+		PFPTransactionPO temp = pfpTransactionMapper.selectOne(new LambdaQueryWrapper<PFPTransactionPO>()
+			.eq(BasePO::getIsDeleted, 0)
+			.eq(PFPTransactionPO::getToUserId, userId)
+			.eq(PFPTransactionPO::getTransactionStatus, 0));
+
+		if(temp != null){
+			return R.fail("You have an unpaid order, please make payment or cancel before placing the order");
+		}
+
+
+		//交易中
+		pfpTokenPO.setStatus(1);
+		pfpTokenMapper.updateById(pfpTokenPO);
+
+		PFPTransactionPO pfpTransactionPO = new PFPTransactionPO();
+		//设置价格、收益价格
+		pfpTransactionPO.setListPrice(price);
+		pfpTransactionPO.setTokenId(tokenId);
+		pfpTransactionPO.setAdminAddress(pfpTokenPO.getAdminAddress());
+		pfpTransactionPO.setLinkType(pfpTokenPO.getLinkType());
+		pfpTransactionPO.setNetwork(pfpTokenPO.getNetwork());
+		pfpTransactionPO.setContractAddress(pfpTokenPO.getContractAddress());
+		pfpTransactionPO.setContractName(pfpTokenPO.getContractName());
+
+		pfpTransactionPO.setFromAddress(pfpTokenPO.getOwnerAddress());
+		pfpTransactionPO.setToAddress(memberPO.getAddress());
+
+		pfpTransactionPO.setFromUserId(pfpTokenPO.getOwnerUserId());
+		pfpTransactionPO.setToUserId(userId);
+		//未交易，已下单
+		pfpTransactionPO.setTransactionStatus(0);
+
+		pfpTransactionPO.setMintUserId(pfpTokenPO.getMintUserId());
+		pfpTransactionPO.setMintUserAddress(pfpTokenPO.getMintUserAddress());
+
+		pfpTransactionPO.initForInsert();
+
+		pfpTransactionMapper.insert(pfpTransactionPO);
+
+		return R.success("Create order success");
+	}
+
+	/**
+	 * 收款验证成功，转NFT以及用户收益
+	 */
+	@Override
+	public R transferNFT(PFPTransactionPO pfpTransactionPO) {
+		Long tokenId = pfpTransactionPO.getTokenId();
+		PFPTokenPO pfpTokenPO = pfpTokenMapper.selectById(tokenId);
+
+		String ownerAddress = pfpTransactionPO.getFromAddress();
+		String toAddress = pfpTransactionPO.getToAddress();
+
+		//NFT是否授权校验
+		R approveCheckResult = ethService.checkApprove(tokenId,ownerAddress);
+		if(approveCheckResult.getCode() != 200){
+			return approveCheckResult;
+		}
+
+		//NFT转账
+		R<String> transferNFTResult = ethService.approveTransferNFT(ownerAddress,toAddress,tokenId);
+		if(transferNFTResult.getCode() != 200){
+			return transferNFTResult;
+		}
+		String transferNFTTxn = transferNFTResult.getData();
+		pfpTransactionPO.setPfpTxnHash(transferNFTTxn);
+
+		//NFT转账校验
+		int reTryCount = 0;
+		Boolean checkNFTOwner = false;
+		while (reTryCount < 10){
+			checkNFTOwner = ethService.checkNFTOwner(toAddress,tokenId);
+			if(checkNFTOwner){
+				//终止循环
+				reTryCount = 10;
+			}else {
+				try {
+					// 休眠10秒再进行重试
+					Thread.sleep(10*000);
+				}catch (Exception e){}
+				reTryCount++;
+			}
+		}
+
+		if(!checkNFTOwner){
+			return R.fail("NFT transfer check failed:NFT owner is not correct");
+		}
+
+		//BNB转账：卖NFT收益
+		R<String> transferBNBResult = ethService.transferBNB(ownerAddress,pfpTransactionPO.getSellerEarnPrice());
+		if(transferBNBResult.getCode() != 200){
+			//TODO 稍后再次尝试
+		}
+		//售卖者收款流水号
+		String sellerMoneyTxnHash = transferBNBResult.getData();
+		pfpTransactionPO.setSellerMoneyTxnHash(sellerMoneyTxnHash);
+
+		//BNB转账：铸造者收益
+		R<String> mintTransferBNBResult = ethService.transferBNB(pfpTokenPO.getMintUserAddress(),pfpTransactionPO.getMinterEarnPrice());
+		if(mintTransferBNBResult.getCode() != 200){
+			//TODO 稍后再次尝试
+		}
+		//铸造者收益流水号
+		String minterMoneyTxnHash = mintTransferBNBResult.getData();
+		pfpTransactionPO.setMinterMoneyTxnHash(minterMoneyTxnHash);
+
+		pfpTransactionPO.setTransactionStatus(2);
+		pfpTransactionMapper.updateById(pfpTransactionPO);
+
+		//修改持有人
+		pfpTokenPO.setOwnerAddress(toAddress);
+		pfpTokenPO.setOwnerUserId(pfpTransactionPO.getToUserId());
+		pfpTokenPO.setPrice(null);
+		pfpTokenPO.setPriceTime(null);
+
+		pfpTokenPO.initForUpdate();
+		//设置最新成交价
+		pfpTokenPO.setLastSale(pfpTransactionPO.getListPrice());
+		pfpTokenPO.setLastSaleTime(new Date());
+
+		//交易状态：0-可交易
+		pfpTokenPO.setStatus(0);
+		pfpTokenMapper.updateById(pfpTokenPO);
+
+		return R.success("transfer success");
 	}
 
 	/**

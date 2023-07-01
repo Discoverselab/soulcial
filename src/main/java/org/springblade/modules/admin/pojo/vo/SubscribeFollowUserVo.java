@@ -31,4 +31,9 @@ public class SubscribeFollowUserVo implements Serializable {
 	@ApiModelProperty("是否已关注对方：0-否 1-是")
 	private Integer isFollow = 0;
 
+	@ApiModelProperty("lensProfile:lens账号id")
+	private String lensProfile;
+
+
+
 }

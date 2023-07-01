@@ -28,6 +28,9 @@ public class FollowUserVo implements Serializable {
 	@ApiModelProperty("用户钱包地址")
 	private String address;
 
+	@ApiModelProperty("lensProfile:lens账号id")
+	private String lensProfile;
+
 //	@ApiModelProperty("likes数量")
 //	private Integer likesCount;
 

@@ -43,7 +43,7 @@ public class PFPScheduled {
 	 * 每分钟执行一次
 	 */
 //	@Scheduled(cron = "0 0/1 * * * ?")
-	@Scheduled(fixedDelay = 60 * 1000)
+//	@Scheduled(fixedDelay = 60 * 1000)
 	public void closeOvertimeOrder(){
 		List<PFPTransactionPO> pfpTransactionPOS = pfpTransactionMapper.selectList(new LambdaQueryWrapper<PFPTransactionPO>()
 			.eq(BasePO::getIsDeleted, 0)
@@ -71,7 +71,7 @@ public class PFPScheduled {
 	 * 每分钟执行一次
 	 */
 //	@Scheduled(cron = "0 0/1 * * * ?")
-	@Scheduled(fixedDelay = 60 * 1000)
+//	@Scheduled(fixedDelay = 60 * 1000)
 	public void checkPayedOrder(){
 		List<PFPTransactionPO> pfpTransactionPOS = pfpTransactionMapper.selectList(new LambdaQueryWrapper<PFPTransactionPO>()
 			.eq(BasePO::getIsDeleted, 0)

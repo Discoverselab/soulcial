@@ -2,14 +2,23 @@
   <div class="congr">
     <p class="title">Congratulations!</p>
     <p class="title_infor">Your soul in web3 has been revealed</p>
-    <Hexagon v-if="this.values.length>5" :type="false" :level="UserInfo.level" :levelScore="UserInfo.levelScore" :values="values" />
-     <!-- operation -->
+    <Hexagon
+      v-if="this.values.length > 5"
+      :type="false"
+      :level="UserInfo.level"
+      :levelScore="UserInfo.levelScore"
+      :values="values"
+    />
+    <!-- operation -->
     <div class="cudset_but">
       <button @click="$router.push('/mint_select')">
         Mint SoulCast NFT
         <span class="FREE">FREE</span>
       </button>
-      <button @click="$router.push('/mint_select')">SHare</button>
+      <button class="Cancel">SHare</button>
+      <p class="skip" @click="$router.push('/')">
+        <span>Skip</span> and <span>Explore</span> other souls
+      </p>
     </div>
   </div>
 </template>
@@ -23,19 +32,19 @@ export default {
   name: "",
   data() {
     return {
-      UserInfo:{},
-      values:[]
+      UserInfo: {},
+      values: [],
     };
   },
   watch: watch,
   methods: methods,
   computed: computed,
   components: {
-    Hexagon
+    Hexagon,
   },
   created() {
     let me = this;
-    me.getUserInfo()
+    me.getUserInfo();
   },
   mounted: async function () {
     console.log("this：", this);

@@ -21,7 +21,7 @@
             line-height: 30px;
             text-transform: uppercase;
             color: #7B7B77;
-
+            cursor: pointer;
             &.Tab_list_Active {
                 font-style: normal;
                 font-weight: 900;
@@ -135,6 +135,7 @@
     .set_but {
         box-sizing: border-box;
         margin-top: 150px;
+        
         button {
             &:active {
                 opacity: 0.8;
@@ -145,7 +146,7 @@
                 color: #c4c4be;
                 border: 2px solid #c4c4be;
             }
-
+            cursor: pointer;
             display: block;
             width: 100%;
             margin-top: 20px;
@@ -154,7 +155,6 @@
             justify-content: center;
             padding: 8px 26px;
             gap: 10px;
-            width: 342px;
             height: 40px;
             background: #FFFFFF;
             border: 2px solid #000000;
@@ -222,10 +222,8 @@
             .nft_list {
                 background: #F5F5ED;
                 border: 1px solid #DFDFCE;
-
+                cursor: pointer;
                 .img_cont {
-                    width: 163px;
-                    height: 163px;
                     background: #F5F5ED;
                     border: 2px solid #DFDFCE;
                     position: relative;

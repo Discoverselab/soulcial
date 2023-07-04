@@ -15,6 +15,9 @@ import mint_select from '@/view/mint_select/main'
 import mint_soulcast from '@/view/mint_soulcast/main'
 import mint_shaping from '@/view/mint_shaping/main'
 import mint_success from '@/view/mint_success/main'
+import purchase_success from '@/view/purchase_success/main'
+import list_price from '@/view/list_price/main'
+import user from '@/view/user/main'
 Vue.use(Router)
 export default new Router({
   mode: 'hash',
@@ -94,6 +97,21 @@ export default new Router({
       path: '/mint_success',
       name: 'mint_success',
       component: mint_success,
+    },
+    {
+      path: '/purchase_success',
+      name: 'purchase_success',
+      component: purchase_success,
+    },
+    {
+      path: '/list_price',
+      name: 'list_price',
+      component: list_price,
+    },
+    {
+      path: '/user',
+      name: 'user',
+      component: user,
     }
   ],
   scrollBehavior(to, from, savedPosition) {

@@ -22,7 +22,7 @@
                 text-transform: uppercase;
                 color: #7B7B77;
                 line-height: 30px;
-
+                cursor: pointer;
                 &.Tab_list_Active {
                     font-style: normal;
                     font-weight: 900;
@@ -52,6 +52,7 @@
             &.cont_left {
                 .Nft_list {
                     margin-bottom: 46px;
+                    cursor: pointer;
                 }
             }
 
@@ -59,6 +60,7 @@
                 padding-top: 60px;
 
                 .Nft_list {
+                    cursor: pointer;
                     margin-bottom: 40px;
                 }
             }

@@ -15,6 +15,7 @@
             display: block;
             width: 16px;
             height: 16px;
+            cursor: pointer;
         }
 
         .nav_name {
@@ -84,7 +85,7 @@
                     background-color: #000;
                     color: #FFF;
                 }
-
+                cursor: pointer;
                 background: #FFFFFF;
                 border: 2px solid #000000;
                 border-radius: 100px;

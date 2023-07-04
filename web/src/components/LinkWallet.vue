@@ -3,7 +3,7 @@
   <div class="wallet">
     <van-action-sheet @close="close" v-model="walletShow">
       <div class="content">
-        <p class="headLin"></p>
+        <p class="headLin" @click="close"></p>
         <P class="title">Connect Wallet</P>
         <img class="wallet_img" src="../assets/wellat_img.png" alt="" />
         <div class="wallet_list" @click="metamask">
@@ -66,6 +66,27 @@
         </div>
       </div>
     </van-action-sheet>
+    <van-dialog
+      v-model="dialogShow"
+      :close-on-click-overlay="true"
+      :z-index="99999999999999999999"
+      title="Create Lens Handle"
+      :before-close="newGroupBefColse"
+      confirmButtonText="CONFIRM"
+      @confirm="dialog_confirm"
+    >
+      <input
+        placeholder="Please enter"
+        onkeyup="this.value = this.value.replace(/[^A-z0-9]/, '')"
+        maxlength="10"
+        type="text"
+        @input="restrictInput"
+        v-model="handle"
+      />
+      <p class="point_out">
+        Handle must be minimum of 5 length and maximum of 31 length
+      </p>
+    </van-dialog>
     <Overlay :overlayshow="overlayshow"></Overlay>
   </div>
 </template>
@@ -80,12 +101,23 @@ import {
 } from "@dataverse/runtime-connector";
 const runtimeConnector = new RuntimeConnector(Extension);
 let dataverse = false;
-const app = dataverse ? "soulcial" : "soulcial3";
+let version = false;
+const app = dataverse ? "soulcial" : "soulcial4";
 import { ParticleNetwork, WalletEntryPosition } from "@particle-network/auth";
 import { ParticleProvider } from "@particle-network/provider";
 import Web3 from "web3";
 import { WALLET } from "@dataverse/runtime-connector";
 import { Toast } from "vant";
+import {
+  LensClient,
+  production,
+  development,
+  isRelayerResult,
+} from "@lens-protocol/client";
+import { ethers } from "ethers";
+const client = new LensClient({
+  environment: development,
+});
 export default {
   props: {
     walletShow: Boolean,
@@ -93,17 +125,27 @@ export default {
   data: function () {
     let _clientH = document.documentElement.clientHeight;
     return {
+      userLens: {},
+      dialogShow: false,
       wallet: "",
       address: "",
       loginType: 0,
       overlayshow: false,
       preferredAuthType: "",
+      handle: "",
     };
   },
   computed: {},
   components: { Overlay },
   watch: {},
   methods: {
+    restrictInput(event) {
+      const pattern = /^[a-zA-Z0-9]*$/;
+      const inputValue = event.target.value;
+      if (!pattern.test(inputValue)) {
+        event.preventDefault();
+      }
+    },
     async testLink(data) {
       //Connect wallet
       try {
@@ -140,76 +182,174 @@ export default {
       let Stream = await runtimeConnector.createStream({
         modelId: dataverse
           ? "kjzl6hvfrbw6c7bz8dm3olx6u48rc7acu6d5khlbu3yeltho4k3oluq2bsbxvdo"
-          : "kjzl6hvfrbw6c5bt9cmvdi2e3v43oei5jst3messykjnkqo2r5n3hhliw7ecy53",
+          : "kjzl6hvfrbw6c76e72zrpizt50pwpobmqbr49u1mks91zxkdr433l3masps9og8",
         streamContent: {
           level: String(data.level),
-          charisma: data.charisma,
-          extroversion: data.extroversion,
-          energy: data.energy,
-          wisdom: data.wisdom,
-          art: data.art,
-          courage: data.courage,
-          soulscore: data.levelScore,
+          charisma: data.charisma || 0,
+          extroversion: data.extroversion || 0,
+          energy: data.energy || 0,
+          wisdom: data.wisdom || 0,
+          art: data.art || 0,
+          courage: data.courage || 0,
+          soulscore: data.levelScore || 0,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           encrypted,
         },
       });
+      console.log(Stream);
       this.overlayshow = false;
-      this.setUserStreamId(Stream.streamId);
-    },
-    setUserStreamId(id) {
-      let data = {
-        streamId: id,
-      };
-      let url = this.$api.infor.setUserStreamId;
-      post(url, data, true)
-        .then((res) => {
-          if (res.code === 200) {
-            this.close();
-            this.$router.push("/welcome");
-          }
-        })
-        .catch((error) => {});
+      this.login(data.isRegister, data.levelScore, Stream.streamId, "", "");
     },
     close() {
       this.$emit("close", true);
     },
-    getUserInfo(type) {
-      let url = this.$api.infor.getUserInfo;
-      get(url)
+    // 查询是否已生成steam_id
+    async checkSteamId(address) {
+      this.overlayshow = true;
+      this.address = address;
+      let data = {
+        loginType: this.loginType,
+        address: address,
+        particleType: this.preferredAuthType,
+        refreshScore: version ? 1 : 0,
+      };
+      let url = this.$api.login.checkSteamId;
+      get(url, data)
         .then((res) => {
           if (res.code === 200) {
-            if (res.data.streamId) {
-              this.close();
-              this.$router.push("/welcome");
+            if (!version) {
+              this.check_lens(data);
+              // this.login(res.data.isRegister,res.data.levelScore);
             } else {
-              let me = this;
-              setTimeout(() => {
-                me.testLink(res.data);
-              }, 100);
+              if (res.data.streamId) {
+                this.login(
+                  res.data.isRegister,
+                  res.data.levelScore,
+                  res.data.streamId,
+                  "",
+                  ""
+                );
+              } else {
+                let me = this;
+                setTimeout(() => {
+                  me.testLink(res.data);
+                }, 100);
+              }
             }
           }
+          this.overlayshow = false;
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch((error) => {});
     },
-    login(address) {
+
+    async check_lens(data) {
+      // 根据当前连接钱包账户判断是否注册过lens账户
+      const allOwnedProfiles = await client.profile.fetchAll({
+        ownedBy: [this.address],
+        limit: 1,
+      });
+      // 判断lens账户List长度
+      if (allOwnedProfiles.items.length) {
+        let item = allOwnedProfiles.items[0];
+        this.login(data.isRegister, data.levelScore, "", item.id, item.handle);
+      } else {
+        this.handle = "";
+        this.userLens = data;
+        this.dialogShow = true;
+      }
+      console.log(allOwnedProfiles);
+    },
+    newGroupBefColse(action, done) {
+      if (action == "confirm" && !this.handle.trim()) {
+        done(false);
+      } else if(action == "confirm"&&this.handle.length<5||this.handle.length>30) {
+        done(false);
+      }else{
+        done(true);
+      }
+    },
+    dialog_confirm() {
+      if (!this.handle) {
+        this.$toast("Please enter");
+        return;
+      }
+      if(this.handle.length<5||this.handle.length>30){
+        this.$toast("Not less than 5 characters and not more than 30 characters");
+        return;
+      }
+      console.log(12)
+      this.overlayshow = true;
+      this.dialogShow = false;
+      this.CreateUser();
+    },
+    // 创建lens用户
+    async CreateUser() {
+      //签名
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x13881" }],
+      });
+      await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      const r = await client.authentication.generateChallenge(this.address);
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const signature = await signer.signMessage(r);
+      const authData = await client.authentication.authenticate(
+        this.address,
+        signature
+      );
+      let res = await client.authentication.isAuthenticated();
+      //创建个人资料
+      const profileCreateResult = await client.profile.create({
+        handle: this.handle,
+        profilePictureUri: null,
+        // followModule: {
+        //   revertFollowModule: true,
+        // },
+      });
+      const profileCreateResultValue = profileCreateResult.unwrap();
+      if (!isRelayerResult(profileCreateResultValue)) {
+        this.$toast(`Something went wrong`, profileCreateResultValue);
+        this.overlayshow = false;
+        return;
+      } else {
+        console.log(profileCreateResultValue);
+        // 创建成功
+        let me = this;
+        setTimeout(() => {
+          me.check_lens(this.userLens);
+        }, 7000);
+      }
+    },
+    login(isRegister, levelScore, streamId, lensId, handle) {
+      let streamID = streamId ? streamId : Date.parse(new Date());
       let url =
         this.$api.login.login +
-        `?address=${address}&&loginType=${this.loginType}&&particleType=${this.preferredAuthType}`;
+        `?address=${this.address}&&loginType=${this.loginType}&&particleType=${this.preferredAuthType}&&dataverse-streamId=streamId${streamID}&&lensProfile=${lensId}&&userName=${handle}`;
       post(url)
         .then((res) => {
           if (res.code === 200) {
             this.$loginData.in({
-              authToken: address,
+              authToken: this.address,
               id: res.data.tokenValue,
             });
-            this.getUserInfo();
+            this.close();
+            if (isRegister && !levelScore) {
+              this.$router.push("/welcome");
+            } else {
+              if (localStorage.getItem("routers") == 1) {
+                this.$router.push("/home");
+              }
+            }
           }
+          this.overlayshow = false;
         })
-        .catch((error) => {});
+        .catch((error) => {
+          this.overlayshow = false;
+        });
     },
     // Link metamask wallet
     async metamask() {
@@ -220,7 +360,7 @@ export default {
         });
         this.loginType = 0;
         this.preferredAuthType = "";
-        this.login(accounts);
+        this.checkSteamId(accounts[0]);
       } else {
         window.location.href("https://metamask.io/");
       }
@@ -237,7 +377,7 @@ export default {
         let accounts = await provider.enable();
         this.loginType = 0;
         this.preferredAuthType = "";
-        this.login(accounts[0]);
+        this.checkSteamId(accounts[0]);
         this.disconnect(provider);
       } catch (err) {
         console.log(err);
@@ -281,7 +421,8 @@ export default {
       window.web3.currentProvider.isParticleNetwork; // => true
       const accounts = await web3.eth.getAccounts();
       this.loginType = 1;
-      this.login(accounts[0]);
+      // this.login(accounts[0]);
+      this.checkSteamId(accounts[0]);
     },
   },
   created() {},
@@ -290,8 +431,21 @@ export default {
 </script>
 <style lang="scss">
 .wallet {
+  @media screen and (min-width: 750px) {
+    .van-action-sheet__content{
+      padding: 8px 430px 42px 430px !important;
+      border: 1px solid #000;
+    }
+    // .content {
+    //   padding: 8px 430px 42px 430px !important;
+    //   border: 1px solid #000;
+    // }
+    .van-action-sheet {
+      max-height: 80% !important;
+    }
+  }
   .van-action-sheet {
-    max-height: 100% !important;
+    max-height: 100%;
   }
   .content {
     padding: 8px 25px 42px 25px;
@@ -413,6 +567,62 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  // .van-overlay{
+  //   z-index: 9999999999999999 !important;
+  // }
+  // .van-dialog {
+  //   z-index: 999999999999999 !important;
+  // }
+  .van-dialog__header {
+    text-align: center;
+    font-size: 20px;
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+  .van-dialog__content {
+    padding: 0 24px;
+    margin-top: 24px;
+    input {
+      border-radius: 10px;
+      border: 2px solid #dfdfce;
+      background: #fff;
+      width: 100%;
+      padding: 12px 20px;
+      box-sizing: border-box;
+      color: #000;
+      font-size: 18px;
+      font-family: "Inter";
+      font-style: normal;
+      font-weight: 600;
+    }
+    .point_out {
+      color: rgba(0, 0, 0, 0.5);
+      font-size: 16px;
+      font-family: 'Inter';
+      font-style: normal;
+      margin-top: 10px;
+    }
+  }
+  .van-dialog__footer {
+    margin-top: 30px;
+    padding: 0 24px 24px 24px;
+    button {
+      border-radius: 45px !important;
+      border: 2px solid #000 !important;
+      background: #fff !important;
+      .van-button__text {
+        color: #000;
+        text-align: center;
+        font-size: 18px;
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+    }
   }
 }
 </style>

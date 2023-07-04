@@ -10,7 +10,7 @@
       <p v-if="BarActive != item.path" class="barName">{{ item.name }}</p>
       <img :class="`imgs${index + 1}`" v-else :src="item.img" alt="" />
     </div>
-    <Wallet @close="walletShow=false" :walletShow="walletShow"></Wallet>
+    <Wallet @close="walletShow = false" :walletShow="walletShow"></Wallet>
   </div>
 </template>
 <script>
@@ -22,7 +22,7 @@ export default {
     let _clientH = document.documentElement.clientHeight;
     return {
       BarActive: this.$route.path,
-      walletShow:false,
+      walletShow: false,
       BarList: [
         {
           name: "Explore",
@@ -49,19 +49,22 @@ export default {
   },
   computed: {},
   components: {
-    Wallet
+    Wallet,
   },
   watch: {},
   methods: {
     BarClick(data) {
       if (this.BarActive != data.path) {
         if (data.name !== "Home") {
+          localStorage.setItem("routers", "");
           this.BarActive = data.path;
           this.$router.push(data.path);
         } else {
-          if(!this.$loginData.Auth_Token){
-            this.walletShow = true
-          }else{
+          if (!this.$loginData.Auth_Token) {
+            localStorage.setItem("routers", 1);
+            this.walletShow = true;
+          } else {
+            localStorage.setItem("routers", "");
             this.BarActive = data.path;
             this.$router.push(data.path);
           }
@@ -71,11 +74,16 @@ export default {
   },
   mounted: async function () {
     this.BarActive = this.$route.path;
-    console.log(this.$route.path)
+    console.log(this.$route.path);
   },
 };
 </script>
 <style lang="scss">
+@media screen and (min-width: 750px) {
+  .barCont {
+    height: 60px !important;
+  }
+}
 .barCont {
   width: 100%;
   height: 84px;
@@ -95,6 +103,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
     .barName {
       font-weight: 900;
       font-family: "Inter";

@@ -18,7 +18,10 @@
       <van-collapse v-model="activeNames">
         <van-collapse-item name="1">
           <template #title>
-            <div class="chid">Personality</div>
+            <div class="chid">
+              <img src="../../assets/userImg.png" alt="">
+              Personality
+            </div>
           </template>
           <template #value>
             <div class="MoreDetail">{{Personality[PersonalityID] }}</div>
@@ -34,7 +37,10 @@
       <van-collapse v-model="activeNames1">
         <van-collapse-item name="1">
           <template #title>
-            <div class="chid">Moad</div>
+            <div class="chid">
+              <img src="../../assets/moodImg.png" alt="">
+              Mood
+            </div>
           </template>
           <template #value>
             <div class="MoreDetail">{{Moad[MoadID]}}</div>
@@ -50,7 +56,10 @@
       <van-collapse v-model="activeNames2">
         <van-collapse-item name="1">
           <template #title>
-            <div class="chid">Weather</div>
+            <div class="chid">
+              <img src="../../assets/weatherImg.png" alt="">
+              Weather
+            </div>
           </template>
           <template #value>
             <div class="MoreDetail">{{Weather[WeatherID]}}</div>
@@ -66,7 +75,10 @@
       <van-collapse v-model="activeNames3">
         <van-collapse-item name="1">
           <template #title>
-            <div class="chid">Color</div>
+            <div class="chid">
+              <img src="../../assets/colorImg.png" alt="">
+              Color
+            </div>
           </template>
           <template #value>
             <div class="MoreDetail">{{ Color[ColorID] }}</div>
@@ -108,9 +120,9 @@ export default {
       activeNames2: [],
       activeNames3: [],
       Personality:['Architect INTJ','Logician INTP','Commander ENTJ','Debater ENTP','Advocate INFJ','Mediator INFP','Protagonist ENFJ','Campaigner ENFP',' Logistician ISTJ','Defender ISFJ','Executive ESTJ','Consul ESFJ','Virtuoso ISTP','Entrepreneur ESTP','Entertainer ESFP'],
-      Moad:['Excited','calm','Angry','Shocked','cheerful','Confused','heartbroken','Fearful'],
-      Weather:['Sunny','cloudy','Overcast','drizzling','stormy','windy','Misty','Snowy'],
-      Color:['White','red','orange','Yellow','Green','Blue','Indigo','Violet','Black'],
+      Moad:['Excited','Calm','Angry','Shocked','Cheerful','Confused','Heartbroken','Fearful'],
+      Weather:['Sunny','Cloudy','Overcast','Drizzling','Stormy','Windy','Misty','Snowy'],
+      Color:['White','Red','Orange','Yellow','Green','Blue','Indigo','Violet','Black'],
       PersonalityID:0,
       MoadID:0,
       WeatherID:0,

@@ -13,12 +13,13 @@
       <div class="userinfo">
         <img class="portrait" :src="UserInfo.avatar" alt="" />
         <!--  -->
-        <div class="nameAddres">
-          <p class="name">{{ UserInfo.userName }}</p>
+        <div class="nameAddres" v-if="UserInfo.userName">
+          <p class="name">{{ UserInfo.userName.replace(".test","")  }}</p>
           <p class="address">
             {{ substring($loginData.Auth_Token) }}
             <img
-              v-copy="$loginData.Auth_Token"
+              @click="copy"
+              class="copy-button"
               round
               src="../../assets//copy.png"
               alt=""
@@ -46,12 +47,12 @@
         />
         <!-- Ranking data information -->
         <div class="rank_cont">
-          <div @click="$router.push('/followers')" class="rank_list">
-            <p class="value">26</p>
+          <div @click="FollList(1)" class="rank_list">
+            <p class="value">{{ UserInfo.followers }}</p>
             <p class="key">Followers</p>
           </div>
-          <div @click="$router.push('/following')" class="rank_list">
-            <p class="value">159</p>
+          <div @click="FollList(2)" class="rank_list">
+            <p class="value">{{ UserInfo.following }}</p>
             <p class="key">Following</p>
           </div>
           <div @click="$router.push('/TopFans')" class="rank_list">
@@ -95,7 +96,7 @@
         <div class="nft_infor">
           <p class="top_name_price">
             <span class="name">Top Pick</span>
-            <span class="price">{{ item.topPick || 0 }} BNB</span>
+            <span class="price">{{ item.topPick || 0 }} ETH</span>
           </p>
           <div class="flow_id">
             <img
@@ -111,12 +112,13 @@
             <span> Cost </span>
           </div>
           <div class="price_botm">
-            <span class="bot_price">{{ item.price || 0 }} BNB</span>
-            <span class="bot_price">{{ item.price || 0 }} BNB</span>
+            <span class="bot_price">{{ item.price || 0 }} ETH</span>
+            <span class="bot_price">{{ item.price || 0 }} ETH</span>
           </div>
         </div>
       </div>
     </div>
+    <!-- <button @click="checkLink">12312312</button> -->
     <Overlay :overlayshow="overlayshow"></Overlay>
     <TabBar></TabBar>
   </div>
@@ -136,6 +138,7 @@ export default {
   data() {
     return {
       overlayshow: false,
+      address: "0x788Ba36fd93B7e1eF6A78CB47eF9c17ba9e2339A",
       levelImg: levelImg,
       getNFTLevel: getNFTLevel,
       UserInfo: {},
@@ -185,8 +188,13 @@ export default {
     let me = this;
     me.getUserInfo();
     me.getMintedNFTPage(1);
+    // me.db3()
   },
   mounted: async function () {
+    // await this.linkethers() 
+    // await this.creatMyInfo()
+    // this.creatMyInfo()
+    // this.checkLink()
     console.log("this：", this);
     console.log("$route：", this.$route);
     AOS.init({

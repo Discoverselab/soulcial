@@ -9,7 +9,7 @@
       />
       <div class="nav_name" v-if="NFTDetail.pictureUrl">
         <img class="userportrait" :src="NFTDetail.ownerUserAvatar" alt="" />
-        <p class="name">{{ NFTDetail.ownerUserName }}</p>
+        <p class="name">{{ NFTDetail.ownerUserName.replace(".test","") }}</p>
       </div>
       <img class="label" src="../../assets/label.png" alt="" />
     </div>
@@ -24,13 +24,17 @@
               v-if="NFTDetail.pictureUrl && $loginData.Auth_Token"
             >
               <p
-                :style="{ color: `hsla(${20 + 120}, 60%, 60%, 1)` }"
+                :style="{
+                  color: `hsla(${NFTDetail.colorAttribute + 120}, 60%, 60%, 1)`,
+                }"
                 class="center"
               >
                 {{ NFTDetail.match || "0" }}%
               </p>
               <p
-                :style="{ color: `hsla(${20 + 120}, 60%, 60%, 1)` }"
+                :style="{
+                  color: `hsla(${NFTDetail.colorAttribute + 120}, 60%, 60%, 1)`,
+                }"
                 class="name"
               >
                 match
@@ -41,7 +45,7 @@
           <!-- hexagonCalculate points -->
           <div class="img_icon img_icon2">
             <Hexagon
-              v-if="this.values.length > 5"
+              v-if="this.values.length > 5 && turnShow"
               :type="false"
               :level="NFTDetail.level"
               :levelScore="NFTDetail.levelScore"
@@ -51,7 +55,9 @@
         </div>
         <div class="bottom_infor" v-if="NFTDetail.pictureUrl">
           <svg-icon
-            :style="{ color: `hsla(${20 + 120}, 60%, 60%, 1)` }"
+            :style="{
+              color: `hsla(${NFTDetail.colorAttribute + 120}, 60%, 60%, 1)`,
+            }"
             className="svgName"
             iconClass="Vector1"
           ></svg-icon>
@@ -68,11 +74,11 @@
               </p>
             </div>
             <p class="price" v-if="NFTDetail.price">
-              {{ NFTDetail.price || 0 }}BNB
+              {{ NFTDetail.price || 0 }}ETH
             </p>
             <p class="price priceinfp" v-else>mediator infp</p>
           </div>
-          <div class="turn" @click="turnShow = !turnShow">
+          <div class="turn" @click="turnShowClick">
             <img src="../../assets/turn.png" alt="" />
           </div>
           <div class="love">
@@ -124,35 +130,61 @@
       </div>
       <!-- The author has something. -->
       <div class="author">
-        <div class="author_list">
+        <div class="author_list" @click="linkUser(1)">
           <div class="portrait">
             <img class="portrait1" :src="NFTDetail.mintUserAvatar" alt="" />
             <img class="chat_link" src="../../assets/chat.png" alt="" />
           </div>
           <p class="Created">Created By</p>
-          <p class="name">{{ NFTDetail.mintUserName }}</p>
+          <p class="name">{{ isUser(1) ? "You" : NFTDetail.mintUserName.replace(".test","") }}</p>
         </div>
-        <div class="author_list">
+        <div class="author_list" @click="linkUser(2)">
           <div class="portrait">
             <img class="portrait1" :src="NFTDetail.ownerUserAvatar" alt="" />
             <img class="chat_link" src="../../assets/chat.png" alt="" />
           </div>
           <p class="Created">Owned By</p>
-          <p class="name">{{ NFTDetail.ownerUserName }}</p>
+          <p class="name">{{ isUser(2) ? "You" : NFTDetail.ownerUserName.replace(".test","") }}</p>
         </div>
       </div>
-       <!-- operation -->
+      <!-- operation -->
       <div class="set_but" v-if="NFTDetail.ownerAddress">
         <button
           v-if="
             NFTDetail.ownerAddress.toLocaleUpperCase() !=
-            $loginData.Auth_Token.toLocaleUpperCase()&&NFTDetail.price
+              $loginData.Auth_Token.toLocaleUpperCase() && NFTDetail.price
           "
-          @click="set_click(1)"
+          @click="addVTNetwork(1)"
         >
           Collect Now
         </button>
-        <button @click="set_click(2)">Pick & Earn</button>
+        <button
+          class="cancel"
+          @click="cancelListNFT"
+          v-if="
+            NFTDetail.ownerAddress.toLocaleUpperCase() ===
+              $loginData.Auth_Token.toLocaleUpperCase() && NFTDetail.price
+          "
+        >
+          CANCEL LIST
+        </button>
+        <button
+          @click="$router.push(`/list_price?id=${NFTDetail.id}`)"
+          v-if="
+            NFTDetail.ownerAddress.toLocaleUpperCase() ===
+            $loginData.Auth_Token.toLocaleUpperCase()
+          "
+        >
+          LIST PRICE
+        </button>
+        <button
+          v-if="
+            NFTDetail.ownerAddress.toLocaleUpperCase() !=
+            $loginData.Auth_Token.toLocaleUpperCase()
+          "
+        >
+          Pick & Earn
+        </button>
       </div>
       <!-- picks -->
       <div class="more">
@@ -186,51 +218,111 @@
               <div class="chid">History</div>
             </template>
             <div class="more_list_cont">
-              <div class="more_list more_list_history">
-                <div class="type_cont">
-                  <img class="left_icon" src="../../assets/start.png" alt="" />
-                  <div>
-                    <span class="value">Collect</span>
-                    <p class="hisname">+ More</p>
+              <van-collapse v-model="CollectList" class="collapse_er">
+                <van-collapse-item name="1">
+                  <template #title>
+                    <div class="more_list more_list_history">
+                      <div class="type_cont">
+                        <img
+                          class="left_icon"
+                          src="../../assets/start.png"
+                          alt=""
+                        />
+                        <div>
+                          <span class="value">Collect</span>
+                          <p class="hisname">{{!CollectList.length?'+ More':'- Less'}}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <span class="value">0.50 ETH</span>
+                        <p class="hisname hisname_right">1 hour ago</p>
+                      </div>
+                    </div>
+                  </template>
+                  <div class="more_list more_list_history">
+                    <div class="type_cont">
+                      <div class="positioning"></div>
+                      <div>
+                        <span class="value">FC36CE</span>
+                        <p class="hisname">From</p>
+                      </div>
+                    </div>
+                    <div>
+                      <span class="value">84E875</span>
+                      <p class="hisname hisname_right">To</p>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <span class="value">0.50 BNB</span>
-                  <p class="hisname hisname_right">1 hour ago</p>
-                </div>
-              </div>
-              <div class="more_list more_list_history">
-                <div class="type_cont">
-                  <img
-                    class="left_icon"
-                    src="../../assets/Transfer.png"
-                    alt=""
-                  />
-                  <div>
-                    <span class="value">Transfer</span>
-                    <p class="hisname">+ More</p>
+                </van-collapse-item>
+              </van-collapse>
+              <van-collapse v-model="TransferList" class="collapse_er">
+                <van-collapse-item name="1">
+                  <template #title>
+                    <div class="more_list more_list_history">
+                      <div class="type_cont">
+                        <img
+                          class="left_icon"
+                          src="../../assets/Transfer.png"
+                          alt=""
+                        />
+                        <div>
+                          <span class="value">Transfer</span>
+                          <p class="hisname">{{!TransferList.length?'+ More':'- Less'}}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <span class="value">0.52 ETH</span>
+                        <p class="hisname hisname_right">2 hour ago</p>
+                      </div>
+                    </div>
+                  </template>
+                  <div class="more_list more_list_history">
+                    <div class="type_cont">
+                      <div class="positioning"></div>
+                      <div>
+                        <span class="value">6E8CD2</span>
+                        <p class="hisname">From</p>
+                      </div>
+                    </div>
+                    <div>
+                      <span class="value">9FFCE7</span>
+                      <p class="hisname hisname_right">To</p>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <span class="value">0.52 BNB</span>
-                  <p class="hisname hisname_right">2 hour ago</p>
-                </div>
-              </div>
-              <div
-                style="padding: 0; margin: 0; border: none"
-                class="more_list more_list_history"
-              >
-                <div class="type_cont">
-                  <img class="left_icon" src="../../assets/mint.png" alt="" />
-                  <div>
-                    <span class="value">Mint</span>
-                    <p class="hisname">+ More</p>
+                </van-collapse-item>
+              </van-collapse>
+
+              <van-collapse v-model="MintList" class="collapse_er">
+                <van-collapse-item name="1">
+                  <template #title>
+                    <div class="more_list more_list_history">
+                      <div class="type_cont">
+                        <img
+                          class="left_icon"
+                          src="../../assets/mint.png"
+                          alt=""
+                        />
+                        <div>
+                          <span class="value">Mint</span>
+                          <p class="hisname">{{!MintList.length?'+ More':'- Less'}}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <p class="hisname hisname_right">6 hour ago</p>
+                      </div>
+                    </div>
+                  </template>
+                  <div class="more_list more_list_history">
+                    <div class="type_cont">
+                      <div class="positioning"></div>
+                      <div>
+                        <span class="value">6E8CD2</span>
+                        <p class="hisname">From</p>
+                      </div>
+                    </div>
+                    <div></div>
                   </div>
-                </div>
-                <div>
-                  <p class="hisname hisname_right">0 hour ago</p>
-                </div>
-              </div>
+                </van-collapse-item>
+              </van-collapse>
             </div>
           </van-collapse-item>
         </van-collapse>
@@ -270,25 +362,28 @@ export default {
       getNFTMood: getNFTMood,
       Weather: Weather,
       walletShow: false,
+      CollectList: [],
+      TransferList: [],
       activeNames: [],
+      MintList: [],
       activeNamesPicks: [],
       activeNamesHistory: [],
       NFTDetail: {},
       PicksList: [
         {
-          price: "0.56 BNB",
+          price: "0.56 ETH",
           from: "8FE87",
         },
         {
-          price: "0.42 BNB",
+          price: "0.42 ETH",
           from: "FC36CE",
         },
         {
-          price: "0.37 BNB",
+          price: "0.37 ETH",
           from: "29F37",
         },
         {
-          price: "0.29 BNB",
+          price: "0.29 ETH",
           from: "HKZ21G",
         },
       ],

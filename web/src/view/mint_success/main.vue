@@ -43,7 +43,7 @@
         </div>
         <div class="bottom_infor" v-if="NFTDetail.pictureUrl">
           <svg-icon
-            :style="{ color: `hsla(${20 + 120}, 60%, 60%, 1)` }"
+            :style="{ color: `hsla(${NFTDetail.colorAttribute + 120}, 60%, 60%, 1)` }"
             className="svgName"
             iconClass="Vector1"
           ></svg-icon>
@@ -55,7 +55,7 @@
                 {{ getNFTPersonality[NFTDetail.personality] }}
               </p>
             </div>
-            <p class="price" v-if="NFTDetail.price">{{ NFTDetail.price || 0 }}BNB</p>
+            <p class="price" v-if="NFTDetail.price">{{ NFTDetail.price || 0 }}ETH</p>
             <p class="price priceinfp" v-else>mediator infp</p>
           </div>
           <div class="love">

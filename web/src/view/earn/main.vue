@@ -39,15 +39,15 @@
     <div class="earnings" v-if="TabActive==2">
         <div class="earn_list earn_list_one">
           <p class="list_name">Available Fund:</p>
-          <p class="balance">29.05 BNB</p>
+          <p class="balance">29.05 ETH</p>
         </div>
         <div class="earn_list">
           <p class="list_name" style="color:#62625F">Wallet Balance</p>
-          <p class="er_balance">29.05 BNB</p>
+          <p class="er_balance">29.05 ETH</p>
         </div>
         <div class="earn_list">
           <p class="list_name" style="color:#62625F">Pool Balance</p>
-          <p class="er_balance" style="color:#E03131">0 BNB</p>
+          <p class="er_balance" style="color:#E03131">0 ETH</p>
         </div>
         <div class="earn_list">
           <div>
@@ -87,7 +87,7 @@
             <div class="nft_infor">
               <p class="top_name_price">
                 <span class="name">Top Pick</span>
-                <span class="price">0.45 BNB</span>
+                <span class="price">0.45 ETH</span>
               </p>
               <div class="flow_id">
                 <img src="../../assets/level1.png" alt="">
@@ -103,8 +103,8 @@
                   </span>
               </div>
               <div class="price_botm">
-                <span class="bot_price">0.50 BNB</span>
-                <span class="bot_price">0.45 BNB</span>
+                <span class="bot_price">0.50 ETH</span>
+                <span class="bot_price">0.45 ETH</span>
               </div>
             </div>
          </div>

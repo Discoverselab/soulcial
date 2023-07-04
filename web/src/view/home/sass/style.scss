@@ -59,13 +59,14 @@
                     color: #666666;
                     display: flex;
                     align-items: center;
-
+                 
                     img {
                         display: block;
                         width: 16px;
                         height: auto;
                         object-fit: cover;
                         margin-left: 10px;
+                        cursor: pointer;
                     }
 
 
@@ -148,7 +149,7 @@
 
                 .rank_list {
                     text-align: center;
-
+                    cursor: pointer;
                     .value {
                         font-family: 'Inter';
                         font-style: normal;
@@ -187,7 +188,7 @@
             line-height: 19px;
             color: #7B7B77;
             text-transform: uppercase;
-
+            cursor: pointer;
             &.Tab_list_Active {
                 font-style: normal;
                 font-weight: 900;
@@ -202,12 +203,12 @@
         display: flex;
         justify-content: center;
         margin-bottom: 24px;
-
+        cursor: pointer;
         button {
             &:active {
                 opacity: 0.8;
             }
-
+            cursor: pointer;
             display: block;
             width: 100%;
             margin-top: 20px;
@@ -239,10 +240,10 @@
         .nft_list {
             background: #F5F5ED;
             border: 1px solid #DFDFCE;
-
+            cursor: pointer;
             .img_cont {
-                width: 163px;
-                height: 163px;
+                // width: 163px;
+                // height: 163px;
                 background: #F5F5ED;
                 border: 2px solid #DFDFCE;
                 position: relative;

@@ -22,9 +22,9 @@ export default {
   methods: {
     IsBar() {
       if (this.BarList.indexOf(this.$route.path) === -1) {
-        return false
-      }else{
-        return true
+        return false;
+      } else {
+        return true;
       }
     },
     _isMobile() {
@@ -104,6 +104,15 @@ body {
     border-radius: 3px;
     background: rgba(0, 0, 0, 0.06);
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+
+  @media screen and (min-width: 750px) {
+    #app {
+      padding: 10px 430px;
+    }
+    #app>div{
+      box-shadow:5px 5px 5px 5px #888888;
+    }
   }
 }
 </style>

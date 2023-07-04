@@ -14,6 +14,7 @@
             display: block;
             width: 16px;
             height: 16px;
+            cursor: pointer;
         }
 
         .nav_name {
@@ -80,7 +81,7 @@
                 position: relative;
                 width: 163px;
                 height: 163px;
-
+                cursor: pointer;
                 &.nft_listac {
                     border: 2px solid #000;
                 }
@@ -107,7 +108,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 0px 10px;
-
+            cursor: pointer;
             button {
                 &:active {
                     opacity: 0.8;
@@ -118,7 +119,7 @@
                     color: #c4c4be;
                     border: 2px solid #c4c4be;
                 }
-
+                cursor: pointer;
                 margin-top: 20px;
                 display: flex;
                 align-items: center;

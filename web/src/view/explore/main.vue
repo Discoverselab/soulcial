@@ -32,13 +32,13 @@
           <div class="img_icon">
             <div class="match" v-if="item.pictureUrl&&$loginData.Auth_Token">
               <p
-                :style="{ color: `hsla(${20 + 120}, 60%, 60%, 1)` }"
+                :style="{ color: `hsla(${item.colorAttribute + 120}, 60%, 60%, 1)` }"
                 class="center"
               >
                 {{ item.match || "0" }}%
               </p>
               <p
-                :style="{ color: `hsla(${20 + 120}, 60%, 60%, 1)` }"
+                :style="{ color: `hsla(${item.colorAttribute + 120}, 60%, 60%, 1)` }"
                 class="name"
               >
                 match
@@ -48,7 +48,7 @@
           </div>
           <div class="bottom_infor" v-if="item.pictureUrl">
             <svg-icon
-              :style="{ color: `hsla(${20 + 120}, 60%, 60%, 1)` }"
+              :style="{ color: `hsla(${item.colorAttribute + 120}, 60%, 60%, 1)` }"
               className="svgName"
               :iconClass="urls()"
             ></svg-icon>
@@ -61,7 +61,7 @@
                 />
                 <p class="grade_name">{{ getNFTLevel[item.level] }}</p>
               </div>
-              <p class="price" v-if="item.price">{{ item.price }}BNB</p>
+              <p class="price" v-if="item.price">{{ item.price }}ETH</p>
               <p class="price priceinfp" v-else>mediator infp</p>
             </div>
             <div class="love">
@@ -82,13 +82,13 @@
           <div class="img_icon">
             <div class="match" v-if="item.pictureUrl&&$loginData.Auth_Token">
               <p
-                :style="{ color: `hsla(${20 + 120}, 60%, 60%, 1)` }"
+                :style="{ color: `hsla(${item.colorAttribute + 120}, 60%, 60%, 1)` }"
                 class="center"
               >
                 {{ item.match || "0" }}%
               </p>
               <p
-                :style="{ color: `hsla(${20 + 120}, 60%, 60%, 1)` }"
+                :style="{ color: `hsla(${item.colorAttribute + 120}, 60%, 60%, 1)` }"
                 class="name"
               >
                 match
@@ -98,7 +98,7 @@
           </div>
           <div class="bottom_infor" v-if="item.pictureUrl">
             <svg-icon
-              :style="{ color: `hsla(${20 + 120}, 60%, 60%, 1)` }"
+              :style="{ color: `hsla(${item.colorAttribute + 120}, 60%, 60%, 1)` }"
               className="svgName"
               :iconClass="urls()"
             ></svg-icon>
@@ -111,7 +111,7 @@
                 />
                 <p class="grade_name">{{ getNFTLevel[item.level] }}</p>
               </div>
-              <p class="price" v-if="item.price">{{ item.price }}BNB</p>
+              <p class="price" v-if="item.price">{{ item.price }}ETH</p>
               <p class="price priceinfp" v-else>mediator infp</p>
             </div>
             <div class="love">

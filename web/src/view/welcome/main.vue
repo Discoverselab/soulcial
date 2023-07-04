@@ -2,9 +2,9 @@
   <div class="welcome">
     <p class="title">welcome!</p>
     <p class="title_infor">Let's create something fun!</p>
-    <div class="userportrait">
+    <div class="userportrait" v-if="UserInfo.userName">
       <img class="userportrait" :src="UserInfo.avatar" alt="" />
-      <p class="humphry">{{ UserInfo.userName }}</p>
+      <p class="humphry">{{UserInfo.userName.replace(".test","")  }}</p>
       <img class="con_lin" src="../../assets/con_lin.png" alt="" />
     </div>
     <img class="link_img link_img1" src="../../assets/link1.png" alt="" />
@@ -26,14 +26,15 @@ export default {
   name: "",
   data() {
     return {
-      overlayshow:false,
-      UserInfo: {},
+      overlayshow: false,
+      UserInfo: { address: "" },
+      address: "0x788Ba36fd93B7e1eF6A78CB47eF9c17ba9e2339A",
     };
   },
   watch: watch,
   methods: methods,
   computed: computed,
-  components: {Overlay},
+  components: { Overlay },
   created() {
     let me = this;
     me.getUserInfo();

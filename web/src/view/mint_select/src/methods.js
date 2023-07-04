@@ -12,7 +12,7 @@ export default {
     nuxt() {
         let me = this
         me.overlayshow = true
-        setTimeout(()=>{
+        setTimeout(() => {
             me.overlayshow = false
             this.$router.push({
                 path: "/mint_soulcast",
@@ -23,7 +23,7 @@ export default {
                     weather: this.WeatherID + 1,
                 }
             })
-        },3000)
+        }, 2000)
 
     },
     getUserInfo() {

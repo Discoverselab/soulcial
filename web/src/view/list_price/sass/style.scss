@@ -1,0 +1,276 @@
+.list_price {
+    padding-bottom: 120px;
+
+    .navigate {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        padding: 20px 24px 0 24px;
+        top: 0px;
+        background-color: #f5f5ed;
+        z-index: 9;
+
+        .back {
+            display: block;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .nav_name {
+            display: flex;
+            align-items: center;
+
+            .name {
+                font-family: 'Inter';
+                text-transform: uppercase;
+                font-style: normal;
+                font-weight: 700;
+                font-size: 20px;
+                color: #000;
+            }
+        }
+    }
+
+    .details_cont {
+        padding: 0 24px;
+        margin-top: 50px;
+
+        .nft_infor {
+            padding-bottom: 18px;
+            border-bottom: 2px solid #DFDFCE;
+            display: flex;
+            align-items: center;
+
+            .nft_img {
+                display: block;
+                min-width: 60px;
+                min-height: 60px;
+                max-width: 60px;
+                max-height: 60px;
+                margin-right: 16px;
+            }
+
+            .infor_right {
+                width: 100%;
+
+                .right_top {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    .grade {
+                        display: flex;
+                        align-items: center;
+
+                        img {
+                            display: block;
+                            height: auto;
+                            margin-right: 4px;
+                            object-fit: cover;
+
+                            &.level1 {
+                                width: 22px;
+                            }
+
+                            &.level2 {
+                                width: 20px;
+                            }
+
+                            &.level3 {
+                                width: 20px;
+                            }
+
+                            &.level4 {
+                                width: 20px;
+                            }
+
+                            &.level5 {
+                                width: 22px;
+                            }
+                        }
+
+                        .grade_name {
+                            font-family: 'Inter';
+                            font-weight: 600;
+                            font-size: 16px;
+                            text-transform: uppercase;
+                            color: #000000;
+                        }
+
+                        .TOKENid {
+                            margin-left: 12px;
+                            color: #000;
+                            font-size: 16px;
+                            font-family: Inter;
+                            font-weight: 600;
+                        }
+                    }
+
+                    .grade_right {
+                        color: #000;
+                        text-align: right;
+                        font-size: 16px;
+                        font-family: Inter;
+                        font-weight: 600;
+                    }
+                }
+
+                .right_bot {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-top: 10px;
+
+                    .bot_left {
+                        color: #000;
+                        font-size: 14px;
+                        font-family: Inter;
+                        font-weight: 600;
+
+                        span {
+                            color: #62625f;
+                        }
+                    }
+
+                    .bot_right {
+                        color: #62625f;
+                        text-align: right;
+                        font-size: 12px;
+                        font-family: Inter;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+
+        .suggestion {
+            margin: 30px 0 56px 0;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #DFDFCE;
+
+            &.suggestions {
+                margin-bottom: 23px;
+            }
+
+            &.suggestionss {
+                margin: 0 0 40px 0;
+                padding-bottom: 23px;
+            }
+
+            .suggestion_list {
+                margin-bottom: 15px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .key {
+                    color: #62625f;
+                    font-size: 16px;
+                    font-family: 'Inter';
+                    font-weight: 600;
+                    text-transform: capitalize;
+                }
+
+                .value {
+                    color: #000;
+                    text-align: right;
+                    font-size: 16px;
+                    font-family: 'Inter';
+                    font-weight: 700;
+                }
+            }
+        }
+
+        .Fees {
+            font-size: 24px;
+            font-family: 'Inter';
+            font-weight: 700;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #DFDFCE;
+            margin-bottom: 30px;
+        }
+
+        .input_cont {
+            border-radius: 10px;
+            border: 2px solid #DFDFCE;
+            background: #FFF;
+            margin-bottom: 40px;
+            position: relative;
+
+            input {
+                width: 100%;
+                box-sizing: border-box;
+                border-radius: 10px;
+                padding: 12px 20px;
+                border: none;
+                color: #E03131;
+                text-align: left;
+                font-size: 18px;
+                font-family: 'Inter';
+                font-weight: 600;
+            }
+
+            .symoy {
+                border-radius: 6px;
+                background: #000;
+                padding: 4px 12px;
+                color: #FFF;
+                font-size: 14px;
+                font-family: "Inter";
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                position: absolute;
+                right: 20px;
+                top: 9px;
+
+                img {
+                    display: block;
+                    width: 20px;
+                    height: 20px;
+                    margin-right: 10px;
+                }
+            }
+        }
+
+        .set_but {
+            box-sizing: border-box;
+            margin-bottom: 56px;
+            cursor: pointer;
+            button {
+                &:active {
+                    opacity: 0.8;
+                }
+
+
+                &.Cancel {
+                    border: 2px solid #000;
+                    background: #DFDECE;
+                    color: #000;
+                }
+                cursor: pointer;
+                display: block;
+                width: 100%;
+                margin-top: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 8px 26px;
+                gap: 10px;
+                // width: 342px;
+                height: 40px;
+                background: #FFFFFF;
+                border: 2px solid #000000;
+                border-radius: 45px;
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 700;
+                font-size: 18px;
+                color: #000;
+            }
+        }
+    }
+}

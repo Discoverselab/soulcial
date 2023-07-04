@@ -45,6 +45,12 @@
                 border: 2px solid #c4c4be;
             }
 
+            &.Cancel {
+                border: 2px solid #000;
+                background: #DFDECE;
+                color: #000;
+            }
+
             .FREE {
                 box-sizing: border-box;
                 position: absolute;
@@ -78,6 +84,20 @@
             font-weight: 700;
             font-size: 18px;
             color: #000;
+        }
+
+        .skip {
+            color: #000;
+            text-align: center;
+            font-size: 12px;
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            margin-top: 20px;
+
+            span {
+                color: #F3B228;
+            }
         }
     }
 }

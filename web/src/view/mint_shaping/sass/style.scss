@@ -15,6 +15,7 @@
             display: block;
             width: 16px;
             height: 16px;
+            cursor: pointer;
         }
 
         .nav_name {
@@ -134,7 +135,7 @@
                 justify-content: center;
                 padding: 8px 26px;
                 gap: 10px;
-                width: 342px;
+                // width: 342px;
                 height: 40px;
                 background: #FFFFFF;
                 text-transform: uppercase;

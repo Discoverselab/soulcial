@@ -1,0 +1,157 @@
+.mint_shaping {
+    padding-bottom: 50px;
+
+    .navigate {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        padding: 20px 24px 0 24px;
+        top: 0px;
+        background-color: #f5f5ed;
+        z-index: 10;
+
+        .back {
+            display: block;
+            width: 16px;
+            height: 16px;
+        }
+
+        .nav_name {
+            display: flex;
+            align-items: center;
+
+            .userportrait {
+                display: block;
+                width: 40px;
+                height: 40px;
+                margin-right: 12px;
+            }
+
+            .name {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 700;
+                font-size: 20px;
+                text-transform: uppercase;
+                color: #000;
+            }
+
+            .label {
+                display: block;
+                width: 16px;
+                height: 16px;
+            }
+        }
+    }
+
+    .slogin {
+        margin: 32px 0 20px 0;
+
+        .slogin_title {
+            position: relative;
+            z-index: 9;
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .sou_lins {
+            display: block;
+            width: 174px;
+            margin: 0 auto;
+            position: relative;
+            top: -10px;
+        }
+    }
+
+    .details_cont {
+        padding: 0 24px;
+
+        .mint_sou_nft {
+            display: block;
+            width: 342px;
+            margin: 28px auto 36px auto;
+        }
+
+        .attribute {
+            .attribute_list {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #DFDFCE;
+                margin-bottom: 35px;
+
+                p {
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 16px;
+                    color: #000;
+                }
+            }
+        }
+
+        .shapset_but {
+            box-sizing: border-box;
+            margin-top: 60px;
+
+            button {
+                position: relative;
+
+                &:active {
+                    opacity: 0.8;
+                }
+
+                &.disabled {
+                    background-color: #F1F1E7;
+                    color: #c4c4be;
+                    border: 2px solid #c4c4be;
+                }
+
+                .FREE {
+                    box-sizing: border-box;
+                    position: absolute;
+                    width: 70px;
+                    height: 25px;
+                    line-height: 25px;
+                    text-align: center;
+                    right: 0;
+                    top: -12.5px;
+                    background: #5CD685;
+                    border: 2px solid #000000;
+                    border-radius: 28px;
+                }
+
+                display: block;
+                width: 100%;
+                margin-top: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 8px 26px;
+                gap: 10px;
+                width: 342px;
+                height: 40px;
+                background: #FFFFFF;
+                text-transform: uppercase;
+                border: 2px solid #000000;
+                border-radius: 45px;
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 700;
+                font-size: 18px;
+                color: #000;
+            }
+        }
+    }
+
+    .ovrlay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

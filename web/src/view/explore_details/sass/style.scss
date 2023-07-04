@@ -1,0 +1,481 @@
+.explore_details {
+    padding-bottom: 120px;
+
+    .navigate {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        padding: 20px 24px 0 24px;
+        top: 0px;
+        background-color: #f5f5ed;
+        z-index: 9;
+
+        .back {
+            display: block;
+            width: 16px;
+            height: 16px;
+        }
+
+        .label {
+            display: block;
+            width: 16px;
+            height: 16px;
+        }
+
+        .nav_name {
+            display: flex;
+            align-items: center;
+
+            .userportrait {
+                display: block;
+                width: 40px;
+                height: 40px;
+                margin-right: 12px;
+            }
+
+            .name {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 700;
+                font-size: 24px;
+                color: #000;
+            }
+
+            .label {
+                display: block;
+                width: 16px;
+                height: 16px;
+            }
+        }
+    }
+
+    .details_cont {
+        padding: 0 24px;
+        margin-top: 28px;
+
+        .Nft_details {
+            .box {
+                position: relative;
+                width: 272px;
+                height: 365px;
+                perspective: 1000px;
+                transition: transform 0.5s;
+                perspective: 1000;
+                margin: 0 auto;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                &.flipped {
+                    .img_icon1 {
+                        transform: rotateY(180deg) !important;
+                        visibility: hidden !important;
+                    }
+
+                    .img_icon2 {
+                        transform: rotateY(360deg) !important;
+                        visibility: visible !important;
+                    }
+                }
+
+                .img_icon {
+                    // 元素背对时默认不可见
+                    backface-visibility: hidden;
+                    // 元素在3D空间中呈现
+                    transform-style: preserve-3d;
+                    // 两秒完成动画
+                    transition-duration: 0.5s;
+                    width: 100%;
+                    height: 100%;
+                    background-color: #f5f5ed;
+
+                    &.img_icon1 {
+                        transform: rotateY(0deg);
+                        position: relative;
+                        z-index: 2;
+                    }
+
+                    &.img_icon2 {
+                        transform: rotateY(180deg);
+                        visibility: hidden;
+                        position: absolute;
+                        z-index: -1;
+                        padding-top: 20px;
+                    }
+
+                    img {
+                        width: 100%;
+                    }
+
+                    .match {
+                        position: absolute;
+                        right: -25px;
+                        top: 50px;
+                        text-align: right;
+                        transition: 0.5s ease-in-out;
+
+                        .center {
+                            font-family: 'DINCond-Bold';
+                            font-style: normal;
+                            font-weight: 700;
+                            font-size: 50px;
+                        }
+
+                        .name {
+                            font-family: 'DINCond-Bold';
+                            font-style: normal;
+                            font-weight: 700;
+                            font-size: 24px;
+                            text-transform: uppercase;
+                        }
+                    }
+                }
+            }
+
+            .bottom_infor {
+                position: relative;
+                width: 350px;
+                height: 144px;
+                margin: -30px auto 0 auto;
+                background-size: 100% 100%;
+
+                .svgName {
+                    width: 100%;
+                    height: 100%;
+                }
+
+                .grade_price {
+                    position: absolute;
+                    top: 20px;
+                    left: 0;
+
+                    .grade {
+                        display: flex;
+                        align-items: center;
+
+                        img {
+                            display: block;
+                            height: auto;
+                            margin-right: 6px;
+                            object-fit: cover;
+
+                            &.level1 {
+                                width: 22px;
+                            }
+
+                            &.level2 {
+                                width: 20px;
+                            }
+
+                            &.level3 {
+                                width: 20px;
+                            }
+
+                            &.level4 {
+                                width: 20px;
+                            }
+
+                            &.level5 {
+                                width: 22px;
+                            }
+                        }
+
+                        .grade_name {
+                            font-family: 'DINCond-Bold';
+                            font-style: normal;
+                            font-weight: 500;
+                            font-size: 24px;
+                            text-transform: uppercase;
+                            color: #000000;
+                        }
+
+                        .Personality_name {
+                            margin-left: 12px;
+                            font-family: 'DINCond-Bold';
+                            font-style: normal;
+                            font-weight: 500;
+                            font-size: 24px;
+                            text-transform: uppercase;
+                            color: #000000;
+                        }
+                    }
+
+                    .price {
+                        font-family: 'DINCond-Bold';
+                        font-style: normal;
+                        font-weight: 500;
+                        font-size: 54px;
+                        text-transform: uppercase;
+                    }
+                }
+
+                .turn {
+                    position: absolute;
+                    right: 5px;
+                    top: 20px;
+
+                    img {
+                        display: block;
+                        width: 24px;
+                        height: auto;
+                    }
+                }
+
+                .love {
+                    display: flex;
+                    align-items: center;
+                    position: absolute;
+                    right: 5px;
+                    bottom: 10px;
+                    font-family: 'DINCond-Bold';
+                    font-style: normal;
+                    font-weight: 500;
+                    font-size: 28px;
+                    text-transform: uppercase;
+
+                    img {
+                        display: block;
+                        width: 21px;
+                        margin-right: 6px;
+                        margin-top: 3px;
+                    }
+                }
+            }
+        }
+
+        // label
+        .label_cont {
+            position: relative;
+            top: -20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .label_left {
+                display: flex;
+                align-items: center;
+
+                .label {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 700;
+                    font-size: 14px;
+
+                    &.label1 {
+                        width: 78px;
+                        height: 24.5px;
+                        background-image: url("../../assets/label1.png");
+                        background-size: 100% 100%;
+                    }
+
+                    &.label2 {
+                        width: 75px;
+                        height: 24px;
+                        background-image: url("../../assets/label2.png");
+                        background-size: 100% 100%;
+                    }
+
+                    &.label3 {
+                        width: 50px;
+                        height: 24px;
+                        background-image: url("../../assets/label3.png");
+                        background-size: 100% 100%;
+                    }
+                }
+            }
+        }
+
+        .more {
+            margin-top: 40px;
+
+            .van-collapse {
+                &::after {
+                    content: none !important
+                }
+
+                .van-cell {
+                    background-color: rgba(0, 0, 0, 0) !important;
+                    display: flex;
+                    align-items: center;
+                    padding: 0 0 10px 0 !important;
+                    border-bottom: 2px solid #DFDFCE;
+                }
+
+                .van-collapse-item__content {
+                    background-color: rgba(0, 0, 0, 0) !important;
+                    padding: 0 !important;
+                }
+
+                .van-icon {
+                    font-weight: bold;
+                    color: #000;
+                    font-size: 16px;
+                }
+            }
+
+
+            .chid {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 700;
+                font-size: 24px;
+                color: #000;
+            }
+
+            .MoreDetail {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 600;
+                font-size: 16px;
+                color: #000;
+                margin-right: 5px;
+            }
+
+            .more_list_cont {
+                padding: 30px 0 18px 0;
+                border-bottom: 2px solid #DFDFCE;
+
+                .more_list {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-bottom: 12px;
+
+                    &.more_list_picks {
+                        margin-bottom: 20px;
+                    }
+
+                    &.more_list_history {
+                        margin-bottom: 20px;
+                        padding-bottom: 20px;
+                        border-bottom: 2px solid #DFDFCE;
+
+                    }
+                    .type_cont{
+                        display: flex;
+                        align-items: center;
+                        img{
+                            display: block;
+                            margin-right: 24px;
+                            transform: scale(0.5); /* scaling */
+                        }
+                    }
+                    .key {
+                        font-family: 'Inter';
+                        font-style: normal;
+                        font-weight: 600;
+                        font-size: 16px;
+                        color: #62625f;
+                    }
+
+                    .value {
+                        font-family: 'Inter';
+                        font-style: normal;
+                        font-weight: 700;
+                        font-size: 16px;
+                        color: #000;
+                    }
+
+                    .hisname {
+                        font-family: 'Inter';
+                        font-style: normal;
+                        font-weight: 600;
+                        font-size: 12px;
+                        margin-top: 5px;
+
+                        &.hisname_right {
+                            text-align: right;
+                        }
+                    }
+                }
+            }
+        }
+
+        .author {
+            margin: 20px 0 44px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0px 10px;
+
+            .author_list {
+                border: 2px solid #DFDFCE;
+                padding: 20px 15px 25px 15px;
+
+                .portrait {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 15px;
+
+                    .portrait1 {
+                        display: block;
+                        width: 36px;
+                        height: 36px;
+                    }
+
+                    .chat_link {
+                        display: block;
+                        width: 20px;
+                        height: 20px;
+                    }
+                }
+
+                .Created {
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 10px;
+                    color: #000000;
+                    margin-bottom: 10px;
+                }
+
+                .name {
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 16px;
+                    color: #000000;
+                }
+            }
+        }
+
+        .set_but {
+            box-sizing: border-box;
+            margin-bottom: 56px;
+
+            button {
+                &:active {
+                    opacity: 0.8;
+                }
+
+                &.disabled {
+                    background-color: #F1F1E7;
+                    color: #c4c4be;
+                    border: 2px solid #c4c4be;
+                }
+
+                display: block;
+                width: 100%;
+                margin-top: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 8px 26px;
+                gap: 10px;
+                width: 342px;
+                height: 40px;
+                background: #FFFFFF;
+                border: 2px solid #000000;
+                border-radius: 45px;
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 700;
+                font-size: 18px;
+                color: #000;
+            }
+        }
+    }
+}
